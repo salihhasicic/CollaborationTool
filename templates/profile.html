@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profil</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Profil von {{ user.name }}</h1>
+  <img src="{{ url_for('static', filename=user.photo) }}" width="150" alt="Profilbild">
+  <h3>Skills:</h3>
+  <ul>
+    {% for skill in user.skills %}
+      <li>{{ skill }}</li>
+    {% endfor %}
+  </ul>
+  <a href="/login">Zurück zum Login</a>
+</body>
+</html>
