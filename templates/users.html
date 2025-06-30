@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Benutzerübersicht</title>
+    <link rel="stylesheet" href="/statics/style.css">
+</head>
+<body>
+    <h2>Alle Benutzer</h2>
+
+    <form method="get" action="/users">
+        <input type="text" name="skill" placeholder="Suche nach Skill" value="{{ skill or '' }}">
+        <button type="submit">Suchen</button>
+    </form>
+
+    <ul>
+        {% for user in users %}
+        <li>
+            <strong>{{ user.username }}</strong> – {{ user.skills }}
+            <a href="/profile/{{ user.id }}">Profil ansehen</a>
+            <form method="post" action="/team/add" style="display:inline;">
+    <input type="hidden" name="user_id" value="{{ user.id }}">
+    <input type="hidden" name="team_id" value="1">  <!-- Team-ID für Demo -->
+    <button type="submit">Zum Team hinzufügen</button>
+</form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

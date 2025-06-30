@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Team Chat {{ team_id }}</title>
+    <link rel="stylesheet" href="/statics/style.css">
+</head>
+<body>
+    <h2>Chat – Team {{ team_id }}</h2>
+
+    <div style="border:1px solid #ccc; padding:10px; height:300px; overflow-y:scroll;">
+        {% for msg in messages %}
+        <p><strong>{{ msg.sender_id }}:</strong> {{ msg.message }} <em>({{ msg.timestamp }})</em></p>
+        {% endfor %}
+    </div>
+
+    <form method="post" action="/chat/{{ team_id }}">
+        <input type="hidden" name="sender_id" value="1"> <!-- Zum Testen -->
+        <textarea name="message" rows="3" cols="50" required></textarea><br>
+        <button type="submit">Senden</button>
+    </form>
+
+    <br>
+    <a href="/team/{{ team_id }}">Zurück zum Team</a>
+</body>
+</html>
