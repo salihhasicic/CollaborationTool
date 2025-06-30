@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-BACKEND_URL = 'http://localhost:5000'  # Passe den Port ggf. an
+BACKEND_URL = 'http://127.0.0.1:5000'  # Passe den Port ggf. an
 
 @app.route('/')
 def index():
@@ -14,7 +14,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        response = requests.post(f'{BACKEND_URL}/login', json={
+        response = requests.post(f'{BACKEND_URL}/auth/login', json={
             'username': username,
             'password': password
         })
@@ -82,7 +82,7 @@ def chat(team_id):
 
 @app.route('/profile/<int:user_id>')
 def profile(user_id):
-    response = requests.get(f'{BACKEND_URL}/{user_id}')
+    response = requests.get(f'{BACKEND_URL}/user/{user_id}')
     if response.status_code == 200:
         user = response.json()
         return render_template('profile.html', user=user)
