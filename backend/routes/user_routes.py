@@ -1,0 +1,79 @@
+from flask import Blueprint, request, jsonify
+from models import User
+from extensions import db
+from math import radians, cos, sin, asin, sqrt
+from datetime import datetime
+
+user_bp = Blueprint('user', __name__)
+
+# 🔎 Benutzerprofil anzeigen
+@user_bp.route('/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    return jsonify({
+        'id': user.id,
+        'username': user.username,
+        'photo_url': user.photo_url,
+        'location': user.location,
+        'skills': user.skills,
+        'team_id': user.team_id,
+        'latitude': user.latitude,
+        'longitude': user.longitude
+    })
+
+# 🔍 Suche nach Skill
+@user_bp.route('/search', methods=['GET'])
+def search_users():
+    skill = request.args.get('skill')
+    users = User.query.filter(User.skills.like(f"%{skill}%")).all()
+    result = [{'id': u.id, 'username': u.username, 'skills': u.skills} for u in users]
+    return jsonify(result)
+
+# 📍 Standort speichern
+@user_bp.route('/location', methods=['POST'])
+def update_location():
+    data = request.json
+    user = User.query.get(data['user_id'])
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    user.latitude = data['latitude']
+    user.longitude = data['longitude']
+    user.last_active = datetime.utcnow()
+    db.session.commit()
+    return jsonify({'message': 'Location updated'})
+
+# 📍 Nutzer im Umkreis finden
+@user_bp.route('/nearby', methods=['GET'])
+def find_nearby_users():
+    user_id = request.args.get('user_id', type=int)
+    radius_km = request.args.get('radius', default=30, type=int)
+
+    current_user = User.query.get(user_id)
+    if not current_user or not current_user.latitude or not current_user.longitude:
+        return jsonify({'message': 'Location not set for user'}), 400
+
+    def haversine(lat1, lon1, lat2, lon2):
+        R = 6371  # km
+        dlat = radians(lat2 - lat1)
+        dlon = radians(lon2 - lon1)
+        a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
+        c = 2 * asin(sqrt(a))
+        return R * c
+
+    all_users = User.query.all()
+    nearby = []
+
+    for user in all_users:
+        if user.id == user_id or not user.latitude or not user.longitude:
+            continue
+        distance = haversine(current_user.latitude, current_user.longitude, user.latitude, user.longitude)
+        if distance <= radius_km:
+            nearby.append({
+                'id': user.id,
+                'username': user.username,
+                'distance_km': round(distance, 2)
+            })
+
+    return jsonify(nearby)
