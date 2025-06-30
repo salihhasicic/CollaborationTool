@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Team {{ team_id }}</title>
+    <link rel="stylesheet" href="/statics/style.css">
+</head>
+<body>
+    <h2>Team {{ team_id }}</h2>
+    <ul>
+        {% for user in team_members %}
+        <li>{{ user.username }} – {{ user.skills }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/users">Zurück zur Benutzerliste</a>
+</body>
+</html>
