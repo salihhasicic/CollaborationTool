@@ -2,24 +2,81 @@
 <html>
 <head>
     <title>Team Chat {{ team_id }}</title>
-    <link rel="stylesheet" href="/statics/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .chat-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .chat-form textarea {
+            resize: vertical;
+        }
+        .ai-btn {
+            margin-top: 0;
+            margin-bottom: 10px;
+            background: #fbbf24;
+            color: #222;
+            font-weight: 600;
+        }
+        .ai-btn:hover {
+            background: #ffe066;
+        }
+    </style>
 </head>
 <body>
-    <h2>Chat – Team {{ team_id }}</h2>
-
-    <div style="border:1px solid #ccc; padding:10px; height:300px; overflow-y:scroll;">
-        {% for msg in messages %}
-        <p><strong>{{ msg.sender_id }}:</strong> {{ msg.message }} <em>({{ msg.timestamp }})</em></p>
-        {% endfor %}
+    <nav>
+        <a href="/">Start</a>
+        <a href="/users">Benutzer</a>
+        <a href="/team/{{ team_id }}">Team</a>
+        <a href="/chat/{{ team_id }}" class="active">Team-Chat</a>
+    </nav>
+    <div class="container">
+        <h2>Chat – Team {{ team_id }}</h2>
+        <div class="chat-box" id="chat-box">
+            {% for msg in messages %}
+            <div class="chat-message">
+                <span class="chat-sender">{{ msg.sender_id }}</span>:
+                {{ msg.message or msg.content }}
+                <span class="chat-timestamp">({{ msg.timestamp }})</span>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="ai-btn" type="button" onclick="suggestAIReply()">AI-Antwort vorschlagen</button>
+        <form method="post" action="/chat/{{ team_id }}" class="chat-form" id="chat-form">
+            <input type="hidden" name="sender_id" value="1">
+            <textarea name="message" id="message" rows="3" required placeholder="Nachricht eingeben..."></textarea>
+            <button type="submit">Senden</button>
+        </form>
+        <br>
+        <a href="/team/{{ team_id }}"><button type="button">Zurück zum Team</button></a>
     </div>
-
-    <form method="post" action="/chat/{{ team_id }}">
-        <input type="hidden" name="sender_id" value="1"> <!-- Zum Testen -->
-        <textarea name="message" rows="3" cols="50" required></textarea><br>
-        <button type="submit">Senden</button>
-    </form>
-
-    <br>
-    <a href="/team/{{ team_id }}">Zurück zum Team</a>
+    <script>
+        window.onload = function() {
+            var chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        function suggestAIReply() {
+            // Letzte Nachricht holen
+            var chatBox = document.getElementById('chat-box');
+            var messages = chatBox.getElementsByClassName('chat-message');
+            if (messages.length === 0) return;
+            var lastMsg = messages[messages.length-1].innerText;
+            var msgText = lastMsg.replace(/^[^:]+:\s*/, '').replace(/\([^)]+\)$/, '').trim();
+            fetch('/chat/suggest', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: msgText})
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.suggested_reply) {
+                    document.getElementById('message').value = data.suggested_reply;
+                } else {
+                    alert('AI konnte keine Antwort generieren.');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

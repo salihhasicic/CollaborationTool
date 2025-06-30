@@ -7,7 +7,7 @@ BACKEND_URL = 'http://127.0.0.1:5000'  # Passe den Port ggf. an
 
 @app.route('/')
 def index():
-    return redirect(url_for('login'))
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -28,7 +28,7 @@ def login():
 @app.route('/users')
 def list_users():
     skill = request.args.get('skill', '')
-    response = requests.get(f'{BACKEND_URL}/search', params={'skill': skill})
+    response = requests.get(f'{BACKEND_URL}/user/search', params={'skill': skill})
     if response.status_code == 200:
         users = response.json()
         return render_template('users.html', users=users, skill=skill)
@@ -37,10 +37,11 @@ def list_users():
 
 @app.route('/team/<int:team_id>')
 def show_team(team_id):
-    response = requests.get(f'{BACKEND_URL}/search')  # alle User
+    # Hole alle User und filtere nach Team-ID
+    response = requests.get(f'{BACKEND_URL}/user/search', params={'skill': ''})
     if response.status_code == 200:
         all_users = response.json()
-        team_members = [u for u in all_users if u['team_id'] == team_id]
+        team_members = [u for u in all_users if u.get('team_id') == team_id]
         return render_template('team.html', team_id=team_id, team_members=team_members)
     else:
         return "Fehler beim Laden des Teams", 500
@@ -48,8 +49,8 @@ def show_team(team_id):
 @app.route('/team/add', methods=['POST'])
 def add_to_team():
     user_id = request.form.get('user_id')
-    team_id = request.form.get('team_id') or 1  # Standardteam für Demo
-    response = requests.post(f'{BACKEND_URL}/team/add_user', json={
+    team_id = request.form.get('team_id') or 1
+    response = requests.post(f'{BACKEND_URL}/team/join', json={
         'user_id': int(user_id),
         'team_id': int(team_id)
     })
@@ -66,19 +67,17 @@ def chat(team_id):
         response = requests.post(f'{BACKEND_URL}/chat/send', json={
             'sender_id': int(sender_id),
             'team_id': team_id,
-            'message': message
+            'content': message
         })
         if response.status_code != 200:
             return "Fehler beim Senden", 500
 
-    # Nachrichten laden
-    res = requests.get(f'{BACKEND_URL}/chat/{team_id}')
+    res = requests.get(f'{BACKEND_URL}/chat/team/{team_id}')
     if res.status_code == 200:
         messages = res.json()
         return render_template('chat.html', messages=messages, team_id=team_id)
     else:
         return "Fehler beim Laden der Nachrichten", 500
-
 
 @app.route('/profile/<int:user_id>')
 def profile(user_id):

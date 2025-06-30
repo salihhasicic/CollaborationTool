@@ -2,15 +2,34 @@
 <html>
 <head>
     <title>Team {{ team_id }}</title>
-    <link rel="stylesheet" href="/statics/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>Team {{ team_id }}</h2>
-    <ul>
-        {% for user in team_members %}
-        <li>{{ user.username }} – {{ user.skills }}</li>
-        {% endfor %}
-    </ul>
-    <a href="/users">Zurück zur Benutzerliste</a>
+    <nav>
+        <a href="/">Start</a>
+        <a href="/users">Benutzer</a>
+        <a href="/team/{{ team_id }}" class="active">Team</a>
+        <a href="/chat/{{ team_id }}">Team-Chat</a>
+    </nav>
+    <div class="container">
+        <h2>Team {{ team_id }}</h2>
+        <ul class="team-list">
+            {% for user in team_members %}
+            <li>
+                <div class="user-info">
+                    <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}" class="profile-img" alt="Profilbild">
+                    <div>
+                        <strong style="font-size:1.15em;">{{ user.username }}</strong><br>
+                        {% set skills = user.skills.split(',') if user.skills else [] %}
+                        {% for skill in skills %}
+                            <span class="skill-badge">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="/users"><button type="button">Zurück zur Benutzerliste</button></a>
+    </div>
 </body>
 </html>
