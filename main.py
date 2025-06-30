@@ -35,14 +35,24 @@ def list_users():
     else:
         return "Fehler beim Laden der Benutzer", 500
 
-@app.route('/team/<int:team_id>')
+@app.route('/team/<int:team_id>', methods=['GET', 'POST'])
 def show_team(team_id):
+    # Ablage speichern (POST)
+    if request.method == 'POST':
+        ablage = request.form.get('ablage', '')
+        res = requests.post(f'{BACKEND_URL}/team/{team_id}/ablage', data={'ablage': ablage})
+        # Fehlerbehandlung ignoriert, da wir gleich neu laden
+
     # Hole alle User und filtere nach Team-ID
     response = requests.get(f'{BACKEND_URL}/user/search', params={'skill': ''})
+    ablage = ""
+    ablage_res = requests.get(f'{BACKEND_URL}/team/{team_id}/ablage')
+    if ablage_res.status_code == 200:
+        ablage = ablage_res.json().get('ablage', '')
     if response.status_code == 200:
         all_users = response.json()
         team_members = [u for u in all_users if u.get('team_id') == team_id]
-        return render_template('team.html', team_id=team_id, team_members=team_members)
+        return render_template('team.html', team_id=team_id, team_members=team_members, ablage=ablage)
     else:
         return "Fehler beim Laden des Teams", 500
 
@@ -75,7 +85,8 @@ def chat(team_id):
     res = requests.get(f'{BACKEND_URL}/chat/team/{team_id}')
     if res.status_code == 200:
         messages = res.json()
-        return render_template('chat.html', messages=messages, team_id=team_id)
+        # Hier backend_url übergeben!
+        return render_template('chat.html', messages=messages, team_id=team_id, backend_url=BACKEND_URL)
     else:
         return "Fehler beim Laden der Nachrichten", 500
 

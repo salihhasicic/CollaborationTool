@@ -32,5 +32,8 @@ def suggest_reply():
     if not user_message:
         return jsonify({"error": "Kein Nachrichtentext angegeben."}), 400
 
-    suggested = get_gpt_reply(user_message)
-    return jsonify({"suggested_reply": suggested})
+    try:
+        suggested = get_gpt_reply(user_message)
+        return jsonify({"suggested_reply": suggested})
+    except Exception as e:
+        return jsonify({"error": f"Fehler bei GPT: {str(e)}"}), 500
