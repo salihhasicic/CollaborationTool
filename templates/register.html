@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registrieren</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .register-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+        }
+        .login-btn {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            color: #fff;
+            font-weight: 600;
+            border-radius: 7px;
+            border: none;
+            padding: 10px 22px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            margin-left: 10px;
+        }
+        .login-btn:hover {
+            background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
+            color: #222;
+        }
+        select, input[type="text"], input[type="password"] {
+            margin-bottom: 16px;
+        }
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid var(--gray);
+            border-radius: 7px;
+            font-size: 1.08em;
+            background: #f7fafc;
+            transition: border 0.2s;
+        }
+        select:focus {
+            border: 1.5px solid var(--primary);
+            outline: none;
+        }
+        .geo-status {
+            color: #2563eb;
+            font-size: 0.98em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width:430px;">
+        <h2>Registrieren</h2>
+        <form method="POST" action="/register" id="registerForm">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required autocomplete="username">
+
+            <label for="password">Passwort:</label>
+            <input type="password" name="password" id="password" required autocomplete="new-password">
+
+            <label for="team_id">Team:</label>
+            <select name="team_id" id="team_id" required>
+                <option value="">Bitte wählen...</option>
+                {% for t in teams %}
+                    <option value="{{ t.id }}">{{ t.name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="skills">Skills (Kommagetrennt):</label>
+            <input type="text" name="skills" id="skills" placeholder="z.B. Python, Flask, SQL">
+
+            <label for="location">Standort:</label>
+            <input type="text" name="location" id="location" placeholder="z.B. Zürich" required>
+
+            <input type="hidden" name="latitude" id="latitude">
+            <input type="hidden" name="longitude" id="longitude">
+            <div class="geo-status" id="geo-status"></div>
+
+            <button type="submit" style="background:linear-gradient(90deg,#2563eb 0%,#fbbf24 100%);color:#fff;font-weight:600;border-radius:7px;font-size:1.1em;margin-top:10px;">Registrieren</button>
+        </form>
+        <div class="register-actions">
+            <span>Schon einen Account?</span>
+            <a href="/login"><button class="login-btn" type="button">Login</button></a>
+        </div>
+        {% if error %}
+        <p style="color:#e11d48; margin-top:12px;">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+        <p style="color:green; margin-top:12px;">{{ success }}</p>
+        {% endif %}
+    </div>
+    <script>
+        // Geo-Location automatisch setzen
+        window.onload = function() {
+            var geoStatus = document.getElementById('geo-status');
+            if (navigator.geolocation) {
+                geoStatus.innerText = "Hole Standort...";
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    document.getElementById('latitude').value = pos.coords.latitude;
+                    document.getElementById('longitude').value = pos.coords.longitude;
+                    geoStatus.innerText = "Standort automatisch gesetzt.";
+                }, function() {
+                    geoStatus.innerText = "Standort konnte nicht automatisch ermittelt werden.";
+                });
+            } else {
+                geoStatus.innerText = "Geolocation wird nicht unterstützt.";
+            }
+        }
+    </script>
+</body>
+</html>

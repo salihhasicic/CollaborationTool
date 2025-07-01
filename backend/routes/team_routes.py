@@ -68,3 +68,8 @@ def upload_team_file(team_id):
 def download_team_file(team_id, filename):
     team_folder = os.path.join(UPLOAD_FOLDER, f"team_{team_id}")
     return send_from_directory(team_folder, filename, as_attachment=True)
+
+@team_bp.route('/all', methods=['GET'])
+def get_all_teams():
+    teams = Team.query.all()
+    return jsonify([{'id': t.id, 'name': t.name} for t in teams])

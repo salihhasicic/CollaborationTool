@@ -18,7 +18,15 @@
         <a href="/">Start</a>
         <a href="/projects">Projekte</a>
         <a href="/users" class="active">Benutzer</a>
-        <a href="/login">Login</a>
+        {% if team_id %}
+            <a href="/team/{{ team_id }}">Team</a>
+            <a href="/chat/{{ team_id }}">Team-Chat</a>
+        {% endif %}
+        {% if logged_in %}
+            <a href="/logout" style="margin-left:auto;">Logout</a>
+        {% else %}
+            <a href="/login" style="margin-left:auto;">Login</a>
+        {% endif %}
     </nav>
     <div class="container">
         <h2>Alle Benutzer</h2>
