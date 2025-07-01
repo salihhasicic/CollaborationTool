@@ -2,20 +2,25 @@
 <html>
 <head>
     <title>Login</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="login-container">
+    <nav>
+        <a href="/">Start</a>
+        <a href="/login" class="active">Login</a>
+        <a href="/users">Benutzer</a>
+    </nav>
+    <div class="container" style="max-width:400px;">
         <h2>Login</h2>
         <form method="POST" action="/login">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+            <input type="text" name="username" id="username" required autocomplete="username">
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" name="password" id="password" required autocomplete="current-password">
             <button type="submit">Login</button>
         </form>
         {% if error %}
-        <p style="color:red;">{{ error }}</p>
+        <p style="color:#e11d48; margin-top:12px;">{{ error }}</p>
         {% endif %}
     </div>
 </body>
