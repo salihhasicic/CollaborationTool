@@ -3,6 +3,30 @@
 <head>
     <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .login-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+        }
+        .register-btn {
+            background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
+            color: #222;
+            font-weight: 600;
+            border-radius: 7px;
+            border: none;
+            padding: 10px 22px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            margin-left: 10px;
+        }
+        .register-btn:hover {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <div class="container" style="max-width:400px;">
@@ -14,6 +38,10 @@
             <input type="password" name="password" id="password" required autocomplete="current-password">
             <button type="submit">Login</button>
         </form>
+        <div class="login-actions">
+            <span>Noch kein Account?</span>
+            <a href="/register"><button class="register-btn" type="button">Registrieren</button></a>
+        </div>
         {% if error %}
         <p style="color:#e11d48; margin-top:12px;">{{ error }}</p>
         {% endif %}

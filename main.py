@@ -64,8 +64,14 @@ def show_team(team_id):
     # Ablage speichern (POST)
     if request.method == 'POST':
         ablage = request.form.get('ablage', '')
+        selected_team_id = request.form.get('team_select')
+        if selected_team_id and int(selected_team_id) != team_id:
+            return redirect(url_for('show_team', team_id=int(selected_team_id)))
         res = requests.post(f'{BACKEND_URL}/team/{team_id}/ablage', data={'ablage': ablage})
-        # Fehlerbehandlung ignoriert, da wir gleich neu laden
+
+    # Hole alle Teams für Dropdown
+    teams_res = requests.get(f'{BACKEND_URL}/team/all')
+    teams = teams_res.json() if teams_res.status_code == 200 else []
 
     # Hole alle User und filtere nach Team-ID
     response = requests.get(f'{BACKEND_URL}/user/search', params={'skill': ''})
@@ -76,7 +82,7 @@ def show_team(team_id):
     if response.status_code == 200:
         all_users = response.json()
         team_members = [u for u in all_users if u.get('team_id') == team_id]
-        return render_template('team.html', team_id=team_id, team_members=team_members, ablage=ablage, logged_in='user_id' in session)
+        return render_template('team.html', team_id=team_id, team_members=team_members, ablage=ablage, logged_in='user_id' in session, teams=teams)
     else:
         return "Fehler beim Laden des Teams", 500
 
@@ -125,6 +131,35 @@ def profile(user_id):
         return render_template('profile.html', user=user, logged_in='user_id' in session)
     else:
         return "Benutzer nicht gefunden", 404
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    # Teams für Dropdown laden
+    teams_res = requests.get(f'{BACKEND_URL}/team/all')
+    teams = teams_res.json() if teams_res.status_code == 200 else []
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        team_id = request.form.get('team_id')
+        skills = request.form.get('skills', '')
+        location = request.form.get('location', '')
+        latitude = request.form.get('latitude', '')
+        longitude = request.form.get('longitude', '')
+        response = requests.post(f'{BACKEND_URL}/auth/register', json={
+            'username': username,
+            'password': password,
+            'team_id': team_id,
+            'skills': skills,
+            'location': location,
+            'latitude': latitude,
+            'longitude': longitude
+        })
+        if response.status_code == 201:
+            return render_template('register.html', success="Registrierung erfolgreich! Du kannst dich jetzt einloggen.", teams=teams)
+        else:
+            error = response.json().get('message', 'Registrierung fehlgeschlagen.')
+            return render_template('register.html', error=error, teams=teams)
+    return render_template('register.html', teams=teams)
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)

@@ -11,7 +11,15 @@ def register():
     if User.query.filter_by(username=data['username']).first():
         return jsonify({'message': 'User already exists'}), 400
     hashed_pw = generate_password_hash(data['password'])
-    new_user = User(username=data['username'], password=hashed_pw)
+    new_user = User(
+        username=data['username'],
+        password=hashed_pw,
+        team_id=data.get('team_id'),
+        skills=data.get('skills', ''),
+        location=data.get('location', ''),
+        latitude=data.get('latitude'),
+        longitude=data.get('longitude')
+    )
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message': 'User registered'}), 201

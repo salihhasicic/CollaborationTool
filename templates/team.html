@@ -31,6 +31,15 @@
     </nav>
     <div class="container">
         <h2>Team {{ team_id }}</h2>
+        <form method="post" style="margin-bottom:24px;">
+            <label for="team_select"><strong>Team wechseln:</strong></label>
+            <select name="team_select" id="team_select" style="margin-left:10px; padding:6px 12px; border-radius:6px;">
+                {% for t in teams %}
+                    <option value="{{ t.id }}" {% if t.id == team_id %}selected{% endif %}>{{ t.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" style="margin-left:10px;">Anzeigen</button>
+        </form>
         <ul class="team-list">
             {% for user in team_members %}
             <li>
@@ -97,7 +106,7 @@
 
             function loadFiles() {
                 fetch(`${BACKEND_URL}/team/{{ team_id }}/files`)
-                .then(r => r.json())
+                .then r => r.json())
                 .then(data => {
                     let ul = document.getElementById('file-list');
                     ul.innerHTML = '';
