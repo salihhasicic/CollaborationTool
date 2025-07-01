@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Projekte</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Optional: Zusätzliche Styles für Projekte-Seite */
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Start</a>
+        <a href="/projects" class="active">Projekte</a>
+        <a href="/users">Benutzer</a>
+        <a href="/login">Login</a>
+    </nav>
+    <div class="container">
+        <h2>Projekte</h2>
+        <a href="/projects/new"><button type="button" style="margin-bottom:18px;">Neues Projekt anlegen</button></a>
+        <div class="users-list">
+            {% if projects|length == 0 %}
+                <div style="color:#2563eb;font-size:1.2em;margin-top:24px;">Alles erledigt</div>
+            {% else %}
+                {% for project in projects %}
+                <div class="user-card">
+                    <h3>{{ project.name }}</h3>
+                    <div class="user-card-ids">
+                        <span><b>Status:</b> {{ project.status }}</span>
+                    </div>
+                    <a href="/project/{{ project.id }}" class="user-card-profile-link">Details & Tasks</a>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
