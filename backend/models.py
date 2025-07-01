@@ -40,5 +40,6 @@ class Task(db.Model):
     description = db.Column(db.Text)
     status = db.Column(db.String(20), nullable=False, default="To Do")  # To Do, In Progress, Done
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
+    assigned_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

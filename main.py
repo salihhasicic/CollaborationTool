@@ -125,12 +125,45 @@ def projects():
 def project_detail(project_id):
     token = request.cookies.get('jwt_token')
     headers = {'Authorization': f'Bearer {token}'} if token else {}
+    # Projekt-Infos laden
+    project_response = requests.get(f'{BACKEND_URL}/projects', headers=headers)
+    project = None
+    team_name = None
+    if project_response.status_code == 200:
+        projects = project_response.json()
+        for p in projects:
+            if p['id'] == project_id:
+                project = p
+                break
+        if project:
+            # Team-Name laden
+            team_id = project.get('team_id')
+            if team_id:
+                team_response = requests.get(f'{BACKEND_URL}/team/{team_id}')
+                if team_response.status_code == 200:
+                    team = team_response.json()
+                    team_name = team.get('name')
+    # Tasks laden
     response = requests.get(f'{BACKEND_URL}/project/{project_id}/tasks', headers=headers)
+    assigned_usernames = {}
     if response.status_code == 200:
         tasks = response.json()
-        return render_template('project_detail.html', tasks=tasks, project_id=project_id)
+        # Usernamen für zugewiesene Tasks holen
+        for t in tasks:
+            uid = t.get('assigned_user_id')
+            if uid and uid not in assigned_usernames:
+                user_response = requests.get(f'{BACKEND_URL}/user/{uid}')
+                if user_response.status_code == 200:
+                    assigned_usernames[uid] = user_response.json().get('username')
+                else:
+                    assigned_usernames[uid] = f"User {uid}"
+        return render_template('project_detail.html', tasks=tasks, project_id=project_id, project=project, team_name=team_name, assigned_usernames=assigned_usernames)
     else:
-        return "Fehler beim Laden der Tasks", 500
+        try:
+            error_msg = response.json()
+        except Exception:
+            error_msg = response.text
+        return f"Fehler beim Laden der Tasks (Status: {response.status_code}): {error_msg}", 500
 
 @app.route('/projects/new', methods=['GET', 'POST'])
 def create_project_view():
@@ -196,6 +229,29 @@ def move_task(task_id):
         return redirect(url_for('project_detail', project_id=project_id))
     else:
         return "Fehler beim Verschieben des Tasks", 500
+
+@app.route('/task/<int:task_id>/assign', methods=['POST'])
+def assign_task_view(task_id):
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+    response = requests.post(f'{BACKEND_URL}/task/{task_id}/assign', headers=headers)
+    # Hole das Projekt zu diesem Task (vereinfachte Annahme: project_id kommt als hidden field oder redirect zurück)
+    if response.status_code == 200:
+        # Projekt-ID aus Referer oder Task-Detail holen
+        referer = request.headers.get('Referer')
+        if referer and '/project/' in referer:
+            try:
+                project_id = int(referer.split('/project/')[1].split('/')[0])
+                return redirect(url_for('project_detail', project_id=project_id))
+            except Exception:
+                pass
+        return redirect(url_for('projects'))
+    else:
+        try:
+            error_msg = response.json()
+        except Exception:
+            error_msg = response.text
+        return f"Fehler beim Übernehmen des Tasks (Status: {response.status_code}): {error_msg}", 500
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)

@@ -16,6 +16,11 @@
     </nav>
     <div class="container">
         <h2>Tasks für Projekt #{{ project_id }}</h2>
+        {% if team_name %}
+            <div style="margin-bottom:12px;color:#2563eb;font-size:1.1em;">
+                <b>Team:</b> {{ team_name }}
+            </div>
+        {% endif %}
         <a href="/project/{{ project_id }}/tasks/new"><button type="button" style="margin-bottom:18px;">Neuen Task anlegen</button></a>
         <div class="users-list">
             {% if tasks|length == 0 %}
@@ -26,6 +31,13 @@
                     <h3>{{ task.title }}</h3>
                     <div class="user-card-ids">
                         <span><b>Status:</b> {{ task.status }}</span>
+                        {% if task.assigned_user_id %}
+                            <span style="margin-left:12px;"><b>Zugewiesen an:</b> {{ assigned_usernames[task.assigned_user_id] }}</span>
+                        {% else %}
+                            <form method="post" action="/task/{{ task.id }}/assign" style="display:inline;margin-left:12px;">
+                                <button type="submit">Task übernehmen</button>
+                            </form>
+                        {% endif %}
                     </div>
                     <div class="user-card-skills">{{ task.description }}</div>
                     <form method="post" action="/task/{{ task.id }}/move" style="margin-top:1rem;display:flex;gap:0.5rem;">
