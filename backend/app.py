@@ -7,7 +7,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///collab.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = '1234'  # Setze hier einen sicheren Wert!
-app.config['JWT_TOKEN_LOCATION'] = ['headers']
+app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
+app.config['JWT_COOKIE_SECURE'] = False  # True für HTTPS
+app.config['JWT_ACCESS_COOKIE_NAME'] = 'jwt_token'
 
 db.init_app(app)
 CORS(app)
