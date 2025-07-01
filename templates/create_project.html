@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Projekt anlegen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Optional: Zusätzliche Styles für das Formular */
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Start</a>
+        <a href="/projects" class="active">Projekte</a>
+        <a href="/users">Benutzer</a>
+        <a href="/login">Login</a>
+    </nav>
+    <div class="container">
+        <h2>Neues Projekt anlegen</h2>
+        <form method="post" style="max-width:420px;margin:2rem auto;display:flex;flex-direction:column;gap:16px;">
+            <input type="text" name="name" placeholder="Projektname" required>
+            <button type="submit">Anlegen</button>
+        </form>
+        <a href="/projects"><button type="button" style="margin-top:18px;">Zurück zu den Projekten</button></a>
+    </div>
+</body>
+</html>
