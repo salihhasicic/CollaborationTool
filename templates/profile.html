@@ -3,6 +3,7 @@
 <head>
     <title>Profil</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         .profile-header {
             display: flex;
@@ -26,6 +27,13 @@
             margin-top: 28px;
             display: flex;
             gap: 18px;
+        }
+        #map {
+            height: 300px;
+            width: 100%;
+            margin-top: 32px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -68,13 +76,39 @@
                 <div id="geo-status" style="margin-top:10px;color:#2563eb;"></div>
             </div>
         </div>
+
+        <!-- 🌍 Karte -->
+        <div id="map"></div>
+
         {% else %}
         <p style="color:#e11d48;">Kein Benutzer gefunden.</p>
         {% endif %}
     </div>
+
+    <!-- 📦 JS Libraries -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- 🧠 JS: Karte + Geolocation -->
     <script>
-        // User-ID als JS-Konstante, immer korrekt als Zahl oder null
         const USER_ID = {{ (user.id if user and user.id is not none else None) | tojson }};
+        const latitude = {{ user.latitude or "null" }};
+        const longitude = {{ user.longitude or "null" }};
+
+        // Standortkarte anzeigen
+        if (latitude && longitude) {
+            const map = L.map('map').setView([latitude, longitude], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            L.marker([latitude, longitude])
+                .addTo(map)
+                .bindPopup("Standort von {{ user.username }}")
+                .openPopup();
+        } else {
+            document.getElementById("map").innerHTML = "<p style='color:#aaa;'>Kein Standort verfügbar</p>";
+        }
+
+        // Standort speichern (besteht bereits bei dir)
         function saveLocation() {
             if (!navigator.geolocation) {
                 document.getElementById('geo-status').innerText = "Geolocation wird nicht unterstützt.";
