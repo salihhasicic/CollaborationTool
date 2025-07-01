@@ -26,3 +26,19 @@ class Message(db.Model):
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     seen = db.Column(db.Boolean, default=False)
+
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default="To Do")  # To Do, In Progress, Done
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
+    tasks = db.relationship('Task', backref='project', lazy=True)
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.Text)
+    status = db.Column(db.String(20), nullable=False, default="To Do")  # To Do, In Progress, Done
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

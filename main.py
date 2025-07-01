@@ -11,6 +11,7 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    from flask import make_response
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -19,8 +20,13 @@ def login():
             'password': password
         })
         if response.status_code == 200:
-            user_id = response.json()['user_id']
-            return redirect(url_for('profile', user_id=user_id))
+            data = response.json()
+            user_id = data['user_id']
+            access_token = data.get('access_token')
+            resp = make_response(redirect(url_for('profile', user_id=user_id)))
+            if access_token:
+                resp.set_cookie('jwt_token', access_token)
+            return resp
         else:
             return render_template('login.html', error="Login fehlgeschlagen.")
     return render_template('login.html')
@@ -98,6 +104,98 @@ def profile(user_id):
         return render_template('profile.html', user=user)
     else:
         return "Benutzer nicht gefunden", 404
+
+@app.route('/projects')
+def projects():
+    token = request.cookies.get('jwt_token')
+    print('DEBUG JWT_TOKEN:', token)
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+    response = requests.get(f'{BACKEND_URL}/projects', headers=headers)
+    if response.status_code == 200:
+        projects = response.json()
+        return render_template('projects.html', projects=projects)
+    else:
+        try:
+            error_msg = response.json()
+        except Exception:
+            error_msg = response.text
+        return f"Fehler beim Laden der Projekte (Status: {response.status_code}): {error_msg}", 500
+
+@app.route('/project/<int:project_id>')
+def project_detail(project_id):
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+    response = requests.get(f'{BACKEND_URL}/project/{project_id}/tasks', headers=headers)
+    if response.status_code == 200:
+        tasks = response.json()
+        return render_template('project_detail.html', tasks=tasks, project_id=project_id)
+    else:
+        return "Fehler beim Laden der Tasks", 500
+
+@app.route('/projects/new', methods=['GET', 'POST'])
+def create_project_view():
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+    # Team-ID automatisch aus dem eingeloggten User holen
+    user_id = None
+    if token:
+        import jwt
+        try:
+            # JWT-Token dekodieren, um User-ID zu bekommen
+            payload = jwt.decode(token, options={"verify_signature": False})
+            user_id = payload.get('sub')
+        except Exception:
+            user_id = None
+    # Team-ID vom User holen
+    team_id = None
+    if user_id:
+        user_response = requests.get(f'{BACKEND_URL}/user/{user_id}')
+        if user_response.status_code == 200:
+            user = user_response.json()
+            team_id = user.get('team_id')
+    if request.method == 'POST':
+        name = request.form['name']
+        # Team-ID automatisch verwenden
+        data = {'name': name, 'team_id': team_id}
+        response = requests.post(f'{BACKEND_URL}/project', json=data, headers=headers)
+        if response.status_code == 200:
+            return redirect(url_for('projects'))
+        else:
+            try:
+                error_msg = response.json()
+            except Exception:
+                error_msg = response.text
+            return f"Fehler beim Anlegen des Projekts (Status: {response.status_code}): {error_msg}", 500
+    return render_template('create_project.html', team_id=team_id)
+
+@app.route('/project/<int:project_id>/tasks/new', methods=['GET', 'POST'])
+def create_task_view(project_id):
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form.get('description', '')
+        data = {'title': title, 'description': description}
+        response = requests.post(f'{BACKEND_URL}/api/project/{project_id}/task', json=data, headers=headers)
+        if response.status_code == 200:
+            return redirect(url_for('project_detail', project_id=project_id))
+        else:
+            return "Fehler beim Anlegen des Tasks", 500
+    return render_template('create_task.html', project_id=project_id)
+
+@app.route('/task/<int:task_id>/move', methods=['POST'])
+def move_task(task_id):
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+    new_status = request.form['status']
+    data = {'status': new_status}
+    response = requests.patch(f'{BACKEND_URL}/api/task/{task_id}/status', json=data, headers=headers)
+    if response.status_code == 200:
+        # Hole das Projekt zu diesem Task (vereinfachte Annahme: project_id kommt als hidden field)
+        project_id = request.form['project_id']
+        return redirect(url_for('project_detail', project_id=project_id))
+    else:
+        return "Fehler beim Verschieben des Tasks", 500
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)

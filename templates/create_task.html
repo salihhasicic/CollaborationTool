@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task anlegen</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="main-navbar-vertical nav-icons">
+        <div class="nav-logo-top">
+            <img src="/static/SYNQ.png" alt="Logo" class="sidebar-logo">
+        </div>
+        <ul class="nav-links-vertical">
+            <li><a href="/projects"><span class="nav-icon"><img src="/static/icon-team.svg" alt="Projekte"></span><span class="nav-label">Projekte</span></a></li>
+            <li><a href="/users"><span class="nav-icon"><img src="/static/icon-users.svg" alt="Users"></span><span class="nav-label">Users</span></a></li>
+            <li><a href="/logout"><span class="nav-icon"><img src="/static/icon-logout.svg" alt="Logout"></span><span class="nav-label">Logout</span></a></li>
+        </ul>
+    </nav>
+    <div class="users-wrapper">
+        <div class="users-header">
+            <h2>Neuen Task anlegen</h2>
+        </div>
+        <form method="post" class="users-search-form" style="max-width:420px;margin:2rem auto;">
+            <input type="text" name="title" placeholder="Titel" required>
+            <input type="text" name="description" placeholder="Beschreibung">
+            <button type="submit">Anlegen</button>
+        </form>
+    </div>
+</body>
+</html>
