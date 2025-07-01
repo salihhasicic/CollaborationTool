@@ -2,15 +2,116 @@
 <html>
 <head>
     <title>Team {{ team_id }}</title>
-    <link rel="stylesheet" href="/statics/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .ablage-section {
+            margin-top: 32px;
+            background: #f7fafc;
+            border-radius: 10px;
+            box-shadow: 0 1px 8px rgba(37,99,235,0.06);
+            padding: 22px 24px 18px 24px;
+        }
+        .ablage-section h3 {
+            margin-top: 0;
+            color: var(--primary-dark);
+        }
+        .ablage-form textarea {
+            width: 100%;
+            min-height: 80px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Team {{ team_id }}</h2>
-    <ul>
-        {% for user in team_members %}
-        <li>{{ user.username }} – {{ user.skills }}</li>
-        {% endfor %}
-    </ul>
-    <a href="/users">Zurück zur Benutzerliste</a>
+    <nav>
+        <a href="/">Start</a>
+        <a href="/users">Benutzer</a>
+        <a href="/team/{{ team_id }}" class="active">Team</a>
+        <a href="/chat/{{ team_id }}">Team-Chat</a>
+    </nav>
+    <div class="container">
+        <h2>Team {{ team_id }}</h2>
+        <ul class="team-list">
+            {% for user in team_members %}
+            <li>
+                <div class="user-info">
+                    <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}" class="profile-img" alt="Profilbild">
+                    <div>
+                        <strong style="font-size:1.15em;">{{ user.username }}</strong><br>
+                        {% set skills = user.skills.split(',') if user.skills else [] %}
+                        {% for skill in skills %}
+                            <span class="skill-badge">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="/users"><button type="button">Zurück zur Benutzerliste</button></a>
+
+        <!-- Datenablage / Notizen -->
+        <div class="ablage-section">
+            <h3>Datenablage / Notizen</h3>
+            <form class="ablage-form" method="post" action="/team/{{ team_id }}">
+                <textarea name="ablage" placeholder="Hier können Team-Mitglieder Notizen oder Links ablegen...">{% if ablage %}{{ ablage }}{% endif %}</textarea>
+                <button type="submit">Speichern</button>
+            </form>
+            {% if ablage %}
+            <div style="margin-top:10px; color:#444;">
+                <strong>Aktuelle Ablage:</strong><br>
+                <pre style="background:#fff; border-radius:6px; padding:10px;">{{ ablage }}</pre>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Dateiablage -->
+        <div class="ablage-section" style="margin-top:32px;">
+            <h3>Dateiablage</h3>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" name="file" required>
+                <button type="submit">Hochladen</button>
+            </form>
+            <div id="upload-status" style="margin-top:8px;color:#2563eb;"></div>
+            <div style="margin-top:18px;">
+                <strong>Team-Dateien:</strong>
+                <ul id="file-list"></ul>
+            </div>
+        </div>
+        <script>
+            // Backend-URL wie in main.py
+            const BACKEND_URL = "http://127.0.0.1:5000";
+
+            document.getElementById('uploadForm').onsubmit = function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                fetch(`${BACKEND_URL}/team/{{ team_id }}/upload`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('upload-status').innerText = data.message || data.error || '';
+                    loadFiles();
+                });
+            };
+
+            function loadFiles() {
+                fetch(`${BACKEND_URL}/team/{{ team_id }}/files`)
+                .then(r => r.json())
+                .then(data => {
+                    let ul = document.getElementById('file-list');
+                    ul.innerHTML = '';
+                    if (data.files && data.files.length > 0) {
+                        data.files.forEach(function(f) {
+                            ul.innerHTML += `<li><a href="${BACKEND_URL}/team/{{ team_id }}/files/${encodeURIComponent(f)}" target="_blank">${f}</a></li>`;
+                        });
+                    } else {
+                        ul.innerHTML = '<li style="color:#aaa;">Keine Dateien vorhanden.</li>';
+                    }
+                });
+            }
+            loadFiles();
+        </script>
+    </div>
 </body>
 </html>

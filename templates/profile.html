@@ -2,13 +2,107 @@
 <html>
 <head>
     <title>Profil</title>
-    <link rel="stylesheet" href="/statics/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            margin-bottom: 32px;
+        }
+        .profile-details {
+            flex: 1;
+        }
+        .profile-img-large {
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            background: var(--gray);
+            box-shadow: 0 2px 12px rgba(37,99,235,0.10);
+        }
+        .profile-actions {
+            margin-top: 28px;
+            display: flex;
+            gap: 18px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Willkommen, {{ user.username }}</h2>
-    <img src="{{ user.photo_url }}" alt="Profilbild" width="150"><br>
-    <p><strong>Standort:</strong> {{ user.location }}</p>
-    <p><strong>Skills:</strong> {{ user.skills }}</p>
-    <p><strong>Team-ID:</strong> {{ user.team_id }}</p>
+    <nav>
+        <a href="/">Start</a>
+        <a href="/users">Benutzer</a>
+        {% if user and user.team_id %}
+        <a href="/team/{{ user.team_id }}">Mein Team</a>
+        <a href="/chat/{{ user.team_id }}">Team-Chat</a>
+        {% endif %}
+    </nav>
+    <div class="container">
+        {% if user %}
+        <div class="profile-header">
+            <img src="{{ user.photo_url or ('https://ui-avatars.com/api/?name=' ~ (user.username or 'User')) }}" class="profile-img-large" alt="Profilbild">
+            <div class="profile-details">
+                <h2>{{ user.username or "Unbekannt" }}</h2>
+                <p><strong>Standort:</strong> {{ user.location or "–" }}</p>
+                <p><strong>Skills:</strong>
+                    {% set skills = user.skills.split(',') if user.skills else [] %}
+                    {% if skills %}
+                        {% for skill in skills %}
+                            <span class="skill-badge">{{ skill }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span style="color:#aaa;">Keine Skills angegeben</span>
+                    {% endif %}
+                </p>
+                <p><strong>Team-ID:</strong> {{ user.team_id or "–" }}</p>
+                <div class="profile-actions">
+                    {% if user.team_id %}
+                    <a href="/team/{{ user.team_id }}"><button type="button">Zum Team</button></a>
+                    <a href="/chat/{{ user.team_id }}"><button type="button">Zum Team-Chat</button></a>
+                    {% endif %}
+                    {% if user.id %}
+                    <button type="button" onclick="saveLocation()">Standort speichern</button>
+                    {% endif %}
+                </div>
+                <div id="geo-status" style="margin-top:10px;color:#2563eb;"></div>
+            </div>
+        </div>
+        {% else %}
+        <p style="color:#e11d48;">Kein Benutzer gefunden.</p>
+        {% endif %}
+    </div>
+    <script>
+        // User-ID als JS-Konstante, immer korrekt als Zahl oder null
+        const USER_ID = {{ (user.id if user and user.id is not none else None) | tojson }};
+        function saveLocation() {
+            if (!navigator.geolocation) {
+                document.getElementById('geo-status').innerText = "Geolocation wird nicht unterstützt.";
+                return;
+            }
+            document.getElementById('geo-status').innerText = "Hole Standort...";
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                if (USER_ID === null) {
+                    document.getElementById('geo-status').innerText = "User-ID fehlt!";
+                    return;
+                }
+                fetch('/user/location', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        user_id: USER_ID,
+                        latitude: pos.coords.latitude,
+                        longitude: pos.coords.longitude
+                    })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('geo-status').innerText = "Standort gespeichert!";
+                });
+            }, function() {
+                document.getElementById('geo-status').innerText = "Standort konnte nicht ermittelt werden.";
+            });
+        }
+    </script>
 </body>
 </html>

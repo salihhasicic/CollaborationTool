@@ -17,6 +17,7 @@ class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     members = db.relationship('User', backref='team', lazy=True)
+    ablage = db.Column(db.Text)  # Datenablage/Notizen
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
