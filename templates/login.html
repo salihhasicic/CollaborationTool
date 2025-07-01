@@ -30,29 +30,56 @@
 </head>
 <body>
 
-    <nav>
-        <a href="/">Start</a>
-        <a href="/projects">Projekte</a>
-        <a href="/login" class="active">Login</a>
-        <a href="/users">Benutzer</a>
-    </nav>
+<nav>
+    <a href="/">Start</a>
+    <a href="/projects">Projekte</a>
+    <a href="/login" class="active">Login</a>
+    <a href="/users">Benutzer</a>
+</nav>
 
-    <div class="container" style="max-width:400px;">
-        <h2>Login</h2>
-        <form method="POST" action="/login">
-            <label for="username">Username:</label>
-            <input type="text" name="username" id="username" required autocomplete="username">
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required autocomplete="current-password">
-            <button type="submit">Login</button>
-        </form>
-        <div class="login-actions">
-            <span>Noch kein Account?</span>
-            <a href="/register"><button class="register-btn" type="button">Registrieren</button></a>
-        </div>
-        {% if error %}
-        <p style="color:#e11d48; margin-top:12px;">{{ error }}</p>
-        {% endif %}
+<div class="container" style="max-width:400px;">
+    <h2>Login</h2>
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" required autocomplete="username">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required autocomplete="current-password">
+        <button type="submit">Login</button>
+    </form>
+    <div class="login-actions">
+        <span>Noch kein Account?</span>
+        <a href="/register"><button class="register-btn" type="button">Registrieren</button></a>
     </div>
+    <p id="error" style="color:#e11d48; margin-top:12px;"></p>
+</div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        fetch("http://127.0.0.1:5000/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.access_token) {
+                localStorage.setItem("access_token", data.access_token);
+                localStorage.setItem("user_id", data.user_id);
+                window.location.href = "/users";
+            } else {
+                document.getElementById("error").innerText = data.message || "Login fehlgeschlagen.";
+            }
+        })
+        .catch(() => {
+            document.getElementById("error").innerText = "Netzwerkfehler beim Login.";
+        });
+    });
+</script>
+
 </body>
 </html>
