@@ -176,7 +176,7 @@ def create_task_view(project_id):
         title = request.form['title']
         description = request.form.get('description', '')
         data = {'title': title, 'description': description}
-        response = requests.post(f'{BACKEND_URL}/api/project/{project_id}/task', json=data, headers=headers)
+        response = requests.post(f'{BACKEND_URL}/project/{project_id}/task', json=data, headers=headers)
         if response.status_code == 200:
             return redirect(url_for('project_detail', project_id=project_id))
         else:
@@ -189,7 +189,7 @@ def move_task(task_id):
     headers = {'Authorization': f'Bearer {token}'} if token else {}
     new_status = request.form['status']
     data = {'status': new_status}
-    response = requests.patch(f'{BACKEND_URL}/api/task/{task_id}/status', json=data, headers=headers)
+    response = requests.patch(f'{BACKEND_URL}/task/{task_id}/status', json=data, headers=headers)
     if response.status_code == 200:
         # Hole das Projekt zu diesem Task (vereinfachte Annahme: project_id kommt als hidden field)
         project_id = request.form['project_id']
