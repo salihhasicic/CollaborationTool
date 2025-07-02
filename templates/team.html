@@ -94,6 +94,8 @@
             document.getElementById('uploadForm').onsubmit = function(e) {
                 e.preventDefault();
                 var formData = new FormData(this);
+                // Uploader (user_id oder username) mitsenden
+                formData.append('uploader', localStorage.getItem('user_id') || 'unbekannt');
                 fetch(`${BACKEND_URL}/team/{{ team_id }}/upload`, {
                     method: 'POST',
                     body: formData
@@ -107,13 +109,19 @@
 
             function loadFiles() {
                 fetch(`${BACKEND_URL}/team/{{ team_id }}/files`)
-                .then r => r.json())
+                .then(r => r.json())
                 .then(data => {
                     let ul = document.getElementById('file-list');
                     ul.innerHTML = '';
+                    // Erwartet: data.files = [{filename, uploader, uploaded_at}]
                     if (data.files && data.files.length > 0) {
                         data.files.forEach(function(f) {
-                            ul.innerHTML += `<li><a href="${BACKEND_URL}/team/{{ team_id }}/files/${encodeURIComponent(f)}" target="_blank">${f}</a></li>`;
+                            ul.innerHTML += `<li>
+                                <a href="${BACKEND_URL}/team/{{ team_id }}/files/${encodeURIComponent(f.filename)}" target="_blank">${f.filename}</a>
+                                <span style="color:#888;font-size:0.95em;">
+                                    (hochgeladen von ${f.uploader || 'unbekannt'} am ${f.uploaded_at ? new Date(f.uploaded_at).toLocaleString() : '-'})
+                                </span>
+                            </li>`;
                         });
                     } else {
                         ul.innerHTML = '<li style="color:#aaa;">Keine Dateien vorhanden.</li>';

@@ -3,6 +3,7 @@ from models import User
 from extensions import db
 from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 user_bp = Blueprint('user', __name__)
 
@@ -46,8 +47,9 @@ def update_location():
 
 # 📍 Nutzer im Umkreis finden
 @user_bp.route('/nearby', methods=['GET'])
+@jwt_required()
 def find_nearby_users():
-    user_id = request.args.get('user_id', type=int)
+    user_id = int(get_jwt_identity())  # wird aus dem Token extrahiert
     radius_km = request.args.get('radius', default=30, type=int)
 
     current_user = User.query.get(user_id)
@@ -55,7 +57,7 @@ def find_nearby_users():
         return jsonify({'message': 'Location not set for user'}), 400
 
     def haversine(lat1, lon1, lat2, lon2):
-        R = 6371  # km
+        R = 6371
         dlat = radians(lat2 - lat1)
         dlon = radians(lon2 - lon1)
         a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
@@ -64,7 +66,6 @@ def find_nearby_users():
 
     all_users = User.query.all()
     nearby = []
-
     for user in all_users:
         if user.id == user_id or not user.latitude or not user.longitude:
             continue

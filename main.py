@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, Response
 import requests
 from functools import wraps
 
@@ -316,6 +316,35 @@ def assign_task_view(task_id):
         except Exception:
             error_msg = response.text
         return f"Fehler beim Übernehmen des Tasks (Status: {response.status_code}): {error_msg}", 500
+
+@app.route('/private_chat/<int:partner_id>')
+@login_required
+def private_chat(partner_id):
+    return render_template('private_chat.html')
+
+@app.route('/chats')
+def chats():
+    # Alle User laden
+    response = requests.get(f'{BACKEND_URL}/user/search', params={'skill': ''})
+    users = response.json() if response.status_code == 200 else []
+    current_user_id = session.get('user_id')
+    team_id = None
+    if current_user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_res.status_code == 200:
+            user = user_res.json()
+            team_id = user.get('team_id')
+    return render_template('chats.html', users=users, current_user_id=current_user_id, team_id=team_id, logged_in='user_id' in session)
+
+@app.route('/chat/private/send', methods=['POST'])
+def proxy_private_send():
+    resp = requests.post(f'{BACKEND_URL}/chat/private/send', json=request.get_json())
+    return Response(resp.content, status=resp.status_code, content_type=resp.headers.get('Content-Type'))
+
+@app.route('/chat/private/<int:user1_id>/<int:user2_id>', methods=['GET'])
+def proxy_private_get(user1_id, user2_id):
+    resp = requests.get(f'{BACKEND_URL}/chat/private/{user1_id}/{user2_id}')
+    return Response(resp.content, status=resp.status_code, content_type=resp.headers.get('Content-Type'))
 
 
 if __name__ == '__main__':
