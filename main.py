@@ -137,12 +137,31 @@ def chat(team_id):
 @app.route('/profile/<int:user_id>')
 @login_required
 def profile(user_id):
+    # Lade das Profil, das angezeigt werden soll
     response = requests.get(f'{BACKEND_URL}/user/{user_id}')
+    
+    # Separat: aktuell eingeloggter Nutzer
+    current_user_id = session.get('user_id')
+    team_id = None
+
+    if current_user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_res.status_code == 200:
+            current_user = user_res.json()
+            team_id = current_user.get('team_id')
+
     if response.status_code == 200:
         user = response.json()
-        return render_template('profile.html', user=user, logged_in='user_id' in session)
+        return render_template(
+            'profile.html',
+            user=user,  # angezeigtes Profil
+            team_id=team_id,
+            logged_in=True,
+            user_id=current_user_id  # eingeloggter Nutzer
+        )
     else:
         return "Benutzer nicht gefunden", 404
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -193,12 +212,14 @@ def projects():
     return render_template('projects.html',
                            projects=projects,
                            team_id=team_id,
-                           logged_in='user_id' in session)
+                           logged_in='user_id' in session,
+                           user_id=session.get('user_id'))
 
 @app.route('/project/<int:project_id>')
 def project_detail(project_id):
     token = request.cookies.get('jwt_token')
     headers = {'Authorization': f'Bearer {token}'} if token else {}
+
     # Projekt-Infos laden
     project_response = requests.get(f'{BACKEND_URL}/projects', headers=headers)
     project = None
@@ -211,12 +232,22 @@ def project_detail(project_id):
                 break
         if project:
             # Team-Name laden
-            team_id = project.get('team_id')
-            if team_id:
-                team_response = requests.get(f'{BACKEND_URL}/team/{team_id}')
+            project_team_id = project.get('team_id')
+            if project_team_id:
+                team_response = requests.get(f'{BACKEND_URL}/team/{project_team_id}')
                 if team_response.status_code == 200:
                     team = team_response.json()
                     team_name = team.get('name')
+
+    # Aktuellen Benutzer & Team-ID ermitteln (für Navbar)
+    current_user_id = session.get('user_id')
+    team_id = None
+    if current_user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_res.status_code == 200:
+            user = user_res.json()
+            team_id = user.get('team_id')
+
     # Tasks laden
     response = requests.get(f'{BACKEND_URL}/project/{project_id}/tasks', headers=headers)
     assigned_usernames = {}
@@ -231,13 +262,25 @@ def project_detail(project_id):
                     assigned_usernames[uid] = user_response.json().get('username')
                 else:
                     assigned_usernames[uid] = f"User {uid}"
-        return render_template('project_detail.html', tasks=tasks, project_id=project_id, project=project, team_name=team_name, assigned_usernames=assigned_usernames)
+
+        return render_template(
+            'project_detail.html',
+            tasks=tasks,
+            project_id=project_id,
+            project=project,
+            team_name=team_name,
+            assigned_usernames=assigned_usernames,
+            team_id=team_id,
+            logged_in='user_id' in session,
+            user_id=session.get('user_id')
+        )
     else:
         try:
             error_msg = response.json()
         except Exception:
             error_msg = response.text
         return f"Fehler beim Laden der Tasks (Status: {response.status_code}): {error_msg}", 500
+
 
 @app.route('/projects/new', methods=['GET', 'POST'])
 def create_project_view():
@@ -273,12 +316,22 @@ def create_project_view():
             except Exception:
                 error_msg = response.text
             return f"Fehler beim Anlegen des Projekts (Status: {response.status_code}): {error_msg}", 500
-    return render_template('create_project.html', team_id=team_id)
+    return render_template('create_project.html', team_id=team_id, logged_in='user_id' in session, user_id=session.get('user_id'))
 
 @app.route('/project/<int:project_id>/tasks/new', methods=['GET', 'POST'])
 def create_task_view(project_id):
     token = request.cookies.get('jwt_token')
     headers = {'Authorization': f'Bearer {token}'} if token else {}
+
+    # Aktuellen Benutzer und team_id ermitteln
+    current_user_id = session.get('user_id')
+    team_id = None
+    if current_user_id:
+        user_response = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_response.status_code == 200:
+            user = user_response.json()
+            team_id = user.get('team_id')
+
     if request.method == 'POST':
         title = request.form['title']
         description = request.form.get('description', '')
@@ -288,7 +341,15 @@ def create_task_view(project_id):
             return redirect(url_for('project_detail', project_id=project_id))
         else:
             return "Fehler beim Anlegen des Tasks", 500
-    return render_template('create_task.html', project_id=project_id)
+
+    return render_template(
+        'create_task.html',
+        project_id=project_id,
+        team_id=team_id,
+        logged_in='user_id' in session,
+        user_id=session.get('user_id')
+    )
+
 
 @app.route('/task/<int:task_id>/move', methods=['POST'])
 def move_task(task_id):

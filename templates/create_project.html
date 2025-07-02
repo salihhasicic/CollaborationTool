@@ -10,9 +10,21 @@
 <body>
     <nav>
         <a href="/">Start</a>
-        <a href="/projects" class="active">Projekte</a>
-        <a href="/users">Benutzer</a>
-        <a href="/login">Login</a>
+        <a href="/projects">Projekte</a>
+        <a href="/users" class="active">Benutzer</a>
+        <a href="/chats">Chat</a>
+        {% if team_id %}
+            <a href="/team/{{ team_id }}">Team</a>
+            <a href="/chat/{{ team_id }}">Team-Chat</a>
+        {% endif %}
+        {% if logged_in %}
+            <div style="margin-left:auto; display:flex; gap:1rem;">
+            <a href="/profile/{{ user_id }}">Mein Profil</a>
+            <a href="/logout">Logout</a>
+        </div>
+        {% else %}
+            <a href="/login" style="margin-left:auto;">Login</a>
+        {% endif %}
     </nav>
     <div class="container">
         <h2>Neues Projekt anlegen</h2>
