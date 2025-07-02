@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session, Response
+from flask import Flask, render_template, request, redirect, url_for, session, make_response 
+
 import requests
 from functools import wraps
 
@@ -30,15 +31,18 @@ def login():
             'password': password
         })
         if response.status_code == 200:
-            user_id = response.json()['user_id']
-            session['user_id'] = user_id
-            return redirect(url_for('list_users'))
             data = response.json()
             user_id = data['user_id']
             access_token = data.get('access_token')
-            resp = make_response(redirect(url_for('profile', user_id=user_id)))
+
+            session['user_id'] = user_id
+
+            resp = make_response(redirect(url_for('list_users')))
             if access_token:
-                resp.set_cookie('jwt_token', access_token)
+                resp.set_cookie(
+                    'jwt_token', access_token,
+                    httponly=True, samesite='Lax'
+                )
             return resp
         else:
             return render_template('login.html', error="Login fehlgeschlagen.", logged_in=False)
