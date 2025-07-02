@@ -2,10 +2,28 @@ from flask import Blueprint, request, jsonify, send_from_directory, current_app
 from models import Team, User
 from extensions import db
 import os
+import json
+from werkzeug.utils import secure_filename
+from datetime import datetime
 
 team_bp = Blueprint('team', __name__)
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+
+def get_files_metadata_path(team_id):
+    return os.path.join(UPLOAD_FOLDER, f"team_{team_id}_files.json")
+
+def load_files_metadata(team_id):
+    path = get_files_metadata_path(team_id)
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            return json.load(f)
+    return []
+
+def save_files_metadata(team_id, files):
+    path = get_files_metadata_path(team_id)
+    with open(path, "w") as f:
+        json.dump(files, f)
 
 @team_bp.route('/create', methods=['POST'])
 def create_team():
@@ -46,27 +64,36 @@ def set_team_ablage(team_id):
 
 @team_bp.route('/<int:team_id>/files', methods=['GET'])
 def list_team_files(team_id):
-    team_folder = os.path.join(UPLOAD_FOLDER, f"team_{team_id}")
-    if not os.path.exists(team_folder):
-        return jsonify({'files': []})
-    files = os.listdir(team_folder)
+    files = load_files_metadata(team_id)
     return jsonify({'files': files})
 
 @team_bp.route('/<int:team_id>/upload', methods=['POST'])
 def upload_team_file(team_id):
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
     file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    team_folder = os.path.join(UPLOAD_FOLDER, f"team_{team_id}")
-    os.makedirs(team_folder, exist_ok=True)
-    file.save(os.path.join(team_folder, file.filename))
-    return jsonify({'message': 'File uploaded'})
+    uploader = request.form.get('uploader') or request.form.get('user_id') or "unbekannt"
+    # Username aus DB holen, falls nur user_id übergeben wird
+    if uploader.isdigit():
+        user = User.query.get(int(uploader))
+        uploader = user.username if user else f"User {uploader}"
+    if file:
+        filename = secure_filename(file.filename)
+        team_folder = os.path.join(UPLOAD_FOLDER, str(team_id))
+        os.makedirs(team_folder, exist_ok=True)
+        file.save(os.path.join(team_folder, filename))
+        # Metadaten speichern
+        files = load_files_metadata(team_id)
+        files.append({
+            "filename": filename,
+            "uploader": uploader,
+            "uploaded_at": datetime.utcnow().isoformat()
+        })
+        save_files_metadata(team_id, files)
+        return jsonify({"message": "Datei hochgeladen."})
+    return jsonify({"error": "Keine Datei erhalten."}), 400
 
 @team_bp.route('/<int:team_id>/files/<filename>', methods=['GET'])
 def download_team_file(team_id, filename):
-    team_folder = os.path.join(UPLOAD_FOLDER, f"team_{team_id}")
+    team_folder = os.path.join(UPLOAD_FOLDER, str(team_id))
     return send_from_directory(team_folder, filename, as_attachment=True)
 
 @team_bp.route('/all', methods=['GET'])

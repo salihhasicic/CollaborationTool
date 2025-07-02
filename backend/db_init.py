@@ -2,6 +2,21 @@ from app import app
 from extensions import db
 from models import User, Team
 from werkzeug.security import generate_password_hash
+from flask import Flask
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+from datetime import datetime as dt
+
+class PrivateMessage(db.Model):
+    __tablename__ = 'private_messages'
+    id = Column(Integer, primary_key=True)
+    sender_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    receiver_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    content = Column(String, nullable=False)
+    timestamp = Column(DateTime, default=dt.utcnow)
+
+    sender = relationship('User', foreign_keys=[sender_id], backref='sent_private_messages')
+    receiver = relationship('User', foreign_keys=[receiver_id], backref='received_private_messages')
 
 with app.app_context():
     db.drop_all()
@@ -39,3 +54,11 @@ with app.app_context():
     db.session.commit()
 
     print("✅ Datenbank mit 3 Teams und 20 Benutzern initialisiert.")
+
+if __name__ == "__main__":
+    app = Flask(__name__)
+    app.config.from_object('config.Config')
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()  # Erstellt alle Tabellen inkl. PrivateMessage
+        print("Alle Tabellen wurden erstellt.")
