@@ -68,6 +68,9 @@
         .then(res => res.json())
         .then(data => {
             if (data.access_token) {
+                // **Kleinste Änderung: hier den Token speichern**
+                localStorage.setItem('access_token', data.access_token);
+
                 // Zugriff auf Haupt-Server (localhost:3000)
                 return fetch("/auth/proxy-login", {
                     method: "POST",
@@ -96,7 +99,6 @@
         });
     });
 </script>
-
 
 </body>
 </html>

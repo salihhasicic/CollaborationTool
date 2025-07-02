@@ -12,7 +12,7 @@ app.config['JWT_COOKIE_SECURE'] = False  # True für HTTPS
 app.config['JWT_ACCESS_COOKIE_NAME'] = 'jwt_token'
 
 db.init_app(app)
-CORS(app)
+CORS(app, supports_credentials=True)
 jwt = JWTManager(app)
 
 # Blueprint-Importe nach Initialisierung

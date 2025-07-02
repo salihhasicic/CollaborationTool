@@ -49,7 +49,7 @@ def update_location():
 @user_bp.route('/nearby', methods=['GET'])
 @jwt_required()
 def find_nearby_users():
-    user_id = int(get_jwt_identity())  # wird aus dem Token extrahiert
+    user_id = request.args.get('user_id', type=int) or int(get_jwt_identity())
     radius_km = request.args.get('radius', default=30, type=int)
 
     current_user = User.query.get(user_id)

@@ -35,13 +35,14 @@
             <input type="text" name="skill" placeholder="Suche nach Skill" value="{{ skill or '' }}">
             <button type="submit">Suchen</button>
         </form>
-        <button type="button" onclick="findNearby()">Nutzer im Umkreis (30km)</button>
+        <button type="button" onclick="findNearby()">Nutzer im Umkreis (30 km)</button>
         <div id="nearby-list"></div>
         <ul>
             {% for user in users %}
             <li>
                 <div class="user-info">
-                    <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}" class="profile-img" alt="Profilbild">
+                    <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}"
+                         class="profile-img" alt="Profilbild">
                     <div>
                         <strong style="font-size:1.15em;">{{ user.username }}</strong><br>
                         {% set skills = user.skills.split(',') if user.skills else [] %}
@@ -50,7 +51,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div style="display:flex;gap:8px;">
+                <div style="display:flex; gap:8px;">
                     <a href="/profile/{{ user.id }}"><button type="button">Profil</button></a>
                     <form method="post" action="/team/add" style="display:inline;">
                         <input type="hidden" name="user_id" value="{{ user.id }}">
@@ -63,49 +64,47 @@
         </ul>
     </div>
     <script>
+        console.log("users.html script geladen");
+
         function findNearby() {
-            if (!navigator.geolocation) {
-                alert("Geolocation wird nicht unterstützt.");
+            console.log("findNearby aufgerufen");
+
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                alert("Kein Token gefunden. Bitte einloggen.");
                 return;
             }
 
-            navigator.geolocation.getCurrentPosition(function(pos) {
-                const token = localStorage.getItem('access_token');
-                if (!token) {
-                    alert("Kein Token gefunden. Bitte einloggen.");
-                    return;
-                }
-
-                fetch("http://127.0.0.1:5000/user/nearby?radius=30", {
-                    headers: {
-                        "Authorization": "Bearer " + token
-                    }
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error("Fehler beim Abrufen");
-                    return res.json();
-                })
-                .then(data => {
-                    let html = "<b>Nutzer im Umkreis:</b><ul>";
-                    if (data.length === 0) html += "<li>Keine gefunden.</li>";
-                    else data.forEach(u => {
+            fetch("http://127.0.0.1:5000/user/nearby?radius=30", {
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                credentials: 'include'
+            })
+            .then(res => {
+                console.log("Fetch geantwortet:", res.status, res.statusText);
+                if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                return res.json();
+            })
+            .then(data => {
+                console.log("Daten erhalten:", data);
+                let html = "<b>Nutzer im Umkreis:</b><ul>";
+                if (data.length === 0) {
+                    html += "<li>Keine gefunden.</li>";
+                } else {
+                    data.forEach(u => {
                         html += `<li>${u.username} (${u.distance_km} km)</li>`;
                     });
-                    html += "</ul>";
-                    document.getElementById("nearby-list").innerHTML = html;
-                })
-                .catch(err => {
-                    document.getElementById("nearby-list").innerHTML = "Fehler beim Abrufen.";
-                    console.error("Nearby error:", err);
-                });
-
-            }, function() {
-                alert("Standort konnte nicht ermittelt werden.");
+                }
+                html += "</ul>";
+                document.getElementById("nearby-list").innerHTML = html;
+            })
+            .catch(err => {
+                console.error("Nearby error:", err);
+                document.getElementById("nearby-list").innerHTML = "Fehler beim Abrufen: " + err.message;
             });
         }
     </script>
-
-
 
 </body>
 </html>
