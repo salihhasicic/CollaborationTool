@@ -9,12 +9,14 @@
 </head>
 <body>
     <nav>
-        <a href="/">Start</a>
-        <a href="/projects">Projekte</a>
-        <a href="/users">Benutzer</a>
+    <a href="/">Start</a>
+    <a href="/projects" class="active">Projekte</a>
+    <a href="/users">Benutzer</a>
+    {% if team_id %}
         <a href="/team/{{ team_id }}">Team</a>
-        <a href="/chat/{{ team_id }}" class="active">Team-Chat</a>
-    </nav>
+        <a href="/chat/{{ team_id }}">Team-Chat</a>
+    {% endif %}
+</nav>
     <div class="container">
         <h2>Projekte</h2>
         <a href="/projects/new"><button type="button" style="margin-bottom:18px;">Neues Projekt anlegen</button></a>
