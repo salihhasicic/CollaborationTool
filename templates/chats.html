@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Chats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .chat-user-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .chat-user-list li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .chat-user-list li:last-child {
+            border-bottom: none;
+        }
+        .chat-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #f3f4f6;
+            border: 1.5px solid #d1d5db;
+        }
+        .chat-user-info {
+            flex: 1;
+        }
+        .chat-user-name {
+            font-weight: 600;
+            font-size: 1.08em;
+            color: var(--primary-dark, #2563eb);
+        }
+        .chat-last-message {
+            color: #444;
+            font-size: 0.98em;
+            margin-top: 2px;
+        }
+        .chat-last-message.me {
+            color: #2563eb;
+        }
+        .chat-last-message.them {
+            color: #111;
+        }
+        .chat-link-btn {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 7px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1em;
+            margin-left: 12px;
+            transition: background 0.2s;
+        }
+        .chat-link-btn:hover {
+            background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
+        }
+        .chat-empty {
+            color: #aaa;
+            margin-top: 24px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Start</a>
+        <a href="/projects">Projekte</a>
+        <a href="/users">Benutzer</a>
+        <a href="/chats" class="active">Chat</a>
+        {% if team_id %}
+            <a href="/team/{{ team_id }}">Team</a>
+            <a href="/chat/{{ team_id }}">Team-Chat</a>
+        {% endif %}
+        {% if logged_in %}
+            <a href="/logout" style="margin-left:auto;">Logout</a>
+        {% else %}
+            <a href="/login" style="margin-left:auto;">Login</a>
+        {% endif %}
+    </nav>
+    <div class="container">
+        <h2>Private Chats</h2>
+        <ul class="chat-user-list" id="chat-user-list">
+            {% for user in users %}
+                {% if user.id != current_user_id %}
+                <li>
+                    <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}" class="chat-user-avatar" alt="Profilbild">
+                    <div class="chat-user-info">
+                        <div class="chat-user-name">{{ user.username }}</div>
+                        <div class="chat-last-message" id="last-msg-{{ user.id }}">Lade letzte Nachricht ...</div>
+                    </div>
+                    <a href="/private_chat/{{ user.id }}"><button class="chat-link-btn">Chat öffnen</button></a>
+                </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        {% if users|length == 1 %}
+            <div class="chat-empty">Keine weiteren Nutzer gefunden.</div>
+        {% endif %}
+    </div>
+    <script>
+        // Für jeden User die letzte Nachricht laden (gesendet oder empfangen)
+        const currentUserId = "{{ current_user_id }}";
+        const users = {{ users|tojson }};
+        users.forEach(u => {
+            if (u.id == currentUserId) return;
+            fetch(`/chat/private/${currentUserId}/${u.id}`)
+                .then(r => r.json())
+                .then(msgs => {
+                    let last = msgs.length > 0 ? msgs[msgs.length-1] : null;
+                    let el = document.getElementById('last-msg-' + u.id);
+                    if (!last) {
+                        el.innerHTML = "<span style='color:#aaa;'>Noch keine Nachrichten</span>";
+                    } else {
+                        let who = last.sender_id == currentUserId ? "me" : "them";
+                        let prefix = last.sender_id == currentUserId ? "Du: " : u.username + ": ";
+                        el.classList.add(who);
+                        el.innerHTML = `<span>${prefix}${last.content}</span> <span style="color:#888;font-size:0.93em;">(${new Date(last.timestamp).toLocaleString()})</span>`;
+                    }
+                });
+        });
+    </script>
+</body>
+</html>

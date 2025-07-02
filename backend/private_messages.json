@@ -1,0 +1,1 @@
+[{"sender_id": 1, "sender_name": "alice", "receiver_id": 2, "receiver_name": "bob", "content": "Hallo von Postman!", "timestamp": "2025-07-02T06:16:00.561838"}, {"sender_id": 9, "sender_name": "ivan", "receiver_id": 1, "receiver_name": "alice", "content": "hallo", "timestamp": "2025-07-02T06:17:20.228980"}]
