@@ -74,8 +74,13 @@
     <div class="container">
         {% if user %}
         <div class="profile-header">
-            <img src="{{ user.photo_url or ('https://ui-avatars.com/api/?name=' ~ (user.username or 'User')) }}"
-                class="profile-img-large" alt="Profilbild">
+            <img src="{{ user.photo_url }}" class="profile-img-large" alt="{{ user.photo_url }}">
+            {% if user.id == user_id %}
+            <div id="photo-upload-section" style="display:none; margin-top:12px;">
+            <input type="file" id="upload-photo" accept="image/*">
+            <button type="button" onclick="uploadPhoto()">📤 Bild hochladen</button>
+            </div>
+{% endif %}
             <div class="profile-details">
                 <h2>
                     <span id="display-username">{{ user.username or "Unbekannt" }}</span>
@@ -185,6 +190,7 @@
         }
 
         function enableEdit() {
+            document.getElementById("photo-upload-section").style.display = "block";
             document.getElementById("display-username").style.display = "none";
             document.getElementById("input-username").style.display = "inline";
 
@@ -258,6 +264,7 @@
             document.getElementById("display-skills").style.display = "inline";
             document.getElementById("display-lat").style.display = "inline";
             document.getElementById("display-lng").style.display = "inline";
+            document.getElementById("photo-upload-section").style.display = "none";
 
             document.querySelector(".profile-edit-button button:first-child").style.display = "inline";
                 alert("Profil aktualisiert!");
@@ -303,6 +310,39 @@
 
 // direkt aufrufen beim Laden
 renderMap(latitude, longitude);
+
+function uploadPhoto() {
+    const fileInput = document.getElementById("upload-photo");
+    const file = fileInput.files[0];
+    if (!file) {
+        alert("Bitte wähle ein Bild aus.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("photo", file);
+    formData.append("user_id", userId);
+
+    fetch("http://localhost:5000/user/upload_photo", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.photo_url) {
+            const img = document.querySelector(".profile-img-large");
+            img.src = data.photo_url + "?t=" + new Date().getTime(); // Cache umgehen
+            alert("Profilbild aktualisiert!");
+        } else {
+            alert("Fehler beim Hochladen: " + data.message);
+        }
+    })
+    .catch(err => {
+        console.error("Upload-Fehler:", err);
+        alert("Fehler beim Hochladen.");
+    });
+}
+
 
     </script>
 </body>

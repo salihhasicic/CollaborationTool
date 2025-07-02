@@ -52,7 +52,11 @@
 <body>
     <div class="container" style="max-width:430px;">
         <h2>Registrieren</h2>
-        <form method="POST" action="/register" id="registerForm">
+        <form method="POST" action="/register" enctype="multipart/form-data" id="registerForm">
+
+            <label for="photo">Profilbild:</label>
+            <input type="file" name="photo" id="photo" accept="image/*">
+
             <label for="username">Username:</label>
             <input type="text" name="username" id="username" required autocomplete="username">
 

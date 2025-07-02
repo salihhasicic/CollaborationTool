@@ -139,6 +139,7 @@ def chat(team_id):
 def profile(user_id):
     # Lade das Profil, das angezeigt werden soll
     response = requests.get(f'{BACKEND_URL}/user/{user_id}')
+    print(response.json()) 
     
     # Separat: aktuell eingeloggter Nutzer
     current_user_id = session.get('user_id')
@@ -175,7 +176,13 @@ def register():
         location = request.form.get('location', '')
         latitude = request.form.get('latitude', '')
         longitude = request.form.get('longitude', '')
-        response = requests.post(f'{BACKEND_URL}/auth/register', json={
+        photo = request.files.get('photo')
+
+
+        files = {'photo': photo} if photo and photo.filename else {}
+
+        # Formulardaten als dictionary
+        data = {
             'username': username,
             'password': password,
             'team_id': team_id,
@@ -183,12 +190,20 @@ def register():
             'location': location,
             'latitude': latitude,
             'longitude': longitude
-        })
+        }
+
+        # POST mit multipart/form-data
+        response = requests.post(f'{BACKEND_URL}/auth/register', data=data, files=files)
+
         if response.status_code == 201:
             return render_template('register.html', success="Registrierung erfolgreich! Du kannst dich jetzt einloggen.", teams=teams)
         else:
-            error = response.json().get('message', 'Registrierung fehlgeschlagen.')
+            try:
+                error = response.json().get('message', 'Registrierung fehlgeschlagen.')
+            except Exception:
+                error = 'Registrierung fehlgeschlagen.'
             return render_template('register.html', error=error, teams=teams)
+
     return render_template('register.html', teams=teams)
 
 @app.route('/projects')
