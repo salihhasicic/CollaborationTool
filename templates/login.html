@@ -68,18 +68,35 @@
         .then(res => res.json())
         .then(data => {
             if (data.access_token) {
-                localStorage.setItem("access_token", data.access_token);
-                localStorage.setItem("user_id", data.user_id);
-                window.location.href = "/users";
+                // Zugriff auf Haupt-Server (localhost:3000)
+                return fetch("/auth/proxy-login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "same-origin", // Cookie setzen
+                    body: JSON.stringify({
+                        access_token: data.access_token,
+                        user_id: data.user_id
+                    })
+                });
             } else {
-                document.getElementById("error").innerText = data.message || "Login fehlgeschlagen.";
+                throw new Error(data.message || "Login fehlgeschlagen.");
             }
         })
-        .catch(() => {
-            document.getElementById("error").innerText = "Netzwerkfehler beim Login.";
+        .then(res => {
+            if (res.ok) {
+                window.location.href = "/users";
+            } else {
+                return res.json().then(data => {
+                    document.getElementById("error").innerText = data.message || "Fehler beim Speichern.";
+                });
+            }
+        })
+        .catch((err) => {
+            document.getElementById("error").innerText = err.message || "Netzwerkfehler beim Login.";
         });
     });
 </script>
+
 
 </body>
 </html>

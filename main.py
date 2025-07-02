@@ -179,15 +179,21 @@ def projects():
     print('DEBUG JWT_TOKEN:', token)
     headers = {'Authorization': f'Bearer {token}'} if token else {}
     response = requests.get(f'{BACKEND_URL}/projects', headers=headers)
-    if response.status_code == 200:
-        projects = response.json()
-        return render_template('projects.html', projects=projects)
-    else:
-        try:
-            error_msg = response.json()
-        except Exception:
-            error_msg = response.text
-        return f"Fehler beim Laden der Projekte (Status: {response.status_code}): {error_msg}", 500
+    projects = response.json() if response.status_code == 200 else []
+
+    # team_id über den eingeloggten Nutzer holen
+    current_user_id = session.get('user_id')
+    team_id = None
+    if current_user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_res.status_code == 200:
+            user = user_res.json()
+            team_id = user.get('team_id')
+
+    return render_template('projects.html',
+                           projects=projects,
+                           team_id=team_id,
+                           logged_in='user_id' in session)
 
 @app.route('/project/<int:project_id>')
 def project_detail(project_id):
@@ -350,6 +356,19 @@ def proxy_private_get(user1_id, user2_id):
     resp = requests.get(f'{BACKEND_URL}/chat/private/{user1_id}/{user2_id}')
     return Response(resp.content, status=resp.status_code, content_type=resp.headers.get('Content-Type'))
 
+@app.route('/auth/proxy-login', methods=['POST'])
+def proxy_login():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    access_token = data.get('access_token')
+
+    if not user_id or not access_token:
+        return {"message": "Fehlende Daten"}, 400
+
+    session['user_id'] = user_id
+    resp = make_response({"message": "Login erfolgreich"})
+    resp.set_cookie('jwt_token', access_token, httponly=True, samesite='Lax')
+    return resp
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
