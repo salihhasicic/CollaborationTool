@@ -126,3 +126,17 @@ def assign_task(task_id):
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
     return jsonify({'id': user.id, 'username': user.username})
+
+@project_bp.route('/user/<int:user_id>/tasks', methods=['GET'])
+@jwt_required()
+def get_tasks_by_user(user_id):
+    user = User.query.get_or_404(user_id)
+    tasks = Task.query.filter_by(assigned_user_id=user.id).all()
+    return jsonify([
+        {
+            'id': t.id,
+            'title': t.title,
+            'status': t.status,
+            'project_id': t.project_id
+        } for t in tasks
+    ])

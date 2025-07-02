@@ -445,5 +445,57 @@ def proxy_login():
     resp.set_cookie('jwt_token', access_token, httponly=True, samesite='Lax')
     return resp
 
+@app.route('/start')
+@login_required
+def dashboard():
+    user_id = session.get('user_id')
+
+    # 1. Hole den eingeloggten User inkl. Team
+    user_res = requests.get(f'{BACKEND_URL}/user/{user_id}')
+    if user_res.status_code != 200:
+        return "User konnte nicht geladen werden", 500
+
+    user = user_res.json()
+    team_id = user.get('team_id')
+    if isinstance(team_id, str):
+        team_id = int(team_id)
+
+    # 2. Hole Projekte dieses Teams
+    projects = []
+    if team_id:
+        token = request.cookies.get('jwt_token')
+        headers = {'Authorization': f'Bearer {token}'} if token else {}
+        projects_res = requests.get(f'{BACKEND_URL}/projects', headers=headers)
+    
+        if projects_res.status_code == 200:
+            all_projects = projects_res.json()
+
+
+            # Nur Projekte mit der Team-ID des Users
+            projects = [p for p in all_projects if p.get("team_id") == team_id]
+
+    # 3. Hole Tasks des Users
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+
+    tasks_res = requests.get(f'{BACKEND_URL}/user/{user_id}/tasks', headers=headers)  # ✅ hier!
+    print("DEBUG: Tasks response", tasks_res.status_code)
+
+    if tasks_res.status_code == 200:
+        print("DEBUG: Tasks JSON", tasks_res.json())
+        tasks = tasks_res.json()
+    else:
+        print("DEBUG: Inhalt bei Fehler:", tasks_res.text)
+        tasks = []
+
+    return render_template('dashboard.html',
+                           user=user,
+                           tasks=tasks,
+                           projects=projects,
+                           team_id=team_id,
+                           logged_in=True,
+                           user_id=user_id)
+
+
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
