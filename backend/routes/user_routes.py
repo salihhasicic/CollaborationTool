@@ -23,6 +23,23 @@ def get_user(user_id):
         'latitude': user.latitude,
         'longitude': user.longitude
     })
+# 🔎 Benutzerprofil anpassen
+@user_bp.route('/update', methods=['POST'])
+def update_user():
+    data = request.get_json()
+    user = User.query.get(data['user_id'])
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    user.username = data.get('username', user.username)
+    user.location = data.get('location', user.location)
+    user.skills = data.get('skills', user.skills)
+    user.latitude = data.get('latitude', user.latitude)
+    user.longitude = data.get('longitude', user.longitude)
+
+    db.session.commit()
+    return jsonify({'message': 'User updated'})
+
 
 # 🔍 Suche nach Skill
 @user_bp.route('/search', methods=['GET'])

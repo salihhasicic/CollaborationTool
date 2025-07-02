@@ -162,7 +162,6 @@ def profile(user_id):
     else:
         return "Benutzer nicht gefunden", 404
 
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     # Teams für Dropdown laden
