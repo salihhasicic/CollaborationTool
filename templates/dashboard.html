@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard – {{ user.username }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .section {
+            margin-top: 32px;
+        }
+
+        .card {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            margin-bottom: 14px;
+        }
+
+        .card h4 {
+            margin: 0 0 6px;
+            font-size: 1.1em;
+        }
+
+        .card small {
+            color: #555;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.95em;
+        }
+
+        .btn:hover {
+            background: #1e40af;
+        }
+
+        h2 {
+            color: #111827;
+        }
+
+        h3 {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 4px;
+        }
+
+        .empty-msg {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/start" class="active">Dashboard</a>
+    <a href="/projects">Projekte</a>
+    <a href="/users">Benutzer</a>
+    <a href="/chats">Chat</a>
+    {% if team_id %}
+        <a href="/team/{{ team_id }}">Team</a>
+        <a href="/chat/{{ team_id }}">Team-Chat</a>
+    {% endif %}
+    {% if logged_in %}
+    <div style="margin-left:auto; display:flex; gap:1rem;">
+        <a href="/profile/{{ user.id }}">Mein Profil</a>
+        <a href="/logout">Logout</a>
+    </div>
+    {% else %}
+        <a href="/login" style="margin-left:auto;">Login</a>
+    {% endif %}
+</nav>
+
+<div class="container">
+    <h2>Willkommen zurück, {{ user.username }} 👋</h2>
+
+    <!-- 🔧 Offene Tasks -->
+    <div class="section">
+        <h3>📌 Deine offenen Tasks</h3>
+        {% if tasks and tasks|length > 0 %}
+            {% for task in tasks %}
+                <div class="card">
+                    <h4>{{ task.title }}</h4>
+                    {% if task.deadline %}
+                        <small>Deadline: {{ task.deadline[:10] }}</small><br>
+                    {% endif %}
+                    <small>Status: {{ task.status }}</small><br>
+                    <a class="btn" href="/project/{{ task.project_id }}">Zum Projekt</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-msg">Keine offenen Tasks – alles erledigt!</p>
+        {% endif %}
+    </div>
+
+    <!-- 📁 Projekte des Teams -->
+    <div class="section">
+        <h3>📁 Projekte deines Teams</h3>
+        {% if projects and projects|length > 0 %}
+            {% for project in projects %}
+                <div class="card">
+                    <h4>{{ project.name }}</h4>
+                    {% if project.deadline %}
+                        <small>Deadline: {{ project.deadline[:10] }}</small><br>
+                    {% endif %}
+                    <small>Status: {{ project.status }}</small><br>
+                    <a class="btn" href="/project/{{ project.id }}">Details & Aufgaben</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-msg">Aktuell keine Projekte in deinem Team.</p>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

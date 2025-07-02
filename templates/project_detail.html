@@ -9,18 +9,45 @@
 </head>
 <body>
     <nav>
-        <a href="/">Start</a>
+        <a href="/start">Dashboard</a>
         <a href="/projects" class="active">Projekte</a>
-        <a href="/users">Benutzer</a>
-        <a href="/login">Login</a>
+        <a href="/users" >Benutzer</a>
+        <a href="/chats">Chat</a>
+        {% if team_id %}
+            <a href="/team/{{ team_id }}">Team</a>
+            <a href="/chat/{{ team_id }}">Team-Chat</a>
+        {% endif %}
+    
+        {% if logged_in %}
+            <div style="margin-left:auto; display:flex; gap:1rem;">
+            <a href="/profile/{{ user_id }}">Mein Profil</a>
+            <a href="/logout">Logout</a>
+        </div>
+        {% else %}
+            <a href="/login" style="margin-left:auto;">Login</a>
+        {% endif %}
     </nav>
     <div class="container">
         <h2>Tasks für Projekt #{{ project_id }}</h2>
+        <div style="margin-bottom:12px;">
         {% if team_name %}
-            <div style="margin-bottom:12px;color:#2563eb;font-size:1.1em;">
-                <b>Team:</b> {{ team_name }}
-            </div>
+        <div style="color:#2563eb;font-size:1.1em;">
+            <b>Team:</b> {{ team_name }}
+        </div>
         {% endif %}
+
+            {% if project['deadline'] %}
+        <b>Deadline:</b> {{ project['deadline'][:10] }}
+        {% else %}
+        <b>Deadline:</b> keine gesetzt
+        {% endif %}
+    </div>
+
+    <form method="post" action="/project/{{ project_id }}/update_deadline">
+    <label for="project_deadline">Projekt-Deadline ändern:</label>
+    <input type="date" name="deadline" id="project_deadline" value="{{ project['deadline'][:10] if project['deadline'] }}">
+    <button type="submit">Speichern</button>
+</form>
         <a href="/project/{{ project_id }}/tasks/new"><button type="button" style="margin-bottom:18px;">Neuen Task anlegen</button></a>
         <div class="users-list">
             {% if tasks|length == 0 %}
@@ -31,6 +58,9 @@
                     <h3>{{ task.title }}</h3>
                     <div class="user-card-ids">
                         <span><b>Status:</b> {{ task.status }}</span>
+                        {% if task.deadline %}
+                            <small>Deadline: {{ task.deadline[:10] }}</small><br>
+                        {% endif %}
                         {% if task.assigned_user_id %}
                             <span style="margin-left:12px;"><b>Zugewiesen an:</b> {{ assigned_usernames[task.assigned_user_id] }}</span>
                         {% else %}
@@ -48,6 +78,12 @@
                             <option value="Done" {% if task.status=='Done' %}selected{% endif %}>Done</option>
                         </select>
                         <button type="submit">Verschieben</button>
+                    </form>
+                    <form method="post" action="/task/{{ task.id }}/update_deadline" style="margin-top:10px;">
+                        <input type="hidden" name="project_id" value="{{ project_id }}">
+                        <label for="deadline_{{ task.id }}">Deadline ändern:</label>
+                        <input type="date" name="deadline" id="deadline_{{ task.id }}" value="{{ task.deadline[:10] if task.deadline }}">
+                        <button type="submit">Speichern</button>
                     </form>
                 </div>
                 {% endfor %}

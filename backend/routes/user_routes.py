@@ -23,6 +23,59 @@ def get_user(user_id):
         'latitude': user.latitude,
         'longitude': user.longitude
     })
+# 🔎 Benutzerprofil anpassen
+@user_bp.route('/update', methods=['POST'])
+def update_user():
+    data = request.get_json()
+    user = User.query.get(data['user_id'])
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    user.username = data.get('username', user.username)
+    user.location = data.get('location', user.location)
+    user.skills = data.get('skills', user.skills)
+    user.latitude = data.get('latitude', user.latitude)
+    user.longitude = data.get('longitude', user.longitude)
+
+    db.session.commit()
+    return jsonify({'message': 'User updated'})
+
+# 🔎 Bild anpassen
+@user_bp.route('/upload_photo', methods=['POST'])
+def upload_photo():
+    from flask import current_app
+    import os
+    import uuid
+    from werkzeug.utils import secure_filename
+
+    user_id = request.form.get('user_id')
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    photo_file = request.files.get('photo')
+    if not photo_file or photo_file.filename == '':
+        return jsonify({'message': 'Kein Bild übergeben'}), 400
+
+    # Dateiendung extrahieren
+    ext = os.path.splitext(secure_filename(photo_file.filename))[1]
+    unique_filename = f"{uuid.uuid4().hex}{ext}"
+
+    # Zielordner in /static/photos im Projektverzeichnis
+    upload_folder = os.path.abspath(os.path.join(current_app.root_path, '..', 'static', 'photos'))
+    os.makedirs(upload_folder, exist_ok=True)
+
+    save_path = os.path.join(upload_folder, unique_filename)
+    photo_file.save(save_path)
+
+    # Datenbank aktualisieren
+    user.photo_url = f'/static/photos/{unique_filename}'
+    db.session.commit()
+
+    return jsonify({'message': 'Profilbild aktualisiert', 'photo_url': user.photo_url})
+
+
 
 # 🔍 Suche nach Skill
 @user_bp.route('/search', methods=['GET'])

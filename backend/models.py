@@ -33,6 +33,7 @@ class Project(db.Model):
     status = db.Column(db.String(20), nullable=False, default="To Do")  # To Do, In Progress, Done
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
     tasks = db.relationship('Task', backref='project', lazy=True)
+    deadline = db.Column(db.DateTime, nullable=True)
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,3 +44,4 @@ class Task(db.Model):
     assigned_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    deadline = db.Column(db.DateTime, nullable=True)

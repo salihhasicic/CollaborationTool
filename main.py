@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, m
 from flask import Response
 import requests
 from functools import wraps
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "supersecret"  # Für Session-Handling
@@ -137,10 +138,29 @@ def chat(team_id):
 @app.route('/profile/<int:user_id>')
 @login_required
 def profile(user_id):
+    # Lade das Profil, das angezeigt werden soll
     response = requests.get(f'{BACKEND_URL}/user/{user_id}')
+    print(response.json()) 
+    
+    # Separat: aktuell eingeloggter Nutzer
+    current_user_id = session.get('user_id')
+    team_id = None
+
+    if current_user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_res.status_code == 200:
+            current_user = user_res.json()
+            team_id = current_user.get('team_id')
+
     if response.status_code == 200:
         user = response.json()
-        return render_template('profile.html', user=user, logged_in='user_id' in session)
+        return render_template(
+            'profile.html',
+            user=user,  # angezeigtes Profil
+            team_id=team_id,
+            logged_in=True,
+            user_id=current_user_id  # eingeloggter Nutzer
+        )
     else:
         return "Benutzer nicht gefunden", 404
 
@@ -157,7 +177,13 @@ def register():
         location = request.form.get('location', '')
         latitude = request.form.get('latitude', '')
         longitude = request.form.get('longitude', '')
-        response = requests.post(f'{BACKEND_URL}/auth/register', json={
+        photo = request.files.get('photo')
+
+
+        files = {'photo': photo} if photo and photo.filename else {}
+
+        # Formulardaten als dictionary
+        data = {
             'username': username,
             'password': password,
             'team_id': team_id,
@@ -165,12 +191,20 @@ def register():
             'location': location,
             'latitude': latitude,
             'longitude': longitude
-        })
+        }
+
+        # POST mit multipart/form-data
+        response = requests.post(f'{BACKEND_URL}/auth/register', data=data, files=files)
+
         if response.status_code == 201:
             return render_template('register.html', success="Registrierung erfolgreich! Du kannst dich jetzt einloggen.", teams=teams)
         else:
-            error = response.json().get('message', 'Registrierung fehlgeschlagen.')
+            try:
+                error = response.json().get('message', 'Registrierung fehlgeschlagen.')
+            except Exception:
+                error = 'Registrierung fehlgeschlagen.'
             return render_template('register.html', error=error, teams=teams)
+
     return render_template('register.html', teams=teams)
 
 @app.route('/projects')
@@ -193,30 +227,46 @@ def projects():
     return render_template('projects.html',
                            projects=projects,
                            team_id=team_id,
-                           logged_in='user_id' in session)
+                           logged_in='user_id' in session,
+                           user_id=session.get('user_id'))
 
 @app.route('/project/<int:project_id>')
 def project_detail(project_id):
     token = request.cookies.get('jwt_token')
     headers = {'Authorization': f'Bearer {token}'} if token else {}
+
     # Projekt-Infos laden
-    project_response = requests.get(f'{BACKEND_URL}/projects', headers=headers)
-    project = None
+    project_response = requests.get(f'{BACKEND_URL}/project/{project_id}', headers=headers)
+    print("=== RAW RESPONSE ===")
+    print(project_response.text)
+    project = project_response.json() if project_response.status_code == 200 else None
+    print("=== PARSED PROJECT ===")
+    print(project)
     team_name = None
-    if project_response.status_code == 200:
-        projects = project_response.json()
-        for p in projects:
-            if p['id'] == project_id:
-                project = p
-                break
+    if project and project.get('team_id'):
+        project_team_id = project['team_id']
+        team_response = requests.get(f'{BACKEND_URL}/team/{project_team_id}')
+        if team_response.status_code == 200:
+            team = team_response.json()
+            team_name = team.get('name')
         if project:
             # Team-Name laden
-            team_id = project.get('team_id')
-            if team_id:
-                team_response = requests.get(f'{BACKEND_URL}/team/{team_id}')
+            project_team_id = project.get('team_id')
+            if project_team_id:
+                team_response = requests.get(f'{BACKEND_URL}/team/{project_team_id}')
                 if team_response.status_code == 200:
                     team = team_response.json()
                     team_name = team.get('name')
+
+    # Aktuellen Benutzer & Team-ID ermitteln (für Navbar)
+    current_user_id = session.get('user_id')
+    team_id = None
+    if current_user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_res.status_code == 200:
+            user = user_res.json()
+            team_id = user.get('team_id')
+
     # Tasks laden
     response = requests.get(f'{BACKEND_URL}/project/{project_id}/tasks', headers=headers)
     assigned_usernames = {}
@@ -231,13 +281,25 @@ def project_detail(project_id):
                     assigned_usernames[uid] = user_response.json().get('username')
                 else:
                     assigned_usernames[uid] = f"User {uid}"
-        return render_template('project_detail.html', tasks=tasks, project_id=project_id, project=project, team_name=team_name, assigned_usernames=assigned_usernames)
+
+        return render_template(
+            'project_detail.html',
+            tasks=tasks,
+            project_id=project_id,
+            project=project,
+            team_name=team_name,
+            assigned_usernames=assigned_usernames,
+            team_id=team_id,
+            logged_in='user_id' in session,
+            user_id=session.get('user_id')
+        )
     else:
         try:
             error_msg = response.json()
         except Exception:
             error_msg = response.text
         return f"Fehler beim Laden der Tasks (Status: {response.status_code}): {error_msg}", 500
+
 
 @app.route('/projects/new', methods=['GET', 'POST'])
 def create_project_view():
@@ -262,8 +324,8 @@ def create_project_view():
             team_id = user.get('team_id')
     if request.method == 'POST':
         name = request.form['name']
-        # Team-ID automatisch verwenden
-        data = {'name': name, 'team_id': team_id}
+        deadline = request.form.get('deadline')
+        data = {'name': name, 'team_id': team_id, 'deadline': deadline if deadline else None}
         response = requests.post(f'{BACKEND_URL}/project', json=data, headers=headers)
         if response.status_code == 200:
             return redirect(url_for('projects'))
@@ -273,22 +335,41 @@ def create_project_view():
             except Exception:
                 error_msg = response.text
             return f"Fehler beim Anlegen des Projekts (Status: {response.status_code}): {error_msg}", 500
-    return render_template('create_project.html', team_id=team_id)
+    return render_template('create_project.html', team_id=team_id, logged_in='user_id' in session, user_id=session.get('user_id'))
 
 @app.route('/project/<int:project_id>/tasks/new', methods=['GET', 'POST'])
 def create_task_view(project_id):
     token = request.cookies.get('jwt_token')
     headers = {'Authorization': f'Bearer {token}'} if token else {}
+
+    # Aktuellen Benutzer und team_id ermitteln
+    current_user_id = session.get('user_id')
+    team_id = None
+    if current_user_id:
+        user_response = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_response.status_code == 200:
+            user = user_response.json()
+            team_id = user.get('team_id')
+
     if request.method == 'POST':
         title = request.form['title']
         description = request.form.get('description', '')
-        data = {'title': title, 'description': description}
+        deadline = request.form.get('deadline')
+        data = {'title': title, 'description': description, 'deadline': deadline if deadline else None}
         response = requests.post(f'{BACKEND_URL}/project/{project_id}/task', json=data, headers=headers)
         if response.status_code == 200:
             return redirect(url_for('project_detail', project_id=project_id))
         else:
             return "Fehler beim Anlegen des Tasks", 500
-    return render_template('create_task.html', project_id=project_id)
+
+    return render_template(
+        'create_task.html',
+        project_id=project_id,
+        team_id=team_id,
+        logged_in='user_id' in session,
+        user_id=session.get('user_id')
+    )
+
 
 @app.route('/task/<int:task_id>/move', methods=['POST'])
 def move_task(task_id):
@@ -369,6 +450,71 @@ def proxy_login():
     resp = make_response({"message": "Login erfolgreich"})
     resp.set_cookie('jwt_token', access_token, httponly=True, samesite='Lax')
     return resp
+
+@app.route('/start')
+@login_required
+def dashboard():
+    user_id = session.get('user_id')
+
+    # Nutzer & Team laden
+    user_res = requests.get(f'{BACKEND_URL}/user/{user_id}')
+    if user_res.status_code != 200:
+        return "User konnte nicht geladen werden", 500
+
+    user = user_res.json()
+    team_id = int(user.get('team_id') or 0)
+
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+
+    # Projekte holen
+    projects = []
+    urgent_projects = []
+    projects_res = requests.get(f'{BACKEND_URL}/projects', headers=headers)
+    if projects_res.status_code == 200:
+        all_projects = projects_res.json()
+        projects = [p for p in all_projects if p.get("team_id") == team_id]
+
+        with_deadline = [p for p in projects if p.get("deadline") and p.get("status") != "Done"]
+        if with_deadline:
+            urgent_projects = sorted(with_deadline, key=lambda p: p["deadline"])[:3]
+        else:
+            urgent_projects = projects[:3]
+
+    # Tasks holen
+    tasks = []
+    urgent_tasks = []
+    tasks_res = requests.get(f'{BACKEND_URL}/user/{user_id}/tasks', headers=headers)
+    if tasks_res.status_code == 200:
+        tasks = tasks_res.json()
+
+        with_deadline = [t for t in tasks if t.get("deadline") and t.get("status") != "Done"]
+        if with_deadline:
+            urgent_tasks = sorted(with_deadline, key=lambda t: t["deadline"])[:3]
+        else:
+            urgent_tasks = tasks[:3]
+
+    return render_template('dashboard.html',
+                           user=user,
+                           tasks=urgent_tasks,
+                           projects=urgent_projects,
+                           team_id=team_id,
+                           logged_in=True,
+                           user_id=user_id)
+
+@app.route('/project/<int:project_id>/update_deadline', methods=['POST'])
+def update_project_deadline_view(project_id):
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+    deadline = request.form.get('deadline')  # kann leer sein
+    data = {'deadline': deadline} if deadline else {'deadline': None}
+    res = requests.patch(f'{BACKEND_URL}/project/{project_id}/deadline', json=data, headers=headers)
+    if res.status_code == 200:
+        return redirect(url_for('project_detail', project_id=project_id))
+    else:
+        return f"Fehler beim Aktualisieren der Projekt-Deadline: {res.text}", 500
+
+
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
