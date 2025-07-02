@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, m
 from flask import Response
 import requests
 from functools import wraps
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "supersecret"  # Für Session-Handling
@@ -235,15 +236,19 @@ def project_detail(project_id):
     headers = {'Authorization': f'Bearer {token}'} if token else {}
 
     # Projekt-Infos laden
-    project_response = requests.get(f'{BACKEND_URL}/projects', headers=headers)
-    project = None
+    project_response = requests.get(f'{BACKEND_URL}/project/{project_id}', headers=headers)
+    print("=== RAW RESPONSE ===")
+    print(project_response.text)
+    project = project_response.json() if project_response.status_code == 200 else None
+    print("=== PARSED PROJECT ===")
+    print(project)
     team_name = None
-    if project_response.status_code == 200:
-        projects = project_response.json()
-        for p in projects:
-            if p['id'] == project_id:
-                project = p
-                break
+    if project and project.get('team_id'):
+        project_team_id = project['team_id']
+        team_response = requests.get(f'{BACKEND_URL}/team/{project_team_id}')
+        if team_response.status_code == 200:
+            team = team_response.json()
+            team_name = team.get('name')
         if project:
             # Team-Name laden
             project_team_id = project.get('team_id')
@@ -319,8 +324,8 @@ def create_project_view():
             team_id = user.get('team_id')
     if request.method == 'POST':
         name = request.form['name']
-        # Team-ID automatisch verwenden
-        data = {'name': name, 'team_id': team_id}
+        deadline = request.form.get('deadline')
+        data = {'name': name, 'team_id': team_id, 'deadline': deadline if deadline else None}
         response = requests.post(f'{BACKEND_URL}/project', json=data, headers=headers)
         if response.status_code == 200:
             return redirect(url_for('projects'))
@@ -349,7 +354,8 @@ def create_task_view(project_id):
     if request.method == 'POST':
         title = request.form['title']
         description = request.form.get('description', '')
-        data = {'title': title, 'description': description}
+        deadline = request.form.get('deadline')
+        data = {'title': title, 'description': description, 'deadline': deadline if deadline else None}
         response = requests.post(f'{BACKEND_URL}/project/{project_id}/task', json=data, headers=headers)
         if response.status_code == 200:
             return redirect(url_for('project_detail', project_id=project_id))
@@ -450,51 +456,64 @@ def proxy_login():
 def dashboard():
     user_id = session.get('user_id')
 
-    # 1. Hole den eingeloggten User inkl. Team
+    # Nutzer & Team laden
     user_res = requests.get(f'{BACKEND_URL}/user/{user_id}')
     if user_res.status_code != 200:
         return "User konnte nicht geladen werden", 500
 
     user = user_res.json()
-    team_id = user.get('team_id')
-    if isinstance(team_id, str):
-        team_id = int(team_id)
+    team_id = int(user.get('team_id') or 0)
 
-    # 2. Hole Projekte dieses Teams
-    projects = []
-    if team_id:
-        token = request.cookies.get('jwt_token')
-        headers = {'Authorization': f'Bearer {token}'} if token else {}
-        projects_res = requests.get(f'{BACKEND_URL}/projects', headers=headers)
-    
-        if projects_res.status_code == 200:
-            all_projects = projects_res.json()
-
-
-            # Nur Projekte mit der Team-ID des Users
-            projects = [p for p in all_projects if p.get("team_id") == team_id]
-
-    # 3. Hole Tasks des Users
     token = request.cookies.get('jwt_token')
     headers = {'Authorization': f'Bearer {token}'} if token else {}
 
-    tasks_res = requests.get(f'{BACKEND_URL}/user/{user_id}/tasks', headers=headers)  # ✅ hier!
-    print("DEBUG: Tasks response", tasks_res.status_code)
+    # Projekte holen
+    projects = []
+    urgent_projects = []
+    projects_res = requests.get(f'{BACKEND_URL}/projects', headers=headers)
+    if projects_res.status_code == 200:
+        all_projects = projects_res.json()
+        projects = [p for p in all_projects if p.get("team_id") == team_id]
 
+        with_deadline = [p for p in projects if p.get("deadline") and p.get("status") != "Done"]
+        if with_deadline:
+            urgent_projects = sorted(with_deadline, key=lambda p: p["deadline"])[:3]
+        else:
+            urgent_projects = projects[:3]
+
+    # Tasks holen
+    tasks = []
+    urgent_tasks = []
+    tasks_res = requests.get(f'{BACKEND_URL}/user/{user_id}/tasks', headers=headers)
     if tasks_res.status_code == 200:
-        print("DEBUG: Tasks JSON", tasks_res.json())
         tasks = tasks_res.json()
-    else:
-        print("DEBUG: Inhalt bei Fehler:", tasks_res.text)
-        tasks = []
+
+        with_deadline = [t for t in tasks if t.get("deadline") and t.get("status") != "Done"]
+        if with_deadline:
+            urgent_tasks = sorted(with_deadline, key=lambda t: t["deadline"])[:3]
+        else:
+            urgent_tasks = tasks[:3]
 
     return render_template('dashboard.html',
                            user=user,
-                           tasks=tasks,
-                           projects=projects,
+                           tasks=urgent_tasks,
+                           projects=urgent_projects,
                            team_id=team_id,
                            logged_in=True,
                            user_id=user_id)
+
+@app.route('/project/<int:project_id>/update_deadline', methods=['POST'])
+def update_project_deadline_view(project_id):
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+    deadline = request.form.get('deadline')  # kann leer sein
+    data = {'deadline': deadline} if deadline else {'deadline': None}
+    res = requests.patch(f'{BACKEND_URL}/project/{project_id}/deadline', json=data, headers=headers)
+    if res.status_code == 200:
+        return redirect(url_for('project_detail', project_id=project_id))
+    else:
+        return f"Fehler beim Aktualisieren der Projekt-Deadline: {res.text}", 500
+
 
 
 if __name__ == '__main__':

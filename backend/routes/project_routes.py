@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 from extensions import db
 from models import Project, Task, Team, User
@@ -19,7 +20,9 @@ def create_project():
     team_id = data.get('team_id')
     if not user_in_team(user_id, team_id):
         return jsonify({'error': 'Kein Zugriff auf dieses Team'}), 403
-    project = Project(name=data['name'], status=data.get('status', 'To Do'), team_id=team_id)
+    deadline_str = data.get('deadline')
+    deadline = datetime.strptime(deadline_str, '%Y-%m-%d') if deadline_str else None
+    project = Project(name=data['name'], status=data.get('status', 'To Do'), team_id=team_id, deadline=deadline)
     db.session.add(project)
     db.session.commit()
     return jsonify({'id': project.id, 'name': project.name, 'status': project.status, 'team_id': project.team_id})
@@ -32,8 +35,23 @@ def get_projects():
     user = User.query.get(user_id)
     projects = Project.query.filter_by(team_id=user.team_id).all()
     return jsonify([
-        {'id': p.id, 'name': p.name, 'status': p.status, 'team_id': p.team_id} for p in projects
+        {'id': p.id, 'name': p.name, 'status': p.status, 'team_id': p.team_id, 'deadline': p.deadline.isoformat() if p.deadline else None} for p in projects
     ])
+
+@project_bp.route('/project/<int:project_id>', methods=['GET'])
+@jwt_required()
+def get_project_by_id(project_id):
+    user_id = get_jwt_identity()
+    project = Project.query.get_or_404(project_id)
+    if not user_in_team(user_id, project.team_id):
+        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
+    return jsonify({
+        'id': project.id,
+        'name': project.name,
+        'status': project.status,
+        'team_id': project.team_id,
+        'deadline': project.deadline.isoformat() if project.deadline else None
+    })
 
 # Projekt-Status ändern
 @project_bp.route('/project/<int:project_id>/status', methods=['PATCH'])
@@ -69,7 +87,9 @@ def create_task(project_id):
     project = Project.query.get_or_404(project_id)
     if not user_in_team(user_id, project.team_id):
         return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
-    task = Task(title=data['title'], description=data.get('description', ''), status=data.get('status', 'To Do'), project_id=project_id)
+    deadline_str = data.get('deadline')
+    deadline = datetime.strptime(deadline_str, '%Y-%m-%d') if deadline_str else None
+    task = Task(title=data['title'], description=data.get('description', ''), status=data.get('status', 'To Do'), project_id=project_id, deadline=deadline)
     db.session.add(task)
     db.session.commit()
     # Nach Anlegen: Projektstatus neu berechnen
@@ -87,7 +107,7 @@ def get_tasks(project_id):
         return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
     tasks = Task.query.filter_by(project_id=project_id).all()
     return jsonify([
-        {'id': t.id, 'title': t.title, 'description': t.description, 'status': t.status, 'project_id': t.project_id, 'assigned_user_id': t.assigned_user_id} for t in tasks
+        {'id': t.id, 'title': t.title, 'description': t.description, 'status': t.status, 'project_id': t.project_id, 'assigned_user_id': t.assigned_user_id, 'deadline': t.deadline.isoformat() if t.deadline else None} for t in tasks
     ])
 
 # Task-Status ändern (z.B. für Kanban-Board)
@@ -137,6 +157,49 @@ def get_tasks_by_user(user_id):
             'id': t.id,
             'title': t.title,
             'status': t.status,
-            'project_id': t.project_id
+            'project_id': t.project_id,
+            'deadline': t.deadline.isoformat() if t.deadline else None
         } for t in tasks
     ])
+
+@project_bp.route('/project/<int:project_id>/deadline', methods=['PATCH'])
+@jwt_required()
+def update_project_deadline(project_id):
+    data = request.json
+    user_id = get_jwt_identity()
+    project = Project.query.get_or_404(project_id)
+
+    if not user_in_team(user_id, project.team_id):
+        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
+
+    deadline_str = data.get('deadline')
+    if deadline_str:
+        from datetime import datetime
+        project.deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
+    else:
+        project.deadline = None
+
+    db.session.commit()
+    return jsonify({'id': project.id, 'deadline': project.deadline.isoformat() if project.deadline else None})
+
+@project_bp.route('/task/<int:task_id>/deadline', methods=['PATCH'])
+@jwt_required()
+def update_task_deadline(task_id):
+    data = request.json
+    user_id = get_jwt_identity()
+    task = Task.query.get_or_404(task_id)
+    project = Project.query.get(task.project_id)
+
+    if not user_in_team(user_id, project.team_id):
+        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
+
+    deadline_str = data.get('deadline')
+    if deadline_str:
+        from datetime import datetime
+        task.deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
+    else:
+        task.deadline = None
+
+    db.session.commit()
+    return jsonify({'id': task.id, 'deadline': task.deadline.isoformat() if task.deadline else None})
+

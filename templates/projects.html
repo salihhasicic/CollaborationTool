@@ -45,6 +45,9 @@
                     <h3>{{ project.name }}</h3>
                     <div class="user-card-ids">
                         <span><b>Status:</b> {{ project.status }}</span>
+                        {% if project.deadline %}
+                            <small>Deadline: {{ project.deadline[:10] }}</small><br>
+                        {% endif %}
                     </div>
                     <a href="/project/{{ project.id }}" class="user-card-profile-link">Details & Tasks</a>
                 </div>

@@ -30,6 +30,8 @@
         <h2>Neues Projekt anlegen</h2>
         <form method="post" style="max-width:420px;margin:2rem auto;display:flex;flex-direction:column;gap:16px;">
             <input type="text" name="name" placeholder="Projektname" required>
+            <label for="deadline">Deadline (optional):</label>
+            <input type="date" name="deadline" id="deadline">
             <button type="submit">Anlegen</button>
         </form>
         <a href="/projects"><button type="button" style="margin-top:18px;">Zurück zu den Projekten</button></a>
