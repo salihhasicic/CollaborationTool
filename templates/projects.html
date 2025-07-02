@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Projekte</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Projekte des Teams {{ team_id }}</title>
+         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         /* Optional: Zusätzliche Styles für Projekte-Seite */
     </style>
@@ -10,8 +10,8 @@
 <body>
     <nav>
         <a href="/">Start</a>
-        <a href="/projects">Projekte</a>
-        <a href="/users" class="active">Benutzer</a>
+        <a href="/projects" class="active">Projekte</a>
+        <a href="/users">Benutzer</a>
         <a href="/chats">Chat</a>
         {% if team_id %}
             <a href="/team/{{ team_id }}">Team</a>
@@ -28,7 +28,13 @@
     
     </nav>
     <div class="container">
-        <h2>Projekte</h2>
+        <h2>
+    {% if team_id %}
+        Projekte des Teams {{ team_id }}
+    {% else %}
+        Projekte (kein Team zugewiesen)
+    {% endif %}
+</h2>
         <a href="/projects/new"><button type="button" style="margin-bottom:18px;">Neues Projekt anlegen</button></a>
         <div class="users-list">
             {% if projects|length == 0 %}
