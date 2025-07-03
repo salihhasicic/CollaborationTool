@@ -53,24 +53,22 @@
 </head>
 
 <body>
-    <nav>
-        <a href="/start">Dashboard</a>
-        <a href="/projects">Projekte</a>
-        <a href="/users">Benutzer</a>
-        <a href="/chats">Chat</a>
-        {% if team_id %}
-        <a href="/team/{{ team_id }}">Team</a>
-        <a href="/chat/{{ team_id }}">Team-Chat</a>
-        {% endif %}
-        {% if logged_in %}
-        <div style="margin-left:auto; display:flex; gap:1rem;">
-            <a href="/profile/{{ user_id }}" class="active">Mein Profil</a>
-            <a href="/logout">Logout</a>
-        </div>
-        {% else %}
-        <a href="/login" style="margin-left:auto;">Login</a>
-        {% endif %}
-    </nav>
+    <nav class="sidebar">
+    <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+    <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+    <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+    <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
+    {% if team_id %}
+        <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
+        <a href="/chat/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
+    {% endif %}
+    {% if logged_in %}
+        <a href="/profile/{{ user.id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein Profil</span></a>
+        <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
+    {% else %}
+        <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
+    {% endif %}
+</nav>
     <div class="container">
         {% if user %}
         <div class="profile-header">

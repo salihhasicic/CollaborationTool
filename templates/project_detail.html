@@ -1,95 +1,310 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Projekt-Details</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* Optional: Zusätzliche Styles für Tasks-Seite */
+        .task-card {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            /* <-- Abstand zwischen Karten */
+        }
+
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.85em;
+            font-weight: 500;
+            border-radius: 999px;
+            width: fit-content;
+        }
+
+        .badge.deadline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge.status {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .badge.assigned {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .task-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .select-status {
+            appearance: none;
+            padding: 8px 12px;
+            border: 1.5px solid var(--gray);
+            border-radius: 8px;
+            background: #f1f5f9;
+            font-size: 0.95em;
+            color: #111;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .select-status:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #e0ecff;
+        }
+
+        .date-input {
+            padding: 8px 12px;
+            border: 1.5px solid var(--gray);
+            border-radius: 8px;
+            background: #f7fafc;
+            font-size: 0.95em;
+            width: 100%;
+            color: #222;
+        }
+
+        .date-input:focus {
+            border-color: var(--primary);
+            background: #e0ecff;
+            outline: none;
+        }
+
+        .small-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            margin-top: 6px;
+        }
+
+        .small-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .date-input {
+            padding: 10px 14px;
+            border: 1.5px solid var(--gray);
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 1em;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            color: #111827;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: border 0.2s ease, background 0.2s ease;
+            width: 100%;
+            max-width: 100%;
+            /* <-- das hier ist entscheidend */
+            box-sizing: border-box;
+            /* verhindert Überlauf durch Padding */
+        }
+
+        .date-input:focus {
+            border-color: var(--primary);
+            background: #e0ecff;
+            outline: none;
+        }
+
+        .date-input::-webkit-calendar-picker-indicator {
+            filter: invert(0.5);
+            cursor: pointer;
+        }
+
+        .project-deadline-box {
+            background: #f1f5f9;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .project-deadline-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 1em;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .project-deadline-display .label {
+            color: #2563eb;
+        }
+
+        .project-deadline-display .date {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .deadline-form-stacked .form-label {
+            font-weight: 500;
+            font-size: 0.95em;
+            color: #374151;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .deadline-form-stacked .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .kanban-heading {
+            margin: 0 0 16px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary-dark);
+            font-size: 1.15em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
+
 <body>
-    <nav>
-        <a href="/start">Dashboard</a>
-        <a href="/projects" class="active">Projekte</a>
-        <a href="/users" >Benutzer</a>
-        <a href="/chats">Chat</a>
+    <nav class="sidebar">
+        <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+        <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+        <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+        <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
         {% if team_id %}
-            <a href="/team/{{ team_id }}">Team</a>
-            <a href="/chat/{{ team_id }}">Team-Chat</a>
+        <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
+        <a href="/chat/{{ team_id }}"><img
+                src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
         {% endif %}
-    
         {% if logged_in %}
-            <div style="margin-left:auto; display:flex; gap:1rem;">
-            <a href="/profile/{{ user_id }}">Mein Profil</a>
-            <a href="/logout">Logout</a>
-        </div>
+        <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein
+                Profil</span></a>
+        <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
         {% else %}
-            <a href="/login" style="margin-left:auto;">Login</a>
+        <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
         {% endif %}
     </nav>
     <div class="container">
         <h2>Tasks für Projekt #{{ project_id }}</h2>
         <div style="margin-bottom:12px;">
-        {% if team_name %}
-        <div style="color:#2563eb;font-size:1.1em;">
-            <b>Team:</b> {{ team_name }}
-        </div>
-        {% endif %}
+            {% if team_name %}
+            <div style="color:#2563eb;font-size:1.1em;">
+                <b>Team:</b> {{ team_name }}
+            </div>
+            {% endif %}
 
-            {% if project['deadline'] %}
-        <b>Deadline:</b> {{ project['deadline'][:10] }}
-        {% else %}
-        <b>Deadline:</b> keine gesetzt
-        {% endif %}
-    </div>
-
-    <form method="post" action="/project/{{ project_id }}/update_deadline">
-    <label for="project_deadline">Projekt-Deadline ändern:</label>
-    <input type="date" name="deadline" id="project_deadline" value="{{ project['deadline'][:10] if project['deadline'] }}">
-    <button type="submit">Speichern</button>
-</form>
-        <a href="/project/{{ project_id }}/tasks/new"><button type="button" style="margin-bottom:18px;">Neuen Task anlegen</button></a>
-        <div class="users-list">
-            {% if tasks|length == 0 %}
-                <div style="color:#2563eb;font-size:1.2em;margin-top:24px;">Keine Tasks vorhanden</div>
-            {% else %}
-                {% for task in tasks %}
-                <div class="user-card">
-                    <h3>{{ task.title }}</h3>
-                    <div class="user-card-ids">
-                        <span><b>Status:</b> {{ task.status }}</span>
-                        {% if task.deadline %}
-                            <small>Deadline: {{ task.deadline[:10] }}</small><br>
-                        {% endif %}
-                        {% if task.assigned_user_id %}
-                            <span style="margin-left:12px;"><b>Zugewiesen an:</b> {{ assigned_usernames[task.assigned_user_id] }}</span>
+            <div class="project-deadline-box">
+                <div class="project-deadline-display">
+                    <span class="label">📅 Deadline:</span>
+                    <span class="date">
+                        {% if project['deadline'] %}
+                        {{ project['deadline'][:10] }}
                         {% else %}
-                            <form method="post" action="/task/{{ task.id }}/assign" style="display:inline;margin-left:12px;">
+                        Keine gesetzt
+                        {% endif %}
+                    </span>
+                </div>
+
+                <form method="post" action="/project/{{ project_id }}/update_deadline" class="deadline-form-stacked">
+                    <label for="project_deadline" class="form-label">Neue Deadline setzen:</label>
+                    <div class="form-row">
+                        <input type="date" name="deadline" id="project_deadline"
+                            value="{{ project['deadline'][:10] if project['deadline'] }}" class="date-input">
+                        <button type="submit" class="small-btn">Speichern</button>
+                    </div>
+                </form>
+            </div>
+
+            <a href="/project/{{ project_id }}/tasks/new"><button type="button" style="margin-bottom:18px;">Neuen Task
+                    anlegen</button></a>
+            <h3 style="margin-top: 32px;">Aufgabenübersicht</h3>
+
+            <div style="display: flex; gap: 24px; margin-top: 18px; flex-wrap: wrap;">
+                {% for status in ['To Do', 'In Progress', 'Done'] %}
+                <div style="flex: 1; min-width: 280px;">
+                    <h3 class="kanban-heading">
+                        {% if status == 'To Do' %}📝{% elif status == 'In Progress' %}🚧{% elif status == 'Done' %}✅{%
+                        endif %}
+                        {{ status }}
+                    </h3>
+
+                    {% for task in tasks if task.status == status %}
+                    <div class="task-card">
+                        <strong>{{ task.title }}</strong>
+
+                        <div class="task-meta">
+                            <span class="badge deadline">
+                                📅 {{ task.deadline[:10] if task.deadline else "Keine Deadline" }}
+                            </span>
+                            <span class="badge status">
+                                📌 {{ task.status }}
+                            </span>
+                            {% if task.assigned_user_id %}
+                            <span class="badge assigned">👤 {{ assigned_usernames[task.assigned_user_id] }}</span>
+                            {% else %}
+                            <form method="post" action="/task/{{ task.id }}/assign">
                                 <button type="submit">Task übernehmen</button>
                             </form>
+                            {% endif %}
+                        </div>
+
+                        <p style="margin: 10px 0;">{{ task.description }}</p>
+                        {% if task.assigned_user_id == user_id %}
+                        <div class="task-actions">
+                            <form method="post" action="/task/{{ task.id }}/move">
+                                <input type="hidden" name="project_id" value="{{ project_id }}">
+                                <select name="status" class="select-status" required>
+                                    <option value="To Do" {% if task.status=='To Do' %}selected{% endif %}>To Do
+                                    </option>
+                                    <option value="In Progress" {% if task.status=='In Progress' %}selected{% endif %}>
+                                        In
+                                        Progress</option>
+                                    <option value="Done" {% if task.status=='Done' %}selected{% endif %}>Done</option>
+                                </select>
+                                <button type="submit" class="small-btn">Status ändern</button>
+                            </form>
+
+                            <form method="post" action="/task/{{ task.id }}/update_deadline">
+                                <input type="hidden" name="project_id" value="{{ project_id }}">
+                                <input type="date" name="deadline" class="date-input"
+                                    value="{{ task.deadline[:10] if task.deadline }}">
+                                <button type="submit" class="small-btn">Speichern</button>
+                            </form>
+                        </div>
                         {% endif %}
                     </div>
-                    <div class="user-card-skills">{{ task.description }}</div>
-                    <form method="post" action="/task/{{ task.id }}/move" style="margin-top:1rem;display:flex;gap:0.5rem;">
-                        <input type="hidden" name="project_id" value="{{ project_id }}">
-                        <select name="status" required>
-                            <option value="To Do" {% if task.status=='To Do' %}selected{% endif %}>To Do</option>
-                            <option value="In Progress" {% if task.status=='In Progress' %}selected{% endif %}>In Progress</option>
-                            <option value="Done" {% if task.status=='Done' %}selected{% endif %}>Done</option>
-                        </select>
-                        <button type="submit">Verschieben</button>
-                    </form>
-                    <form method="post" action="/task/{{ task.id }}/update_deadline" style="margin-top:10px;">
-                        <input type="hidden" name="project_id" value="{{ project_id }}">
-                        <label for="deadline_{{ task.id }}">Deadline ändern:</label>
-                        <input type="date" name="deadline" id="deadline_{{ task.id }}" value="{{ task.deadline[:10] if task.deadline }}">
-                        <button type="submit">Speichern</button>
-                    </form>
+                    {% endfor %}
                 </div>
                 {% endfor %}
-            {% endif %}
+            </div>
+            <a href="/projects"><button type="button" style="margin-top:18px;">Zurück zu den Projekten</button></a>
         </div>
-        <a href="/projects"><button type="button" style="margin-top:18px;">Zurück zu den Projekten</button></a>
-    </div>
 </body>
+
 </html>

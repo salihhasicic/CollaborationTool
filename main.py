@@ -68,7 +68,7 @@ def list_users():
             team_id = user.get('team_id')
     if response.status_code == 200:
         users = response.json()
-        return render_template('users.html', users=users, skill=skill, logged_in=True, team_id=team_id)
+        return render_template('users.html', users=users, skill=skill, logged_in=True, team_id=team_id, user_id=session.get('user_id'))
     else:
         return "Fehler beim Laden der Benutzer", 500
 
@@ -96,7 +96,7 @@ def show_team(team_id):
     if response.status_code == 200:
         all_users = response.json()
         team_members = [u for u in all_users if u.get('team_id') == team_id]
-        return render_template('team.html', team_id=team_id, team_members=team_members, ablage=ablage, logged_in='user_id' in session, teams=teams)
+        return render_template('team.html', team_id=team_id, team_members=team_members, ablage=ablage, logged_in='user_id' in session, teams=teams, user_id=session.get('user_id'))
     else:
         return "Fehler beim Laden des Teams", 500
 
@@ -412,7 +412,23 @@ def assign_task_view(task_id):
 @app.route('/private_chat/<int:partner_id>')
 @login_required
 def private_chat(partner_id):
-    return render_template('private_chat.html')
+    user_id = session.get('user_id')
+    team_id = None
+
+    # Team-ID aus dem aktuellen Benutzerprofil holen
+    if user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{user_id}')
+        if user_res.status_code == 200:
+            user = user_res.json()
+            team_id = user.get('team_id')
+
+    return render_template(
+        'private_chat.html',
+        partner_id=partner_id,
+        user_id=user_id,
+        team_id=team_id,
+        logged_in=True
+    )
 
 @app.route('/chats')
 def chats():
@@ -426,7 +442,7 @@ def chats():
         if user_res.status_code == 200:
             user = user_res.json()
             team_id = user.get('team_id')
-    return render_template('chats.html', users=users, current_user_id=current_user_id, team_id=team_id, logged_in='user_id' in session)
+    return render_template('chats.html', users=users, current_user_id=current_user_id, team_id=team_id, logged_in='user_id' in session, user_id=session.get('user_id'))
 
 @app.route('/chat/private/send', methods=['POST'])
 def proxy_private_send():
