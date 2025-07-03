@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <title>Dashboard – {{ user.username }}</title>
@@ -13,7 +14,7 @@
             background: #f9fafb;
             padding: 16px;
             border-radius: 10px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
             margin-bottom: 14px;
         }
 
@@ -53,112 +54,274 @@
         .empty-msg {
             color: #aaa;
         }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* drei gleich breite Spalten */
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .card.wide {
+            grid-column: span 3;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                /* alles untereinander */
+            }
+
+            .card.wide {
+                grid-column: span 1;
+            }
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .grid-btn {
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            background: #2563eb;
+            color: rgb(0, 0, 0);
+        }
+
+        .grid-btn:hover {
+            box-shadow: 0 6px 24px rgba(37, 99, 235, 0.18);
+            /* optional stärker beim Hover */
+        }
+
+        .card.quick-actions {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card.quick-actions .quick-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+            height: 100%;
+        }
+
+        .card.task-summary {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .task-stats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat {
+            background: #f0f4ff;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .stat .label {
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 6px;
+            color: #111827;
+        }
+
+        .stat .count {
+            font-size: 1.9em;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .task-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .task-card {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+            /* Abstand zwischen Elementen */
+        }
+
+        .task-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.85em;
+            font-weight: 500;
+            border-radius: 999px;
+            width: fit-content;
+        }
+
+        .badge.deadline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge.status {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
     </style>
 </head>
+
 <body>
 
-<nav>
-    <a href="/start" class="active">Dashboard</a>
-    <a href="/projects">Projekte</a>
-    <a href="/users">Benutzer</a>
-    <a href="/chats">Chat</a>
-    {% if team_id %}
-        <a href="/team/{{ team_id }}">Team</a>
-        <a href="/chat/{{ team_id }}">Team-Chat</a>
-    {% endif %}
-    {% if logged_in %}
-    <div style="margin-left:auto; display:flex; gap:1rem;">
-        <a href="/profile/{{ user.id }}">Mein Profil</a>
-        <a href="/logout">Logout</a>
-    </div>
-    {% else %}
-        <a href="/login" style="margin-left:auto;">Login</a>
-    {% endif %}
-</nav>
-
-<div class="container">
-    <h2>Willkommen zurück, {{ user.username }} 👋</h2>
-
-    <div class="section">
-    <h3>⚡ Quick Actions</h3>
-    <a class="btn" href="/projects/new">📁 Projekt starten</a>
-    <a class="btn" href="/tasks/new">📝 Task erstellen</a>
-    {% if team_id %}
-        <a class="btn" href="/chat/{{ team_id }}">💬 Mein Team-Chat</a>
-    {% endif %}
-    <a class="btn" href="/users?skill=">🔍 Benutzer nach Skill</a>
-    </div>
-
-    <div class="section">
-    <h3>📦 Task-Zusammenfassung</h3>
-    <div class="card">
-        <b>Offene Tasks:</b> {{ open_task_count }}<br>
-        <b>Erledigte Tasks:</b> {{ closed_task_count }}
-    </div>
-    </div>
-
-
-    <!-- 🔧 Offene Tasks -->
-    <div class="section">
-        <h3>📌 Deine offenen Tasks</h3>
-        {% if tasks and tasks|length > 0 %}
-            {% for task in tasks %}
-                <div class="card">
-                    <h4>{{ task.title }}</h4>
-                    {% if task.deadline %}
-                        <small>Deadline: {{ task.deadline[:10] }}</small><br>
-                    {% endif %}
-                    <small>Status: {{ task.status }}</small><br>
-                    <a class="btn" href="/project/{{ task.project_id }}">Zum Projekt</a>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p class="empty-msg">Keine offenen Tasks – alles erledigt!</p>
+    <nav class="sidebar">
+        <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+        <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+        <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+        <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
+        {% if team_id %}
+        <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
+        <a href="/chat/{{ team_id }}"><img
+                src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
         {% endif %}
-    </div>
-
-    <!-- 📁 Projekte des Teams -->
-    <div class="section">
-        <h3>📁 Projekte deines Teams</h3>
-        {% if projects and projects|length > 0 %}
-            {% for project in projects %}
-                <div class="card">
-                    <h4>{{ project.name }}</h4>
-                    {% if project.deadline %}
-                        <small>Deadline: {{ project.deadline[:10] }}</small><br>
-                    {% endif %}
-                    <small>Status: {{ project.status }}</small><br>
-                    <a class="btn" href="/project/{{ project.id }}">Details & Aufgaben</a>
-                </div>
-            {% endfor %}
+        {% if logged_in %}
+        <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein
+                Profil</span></a>
+        <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
         {% else %}
-            <p class="empty-msg">Aktuell keine Projekte in deinem Team.</p>
+        <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
         {% endif %}
-    </div>
-    <div class="section">
-    <h3>📈 Projekt-Fortschritt</h3>
-    {% for project in progress_projects %}
-        <div class="card">
-            <h4>{{ project.name }}</h4>
-            <small>Status: {{ project.status }}</small><br>
-            <div style="margin: 8px 0;">
-                <div style="background:#e5e7eb; border-radius: 6px; height: 12px;">
-                    <div style="
-                        height: 12px;
-                        width: {{ project.progress }}%;
-                        background: #2563eb;
-                        border-radius: 6px;
-                        transition: width 0.4s;">
+    </nav>
+
+    <div class="container">
+        <h2>Willkommen zurück, {{ user.username }} 👋</h2>
+
+        <div class="dashboard-grid">
+            <!-- Obere 3 Karten -->
+            <div class="card quick-actions">
+                <h3>⚡ Quick Actions</h3>
+                <div class="quick-grid">
+                    <a class="btn grid-btn" href="/projects/new">📁 Projekt starten</a>
+                    <a class="btn grid-btn" href="/tasks/new">📝 Task erstellen</a>
+                    {% if team_id %}
+                    <a class="btn grid-btn" href="/chat/{{ team_id }}">💬 Mein Team-Chat</a>
+                    {% endif %}
+                    <a class="btn grid-btn" href="/users?skill=">🔍 Benutzer nach Skill</a>
+                </div>
+            </div>
+
+            <div class="card task-summary">
+                <h3>📦 Task-Zusammenfassung</h3>
+                <div class="task-stats-grid">
+                    <div class="stat">
+                        <span class="label">Offene Tasks</span>
+                        <span class="count">{{ open_task_count }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Erledigte Tasks</span>
+                        <span class="count">{{ closed_task_count }}</span>
                     </div>
                 </div>
-                <small>{{ project.progress }}% abgeschlossen</small>
             </div>
-            <a class="btn" href="/project/{{ project.id }}">Details</a>
+
+            <div class="card">
+                <h3>📈 Projekt-Fortschritt</h3>
+                {% for project in progress_projects %}
+                <div style="margin-bottom:16px;">
+                    <strong>{{ project.name }}</strong><br>
+                    <small>Status: {{ project.status }}</small>
+                    <div style="background:#e5e7eb; border-radius: 6px; height: 12px; margin: 6px 0;">
+                        <div
+                            style="height: 12px; width: {{ project.progress }}%; background: #2563eb; border-radius: 6px;">
+                        </div>
+                    </div>
+                    <small>{{ project.progress }}% abgeschlossen</small>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Untere 2 Karten -->
+            <div class="card wide">
+                <h3>📌 Deine offenen Tasks</h3>
+                {% if tasks and tasks|length > 0 %}
+                <div class="task-list-grid">
+                    {% for task in tasks %}
+                    <div class="task-card">
+                        <strong>{{ task.title }}</strong>
+                        <div class="task-meta">
+                            <span class="badge deadline">
+                                📅 {{ task.deadline[:10] if task.deadline else "Keine Deadline" }}
+                            </span>
+                            <span class="badge status">📌 {{ task.status }}</span>
+                        </div>
+                        <a class="btn" href="/project/{{ task.project_id }}">Zum Projekt</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-msg">Keine offenen Tasks – alles erledigt!</p>
+                {% endif %}
+            </div>
+
+            <div class="card wide">
+                <h3>📁 Projekte deines Teams</h3>
+                {% if projects and projects|length > 0 %}
+                <div class="task-list-grid">
+                    {% for project in projects %}
+                    <div class="task-card">
+                        <strong>{{ project.name }}</strong>
+                        <div class="task-meta">
+                            <span class="badge deadline">
+                                📅 {{ project.deadline[:10] if project.deadline else "Keine Deadline" }}
+                            </span>
+                            <span class="badge status">📌 {{ project.status }}</span>
+                        </div>
+                        <a class="btn" href="/project/{{ project.id }}">Details & Aufgaben</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-msg">Aktuell keine Projekte in deinem Team.</p>
+                {% endif %}
+            </div>
         </div>
-    {% endfor %}
-</div>
-</div>
+    </div>
 
 
 </body>
+
 </html>
