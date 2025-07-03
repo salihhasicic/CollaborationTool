@@ -3,6 +3,7 @@ from flask import Response
 import requests
 from functools import wraps
 from datetime import datetime
+import random
 
 app = Flask(__name__)
 app.secret_key = "supersecret"  # Für Session-Handling
@@ -481,6 +482,25 @@ def dashboard():
         else:
             urgent_projects = projects[:3]
 
+        
+        progress_projects = []
+        random_projects = random.sample(projects, min(3, len(projects)))
+
+        for project in random_projects:
+            project_id = project['id']
+            progress = 0  # <-- Default setzen, um Fehler zu vermeiden
+
+            task_res = requests.get(f'{BACKEND_URL}/project/{project_id}/tasks', headers=headers)
+
+            if task_res.status_code == 200:
+                tasks = task_res.json()
+                total = len(tasks)
+                done = sum(1 for t in tasks if t['status'] == 'Done')
+                progress = int((done / total) * 100) if total > 0 else 0
+
+            project['progress'] = progress
+            progress_projects.append(project)
+
     # Tasks holen
     tasks = []
     urgent_tasks = []
@@ -494,10 +514,16 @@ def dashboard():
         else:
             urgent_tasks = tasks[:3]
 
+    open_tasks = [t for t in tasks if t.get("status") != "Done"]
+    closed_tasks = [t for t in tasks if t.get("status") == "Done"]
+
     return render_template('dashboard.html',
                            user=user,
                            tasks=urgent_tasks,
                            projects=urgent_projects,
+                           progress_projects=progress_projects,
+                           open_task_count=len(open_tasks),
+                           closed_task_count=len(closed_tasks),
                            team_id=team_id,
                            logged_in=True,
                            user_id=user_id)
@@ -515,6 +541,43 @@ def update_project_deadline_view(project_id):
         return f"Fehler beim Aktualisieren der Projekt-Deadline: {res.text}", 500
 
 
+@app.route('/tasks/new', methods=['GET', 'POST'])
+@login_required
+def create_general_task_view():
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+
+    user_id = session.get('user_id')
+    team_id = None
+
+    # Benutzerinformationen holen
+    user_res = requests.get(f'{BACKEND_URL}/user/{user_id}')
+    if user_res.status_code == 200:
+        user = user_res.json()
+        team_id = user.get('team_id')
+
+    # Projekte des Teams holen
+    projects_res = requests.get(f'{BACKEND_URL}/projects', headers=headers)
+    all_projects = projects_res.json() if projects_res.status_code == 200 else []
+    team_projects = [p for p in all_projects if p.get('team_id') == team_id]
+
+    if request.method == 'POST':
+        project_id = request.form['project_id']
+        title = request.form['title']
+        description = request.form.get('description', '')
+        deadline = request.form.get('deadline')
+        data = {'title': title, 'description': description, 'deadline': deadline if deadline else None}
+        response = requests.post(f'{BACKEND_URL}/project/{project_id}/task', json=data, headers=headers)
+        if response.status_code == 200:
+            return redirect(url_for('dashboard'))
+        else:
+            return "Fehler beim Anlegen des Tasks", 500
+
+    return render_template('create_general_task.html',
+                           projects=team_projects,
+                           team_id=team_id,
+                           logged_in=True,
+                           user_id=user_id)
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
