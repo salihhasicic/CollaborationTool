@@ -79,6 +79,25 @@
 <div class="container">
     <h2>Willkommen zurück, {{ user.username }} 👋</h2>
 
+    <div class="section">
+    <h3>⚡ Quick Actions</h3>
+    <a class="btn" href="/projects/new">📁 Projekt starten</a>
+    <a class="btn" href="/tasks/new">📝 Task erstellen</a>
+    {% if team_id %}
+        <a class="btn" href="/chat/{{ team_id }}">💬 Mein Team-Chat</a>
+    {% endif %}
+    <a class="btn" href="/users?skill=">🔍 Benutzer nach Skill</a>
+    </div>
+
+    <div class="section">
+    <h3>📦 Task-Zusammenfassung</h3>
+    <div class="card">
+        <b>Offene Tasks:</b> {{ open_task_count }}<br>
+        <b>Erledigte Tasks:</b> {{ closed_task_count }}
+    </div>
+    </div>
+
+
     <!-- 🔧 Offene Tasks -->
     <div class="section">
         <h3>📌 Deine offenen Tasks</h3>
@@ -116,7 +135,30 @@
             <p class="empty-msg">Aktuell keine Projekte in deinem Team.</p>
         {% endif %}
     </div>
+    <div class="section">
+    <h3>📈 Projekt-Fortschritt</h3>
+    {% for project in progress_projects %}
+        <div class="card">
+            <h4>{{ project.name }}</h4>
+            <small>Status: {{ project.status }}</small><br>
+            <div style="margin: 8px 0;">
+                <div style="background:#e5e7eb; border-radius: 6px; height: 12px;">
+                    <div style="
+                        height: 12px;
+                        width: {{ project.progress }}%;
+                        background: #2563eb;
+                        border-radius: 6px;
+                        transition: width 0.4s;">
+                    </div>
+                </div>
+                <small>{{ project.progress }}% abgeschlossen</small>
+            </div>
+            <a class="btn" href="/project/{{ project.id }}">Details</a>
+        </div>
+    {% endfor %}
 </div>
+</div>
+
 
 </body>
 </html>
