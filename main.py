@@ -476,13 +476,16 @@ def dashboard():
         all_projects = projects_res.json()
         projects = [p for p in all_projects if p.get("team_id") == team_id]
 
-        with_deadline = [p for p in projects if p.get("deadline") and p.get("status") != "Done"]
-        if with_deadline:
-            urgent_projects = sorted(with_deadline, key=lambda p: p["deadline"])[:3]
-        else:
-            urgent_projects = projects[:3]
+        open_projects = [p for p in projects if p.get("status") != "Done"]
+        with_deadline = [p for p in open_projects if p.get("deadline")]
+        without_deadline = [p for p in open_projects if not p.get("deadline")]
 
-        
+        urgent_projects = sorted(with_deadline, key=lambda p: p["deadline"])[:3]
+
+        if len(urgent_projects) < 3:
+            remaining = 3 - len(urgent_projects)
+            urgent_projects += without_deadline[:remaining]
+
         progress_projects = []
         random_projects = random.sample(projects, min(3, len(projects)))
 
@@ -508,11 +511,16 @@ def dashboard():
     if tasks_res.status_code == 200:
         tasks = tasks_res.json()
 
-        with_deadline = [t for t in tasks if t.get("deadline") and t.get("status") != "Done"]
-        if with_deadline:
-            urgent_tasks = sorted(with_deadline, key=lambda t: t["deadline"])[:3]
-        else:
-            urgent_tasks = tasks[:3]
+        open_tasks_all = [t for t in tasks if t.get("status") != "Done"]
+        with_deadline = [t for t in open_tasks_all if t.get("deadline")]
+        without_deadline = [t for t in open_tasks_all if not t.get("deadline")]
+
+        urgent_tasks = sorted(with_deadline, key=lambda t: t["deadline"])[:3]
+
+        # Falls weniger als 3: mit Tasks ohne Deadline auffüllen
+        if len(urgent_tasks) < 3:
+            remaining = 3 - len(urgent_tasks)
+            urgent_tasks += without_deadline[:remaining]
 
     open_tasks = [t for t in tasks if t.get("status") != "Done"]
     closed_tasks = [t for t in tasks if t.get("status") == "Done"]
