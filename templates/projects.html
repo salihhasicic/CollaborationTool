@@ -1,154 +1,178 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
+
 <head>
+    <meta charset="UTF-8">
     <title>Projekte des Teams {{ team_id }}</title>
-         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+        h2 {
+            color: #111827;
+            margin-top: 24px;
+        }
+
+        .btn {
+            background: #3C6E71;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.95em;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            transition: background 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #2A4E50;
+        }
+
         .kanban-board {
-    display: flex;
-    justify-content: space-between;
-    gap: 24px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-}
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
 
-.kanban-column {
-    flex: 1;
-    min-width: 280px;
-    background: #f9fafb;
-    border-radius: 12px;
-    padding: 18px;
-    box-shadow: var(--shadow);
-}
+        .kanban-column {
+            flex: 1;
+            min-width: 280px;
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
 
-.kanban-column h3 {
-    margin-top: 0;
-    border-bottom: 2px solid var(--primary);
-    padding-bottom: 6px;
-    margin-bottom: 16px;
-    color: var(--primary-dark);
-}
+        .kanban-column h3 {
+            margin-top: 0;
+            border-bottom: 2px solid #2A4E50;
+            padding-bottom: 6px;
+            margin-bottom: 16px;
+            color: #2A4E50;
+        }
 
-.kanban-card {
-    background: #fff;
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 18px;
-    box-shadow: var(--shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+        .kanban-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-.project-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
+        .project-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
 
-.badge.deadline {
-    background: #fee2e2;
-    color: #991b1b;
-    padding: 4px 10px;
-    font-size: 0.85em;
-    font-weight: 500;
-    border-radius: 999px;
-    width: fit-content;
-}
+        .badge.deadline {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 4px 10px;
+            font-size: 0.85em;
+            font-weight: 500;
+            border-radius: 999px;
+            width: fit-content;
+        }
 
-.btn {
-    background: #2563eb;
-    color: white;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 0.95em;
-    box-shadow: var(--shadow);
-    transition: background 0.2s ease;
-}
+        .new-project-btn {
+            display: inline-block;
+            margin: 18px 0;
+        }
 
-.btn:hover {
-    background: #1e40af;
-}
+        @media (max-width: 900px) {
+            .kanban-board {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
+
 <body>
-   <nav class="sidebar">
-    <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
-    <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
-    <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
-    <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
-    {% if team_id %}
+    <nav class="sidebar">
+        <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+        <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+        <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+        <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
+        {% if team_id %}
         <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
         <a href="/chat/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
-    {% endif %}
-    {% if logged_in %}
+        {% endif %}
+        {% if logged_in %}
         <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein Profil</span></a>
         <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
-    {% else %}
+        {% else %}
         <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
-    {% endif %}
-</nav>
+        {% endif %}
+    </nav>
+
     <div class="container">
         <h2>
-    {% if team_id %}
-        Projekte des Teams {{ team_id }}
-    {% else %}
-        Projekte (kein Team zugewiesen)
-    {% endif %}
-</h2>
-        <a href="/projects/new"><button type="button" style="margin-bottom:18px;">Neues Projekt anlegen</button></a>
+            {% if team_id %}
+            Projekte des Teams {{ team_id }}
+            {% else %}
+            Projekte (kein Team zugewiesen)
+            {% endif %}
+        </h2>
+
+        <div class="new-project-btn">
+            <a class="btn" href="/projects/new">➕ Neues Projekt anlegen</a>
+        </div>
 
         <div class="kanban-board">
-    <!-- Spalte: To Do -->
-    <div class="kanban-column">
-        <h3>📝 To Do</h3>
-        {% for project in projects if project.status == 'To Do' %}
-        <div class="kanban-card">
-            <strong>{{ project.name }}</strong>
-            <div class="project-meta">
-                <span class="badge deadline">
-                    📅 {{ project.deadline[:10] if project.deadline else "Keine Deadline" }}
-                </span>
+            <!-- Spalte: To Do -->
+            <div class="kanban-column">
+                <h3>📝 To Do</h3>
+                {% for project in projects if project.status == 'To Do' %}
+                <div class="kanban-card">
+                    <strong>{{ project.name }}</strong>
+                    <div class="project-meta">
+                        <span class="badge deadline">
+                            📅 {{ project.deadline[:10] if project.deadline else "Keine Deadline" }}
+                        </span>
+                    </div>
+                    <a class="btn" href="/project/{{ project.id }}">Details & Tasks</a>
+                </div>
+                {% endfor %}
             </div>
-            <a class="btn" href="/project/{{ project.id }}">Details & Tasks</a>
-        </div>
-        {% endfor %}
-    </div>
 
-    <!-- Spalte: In Progress -->
-    <div class="kanban-column">
-        <h3>🚧 In Progress</h3>
-        {% for project in projects if project.status == 'In Progress' %}
-        <div class="kanban-card">
-            <strong>{{ project.name }}</strong>
-            <div class="project-meta">
-                <span class="badge deadline">
-                    📅 {{ project.deadline[:10] if project.deadline else "Keine Deadline" }}
-                </span>
+            <!-- Spalte: In Progress -->
+            <div class="kanban-column">
+                <h3>🚧 In Progress</h3>
+                {% for project in projects if project.status == 'In Progress' %}
+                <div class="kanban-card">
+                    <strong>{{ project.name }}</strong>
+                    <div class="project-meta">
+                        <span class="badge deadline">
+                            📅 {{ project.deadline[:10] if project.deadline else "Keine Deadline" }}
+                        </span>
+                    </div>
+                    <a class="btn" href="/project/{{ project.id }}">Details & Tasks</a>
+                </div>
+                {% endfor %}
             </div>
-            <a class="btn" href="/project/{{ project.id }}">Details & Tasks</a>
-        </div>
-        {% endfor %}
-    </div>
 
-    <!-- Spalte: Done -->
-    <div class="kanban-column">
-        <h3>✅ Done</h3>
-        {% for project in projects if project.status == 'Done' %}
-        <div class="kanban-card">
-            <strong>{{ project.name }}</strong>
-            <div class="project-meta">
-                <span class="badge deadline">
-                    📅 {{ project.deadline[:10] if project.deadline else "Keine Deadline" }}
-                </span>
+            <!-- Spalte: Done -->
+            <div class="kanban-column">
+                <h3>✅ Done</h3>
+                {% for project in projects if project.status == 'Done' %}
+                <div class="kanban-card">
+                    <strong>{{ project.name }}</strong>
+                    <div class="project-meta">
+                        <span class="badge deadline">
+                            📅 {{ project.deadline[:10] if project.deadline else "Keine Deadline" }}
+                        </span>
+                    </div>
+                    <a class="btn" href="/project/{{ project.id }}">Details & Tasks</a>
+                </div>
+                {% endfor %}
             </div>
-            <a class="btn" href="/project/{{ project.id }}">Details & Tasks</a>
         </div>
-        {% endfor %}
-    </div>
-</div>
     </div>
 </body>
+
 </html>

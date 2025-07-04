@@ -1,7 +1,7 @@
 :root {
-    --primary: #2563eb;
-    --primary-dark: #1e40af;
-    --accent: #fbbf24;
+    --primary: #3C6E71;
+    --primary-dark: #2A4E50;
+    --accent: #000000;
     --bg: #f3f6fb;
     --white: #fff;
     --gray: #e5e7eb;
@@ -44,7 +44,7 @@ body {
     align-items: center;
     width: 100%;
     padding: 12px 20px;
-    color: var(--white);
+    color: white; 
     text-decoration: none;
     font-size: 1em;
     transition: background 0.2s;

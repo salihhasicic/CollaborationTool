@@ -428,6 +428,23 @@ def assign_task_view(task_id):
         except Exception:
             error_msg = response.text
         return f"Fehler beim Übernehmen des Tasks (Status: {response.status_code}): {error_msg}", 500
+    
+@app.route('/task/<int:task_id>/update_deadline', methods=['POST'])
+def update_task_deadline(task_id):
+    token = request.cookies.get('jwt_token')
+    headers = {'Authorization': f'Bearer {token}'} if token else {}
+
+    new_deadline = request.form.get('deadline')
+    project_id = request.form.get('project_id')
+
+    data = {'deadline': new_deadline} if new_deadline else {'deadline': None}
+
+    response = requests.patch(f'{BACKEND_URL}/task/{task_id}/deadline', json=data, headers=headers)
+    if response.status_code == 200:
+        return redirect(url_for('project_detail', project_id=project_id))
+    else:
+        return f"Fehler beim Aktualisieren der Task-Deadline: {response.text}", 500
+
 
 @app.route('/private_chat/<int:partner_id>')
 @login_required
