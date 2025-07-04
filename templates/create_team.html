@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Team verwalten</title>
+    <title>Neues Team erstellen</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        .team-list { margin-top: 24px; }
-        .team-list li { margin-bottom: 8px; }
-        .create-status { margin-top: 12px; color: #2563eb; }
-    </style>
 </head>
 <body>
     <nav class="sidebar">
+        <!-- ...existing sidebar code (wie in anderen Seiten, inkl. Team verwalten Link)... -->
         <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
         <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
         <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
@@ -27,30 +23,21 @@
             <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
         {% endif %}
     </nav>
-    <div class="container">
-        <h2>Team verwalten</h2>
-
-        <form id="createTeamForm" style="margin-bottom:24px;">
-            <label for="teamName"><strong>Neues Team erstellen:</strong></label>
-            <input type="text" id="teamName" name="teamName" required placeholder="Teamname" style="margin-left:10px;">
+    <div class="container" style="max-width:400px;">
+        <h2>Neues Team erstellen</h2>
+        <form id="createTeamForm">
+            <label for="teamName">Teamname:</label>
+            <input type="text" id="teamName" name="teamName" required>
             <button type="submit">Team erstellen</button>
         </form>
-        <div id="team-create-status" class="create-status"></div>
-
-        <h3>Alle Teams</h3>
-        <ul class="team-list" id="team-list">
-            {% for team in teams %}
-                <li><b>{{ team.name }}</b> (ID: {{ team.id }})</li>
-            {% endfor %}
-        </ul>
+        <div id="team-create-status" style="margin-top:12px;"></div>
     </div>
     <script>
-        // Team erstellen
         document.getElementById("createTeamForm").onsubmit = function(e) {
             e.preventDefault();
             const name = document.getElementById("teamName").value;
             const token = localStorage.getItem('access_token');
-            fetch("http://127.0.0.1:5000/team/create", {
+            fetch("http://127.0.0.1:5000/team", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +49,6 @@
             .then(({status, data}) => {
                 if (status === 201) {
                     document.getElementById("team-create-status").innerHTML = "Team erfolgreich erstellt: <b>" + data.name + "</b>";
-                    loadTeams();
                 } else {
                     document.getElementById("team-create-status").innerText = data.error || "Fehler beim Erstellen.";
                 }
@@ -70,22 +56,7 @@
             .catch(() => {
                 document.getElementById("team-create-status").innerText = "Netzwerkfehler.";
             });
-        };
-
-        // Teams laden und anzeigen
-        function loadTeams() {
-            fetch("http://127.0.0.1:5000/team/all")
-                .then(res => res.json())
-                .then(teams => {
-                    let html = "";
-                    teams.forEach(team => {
-                        html += `<li><b>${team.name}</b> (ID: ${team.id})</li>`;
-                    });
-                    document.getElementById("team-list").innerHTML = html;
-                });
         }
-        // Optional: Teams nach dem Laden der Seite aktualisieren
-        // loadTeams();
     </script>
 </body>
 </html>

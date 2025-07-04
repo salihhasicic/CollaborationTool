@@ -25,13 +25,26 @@ def save_files_metadata(team_id, files):
     with open(path, "w") as f:
         json.dump(files, f)
 
-@team_bp.route('/create', methods=['POST'])
+# Ändere die Route von '/team' zu einfach nur '/'!
+@team_bp.route('/create', methods=['POST', 'OPTIONS'])
 def create_team():
-    data = request.json
-    team = Team(name=data['name'])
-    db.session.add(team)
-    db.session.commit()
-    return jsonify({'message': 'Team created', 'team_id': team.id})
+    if request.method == 'OPTIONS':
+        # CORS Preflight explizit beantworten
+        response = jsonify({'message': 'CORS preflight'})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'POST,OPTIONS')
+        return response, 200
+    try:
+        data = request.json
+        if not data or 'name' not in data or not data['name']:
+            return jsonify({'error': 'Teamname fehlt!'}), 400
+        team = Team(name=data['name'])
+        db.session.add(team)
+        db.session.commit()
+        return jsonify({'message': 'Team created', 'team_id': team.id}), 201
+    except Exception as e:
+        return jsonify({'error': f'Fehler beim Erstellen des Teams: {str(e)}'}), 500
 
 @team_bp.route('/join', methods=['POST'])
 def join_team():

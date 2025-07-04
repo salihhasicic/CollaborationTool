@@ -620,5 +620,22 @@ def team_manage():
         user_id=current_user_id
     )
 
+@app.route('/teams/new')
+@login_required
+def create_team_view():
+    current_user_id = session.get('user_id')
+    team_id = None
+    if current_user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_res.status_code == 200:
+            user = user_res.json()
+            team_id = user.get('team_id')
+    return render_template(
+        'create_team.html',
+        team_id=team_id,
+        logged_in='user_id' in session,
+        user_id=current_user_id
+    )
+
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
