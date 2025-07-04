@@ -1,20 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 
 <head>
+    <meta charset="UTF-8">
     <title>Profil</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 36px;
-            margin-bottom: 32px;
+        body {
+            font-family: system-ui, sans-serif;
+            background: #ffffff;
+            color: #1f2937;
         }
 
-        .profile-details {
-            flex: 1;
+        .container {
+            max-width: 960px;
+            margin: 24px auto;
+            padding: 24px;
+        }
+
+        h2 {
+            font-size: 1.6em;
+            margin-bottom: 8px;
+            color: #111827;
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+            justify-content: space-between;
+            background: #f9fafb;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
         }
 
         .profile-img-large {
@@ -22,257 +48,295 @@
             width: 120px;
             height: 120px;
             object-fit: cover;
-            border: 3px solid var(--primary);
-            background: var(--gray);
-            box-shadow: 0 2px 12px rgba(37, 99, 235, 0.10);
+            border: 2px solid #3C6E71;
+            background: #fff;
+            box-shadow: 0 0 0 2px #e5e7eb;
         }
 
-        .profile-actions {
-            margin-top: 28px;
+        .username-display {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .btn,
+        .profile-actions button,
+        .profile-edit-button button,
+        #geo-btn,
+        #save-btn,
+        #photo-upload-section button {
+            background: #3C6E71;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover,
+        .profile-actions button:hover,
+        .profile-edit-button button:hover,
+        #geo-btn:hover,
+        #save-btn:hover,
+        #photo-upload-section button:hover {
+            background: #2A4E50;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .card {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            color: #1f2937;
+        }
+
+        .card input[type="text"] {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-top: 4px;
+            margin-bottom: 6px;
+        }
+
+        input[readonly] {
+            border: none;
+            background: transparent;
+            padding-left: 0;
+            color: #111827;
+        }
+
+        .card-actions {
+            margin-top: 12px;
             display: flex;
-            gap: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .card.wide {
+            grid-column: span 3;
         }
 
         #map {
             height: 300px;
             width: 100%;
-            margin-top: 32px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
         }
 
-        input[readonly] {
-    border: none;
-    background-color: transparent;
-    cursor: default;
-    color: #111827; /* gleiche Farbe wie normaler Text */
-    font-size: 1em;
-    padding: 0;
+        #geo-status {
+            margin-top: 10px;
+            color: #2563eb;
+        }
+
+        .profile-edit-button {
+            margin-left: auto;
+        }
+
+        @media (max-width: 800px) {
+            .card.wide {
+                grid-column: span 1;
+            }
+        }
+
+        .btn-small {
+    font-size: 0.75em;
+    padding: 6px 10px;
 }
     </style>
 </head>
 
 <body>
     <nav class="sidebar">
-    <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
-    <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
-    <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
-    <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
-    {% if team_id %}
+        <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+        <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+        <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+        <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
+        {% if team_id %}
         <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
-        <a href="/chat/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
-    {% endif %}
-    {% if logged_in %}
-        <a href="/profile/{{ user.id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein Profil</span></a>
+        <a href="/chat/{{ team_id }}"><img
+                src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
+        {% endif %}
+        <a href="/team_manage"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team
+                verwalten</span></a>
+        {% if logged_in %}
+        <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein
+                Profil</span></a>
         <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
-    {% else %}
+        {% else %}
         <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
-    {% endif %}
-</nav>
+        {% endif %}
+    </nav>
+
     <div class="container">
         {% if user %}
         <div class="profile-header">
-            <img src="{{ user.photo_url }}" class="profile-img-large" alt="{{ user.photo_url }}">
-            {% if user.id == user_id %}
-            <div id="photo-upload-section" style="display:none; margin-top:12px;">
-            <input type="file" id="upload-photo" accept="image/*">
-            <button type="button" onclick="uploadPhoto()">📤 Bild hochladen</button>
-            </div>
-{% endif %}
-            <div class="profile-details">
-                <h2>
-                    <span id="display-username">{{ user.username or "Unbekannt" }}</span>
-                    <input type="text" id="input-username" value="{{ user.username or '' }}" style="display:none;">
-                </h2>
-                <p><strong>Standort:</strong>
-                    <span id="display-location">{{ user.location or "–" }}</span>
-                    <input type="text" id="input-location" value="{{ user.location or '' }}" style="display:none;">
-                </p>
-                <p><strong>Latitude:</strong>
-                    <span id="display-lat">{{ user.latitude or "–" }}</span>
-                    <input type="text" id="input-lat" value="{{ user.latitude or '' }}" style="display:none;" readonly>
-                </p>
-                <p><strong>Longitude:</strong>
-                    <span id="display-lng">{{ user.longitude or "–" }}</span>
-                    <input type="text" id="input-lng" value="{{ user.longitude or '' }}" style="display:none;" readonly>
-                </p>
-                    <button type="button" onclick="fillCurrentLocation()" id="geo-btn" style="display:none; margin-bottom: 12px;">📍 Aktuellen Standort verwenden</button>
+            <img src="{{ user.photo_url }}" class="profile-img-large" alt="Profilbild">
+            <div class="username-display" style="display: flex; flex-direction: column; align-items: flex-start;">
+                <h2 id="display-username" style="margin: 0;">{{ user.username or "Unbekannt" }}</h2>
+                <input type="text" id="input-username" value="{{ user.username or '' }}"
+                    style="display:none; width: 100%; margin-top: 6px;">
 
-                <p><strong>Skills:</strong>
-                    <span id="display-skills">{{ user.skills or '–' }}</span>
-                    <input type="text" id="input-skills" value="{{ user.skills or '' }}" style="display:none;">
-                </p>
-                {% if user.id == user_id %}
-                <div class="profile-edit-button" style="margin-top:16px;">
-                    <button type="button" onclick="enableEdit()">Profil bearbeiten</button>
-                    <button type="button" onclick="saveChanges()" id="save-btn" style="display:none;">Speichern</button>
+                {% if user.id != user_id %}
+                <div style="margin-top: 12px;">
+                    <a href="/private_chat/{{ user.id }}">
+                        <button class="btn btn-small">💬 Privater Chat</button>
+                    </a>
                 </div>
                 {% endif %}
-                <p><strong>Team-ID:</strong> {{ user.team_id or "–" }}</p>
-                <div class="profile-actions">
-                    {% if user.team_id %}
-                    <a href="/team/{{ user.team_id }}"><button type="button">Zum Team</button></a>
-                    <a href="/chat/{{ user.team_id }}"><button type="button">Zum Team-Chat</button></a>
-                    {% endif %}
-                    {% if user.id %}
-                    <button type="button" onclick="saveLocation()">Standort speichern</button>
-                    {% endif %}
-                </div>
-                <div id="geo-status" style="margin-top:10px;color:#2563eb;"></div>
+            </div>
+
+            <div class="profile-edit-button">
+                {% if user.id == user_id %}
+                <button type="button" onclick="enableEdit()">Profil bearbeiten</button>
+                <button type="button" onclick="saveChanges()" id="save-btn" style="display:none;">Speichern</button>
+                {% endif %}
             </div>
         </div>
 
-        <!-- 🌍 Karte -->
-        <div id="map"></div>
+        <div id="photo-upload-section" style="display:none; margin-bottom: 12px;">
+            <input type="file" id="upload-photo" accept="image/*">
+            <button type="button" onclick="uploadPhoto()">📤 Bild hochladen</button>
+        </div>
 
+        <div class="profile-grid">
+            <div class="card">
+                <h3>📍 Standort</h3>
+                <p><strong>Ort:</strong> <span id="display-location">{{ user.location or "–" }}</span>
+                    <input type="text" id="input-location" value="{{ user.location or '' }}" style="display:none;">
+                </p>
+                <p><strong>Latitude:</strong> <span id="display-lat">{{ user.latitude or "–" }}</span>
+                    <input type="text" id="input-lat" value="{{ user.latitude or '' }}" style="display:none;" readonly>
+                </p>
+                <p><strong>Longitude:</strong> <span id="display-lng">{{ user.longitude or "–" }}</span>
+                    <input type="text" id="input-lng" value="{{ user.longitude or '' }}" style="display:none;" readonly>
+                </p>
+                <button type="button" onclick="fillCurrentLocation()" id="geo-btn" style="display:none;">📍 Aktuellen
+                    Standort verwenden</button>
+            </div>
+
+            <div class="card">
+                <h3>🛠️ Skills</h3>
+                <p><span id="display-skills">{{ user.skills or '–' }}</span></p>
+                <input type="text" id="input-skills" value="{{ user.skills or '' }}" style="display:none;">
+            </div>
+
+            <div class="card">
+                <h3 style="text-align:center; ">👥 Team-Zugehörigkeit</h3>
+                <p style="text-align:center; font-size:1.1em;"><strong>Team-ID:</strong><br>{{ user.team_id or "–" }}
+                </p>
+                <div class="card-actions">
+                    {% if user.team_id %}
+                    <a href="/team/{{ user.team_id }}"><button type="button" class="btn">Zum Team</button></a>
+                    <a href="/chat/{{ user.team_id }}"><button type="button" class="btn">Zum Team-Chat</button></a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card wide">
+                <div id="map"></div>
+                <div id="geo-status"></div>
+            </div>
+        </div>
         {% else %}
         <p style="color:#e11d48;">Kein Benutzer gefunden.</p>
         {% endif %}
     </div>
 
-    <!-- 📦 JS Libraries -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <!-- 🧠 JS: Karte + Geolocation -->
     <script>
-            let map;
-          let userId = null;
-        {% if user and user.id %}
-            userId = {{ user.id }};
-        {% endif %}
-        const latitude = {{ user.latitude or "null" }};
-        const longitude = {{ user.longitude or "null" }};
+        let map;
+        let userId = {{ user.id if user and user.id else 'null' }};
+        const latitude = {{ user.latitude or 'null' }};
+        const longitude = {{ user.longitude or 'null' }};
 
-        // Standortkarte anzeigen
-        if (latitude && longitude) {
-            map = L.map('map').setView([latitude, longitude], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-            L.marker([latitude, longitude])
-                .addTo(map)
-                .bindPopup("Standort von {{ user.username }}")
-                .openPopup();
-        } else {
-            document.getElementById("map").innerHTML = "<p style='color:#aaa;'>Kein Standort verfügbar</p>";
-        }
-
-        // Standort speichern (besteht bereits bei dir)
-        function saveLocation() {
-            if (!navigator.geolocation) {
-                document.getElementById('geo-status').innerText = "Geolocation wird nicht unterstützt.";
-                return;
+        function renderMap(lat, lng, popupText = "Standort von {{ user.username }}") {
+            if (map) map.remove();
+            if (lat && lng) {
+                map = L.map('map').setView([lat, lng], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+                L.marker([lat, lng]).addTo(map).bindPopup(popupText).openPopup();
+            } else {
+                document.getElementById("map").innerHTML = "<p style='color:#aaa;'>Kein Standort verfügbar</p>";
             }
-            document.getElementById('geo-status').innerText = "Hole Standort...";
-            navigator.geolocation.getCurrentPosition(function (pos) {
-                if (USER_ID === null) {
-                    document.getElementById('geo-status').innerText = "User-ID fehlt!";
-                    return;
-                }
-                fetch('/user/location', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: USER_ID,
-                        latitude: pos.coords.latitude,
-                        longitude: pos.coords.longitude
-                    })
-                })
-                    .then(r => r.json())
-                    .then(data => {
-                        document.getElementById('geo-status').innerText = "Standort gespeichert!";
-                    });
-            }, function () {
-                document.getElementById('geo-status').innerText = "Standort konnte nicht ermittelt werden.";
-            });
         }
+
+        renderMap(latitude, longitude);
 
         function enableEdit() {
             document.getElementById("photo-upload-section").style.display = "block";
-            document.getElementById("display-username").style.display = "none";
-            document.getElementById("input-username").style.display = "inline";
-
             document.getElementById("display-location").style.display = "none";
             document.getElementById("input-location").style.display = "inline";
-
-            document.getElementById("display-skills").style.display = "none";
-            document.getElementById("input-skills").style.display = "inline";
-
             document.getElementById("display-lat").style.display = "none";
             document.getElementById("input-lat").style.display = "inline";
-
             document.getElementById("display-lng").style.display = "none";
             document.getElementById("input-lng").style.display = "inline";
-
+            document.getElementById("display-skills").style.display = "none";
+            document.getElementById("input-skills").style.display = "inline";
             document.getElementById("geo-btn").style.display = "inline";
-
             document.getElementById("save-btn").style.display = "inline";
-
             document.querySelector(".profile-edit-button button:first-child").style.display = "none";
-
         }
 
-         function saveChanges() {
-            const username = document.getElementById("input-username").value;
+        function saveChanges() {
             const location = document.getElementById("input-location").value;
-            const skills = document.getElementById("input-skills").value;
             const latitude = document.getElementById("input-lat").value;
             const longitude = document.getElementById("input-lng").value;
-
-            if (!userId) {
-                alert("User-ID fehlt.");
-                return;
-            }
+            const skills = document.getElementById("input-skills").value;
 
             fetch("http://localhost:5000/user/update", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     user_id: userId,
-                    username: username,
-                    location: location,
-                    skills: skills,
-                    latitude: latitude,
-                    longitude: longitude
+                    location,
+                    latitude,
+                    longitude,
+                    skills
                 })
             })
-            .then(res => res.json())
-            .then(data => {
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("display-location").textContent = location || "–";
+                    document.getElementById("display-lat").textContent = latitude || "–";
+                    document.getElementById("display-lng").textContent = longitude || "–";
+                    document.getElementById("display-skills").textContent = skills || "–";
 
-                // Werte im DOM aktualisieren
-            document.getElementById("display-username").textContent = username;
-            document.getElementById("display-location").textContent = location || "–";
-            document.getElementById("display-skills").textContent = skills || "–";
-            document.getElementById("display-lat").textContent = latitude || "–";
-            document.getElementById("display-lng").textContent = longitude || "–";
-
-            // Eingabefelder ausblenden
-            document.getElementById("input-username").style.display = "none";
-            document.getElementById("input-location").style.display = "none";
-            document.getElementById("input-skills").style.display = "none";
-            document.getElementById("input-lat").style.display = "none";
-            document.getElementById("input-lng").style.display = "none";
-            document.getElementById("geo-btn").style.display = "none";
-            document.getElementById("save-btn").style.display = "none";
-
-
-            // Anzeigen wieder aktivieren
-            document.getElementById("display-username").style.display = "inline";
-            document.getElementById("display-location").style.display = "inline";
-            document.getElementById("display-skills").style.display = "inline";
-            document.getElementById("display-lat").style.display = "inline";
-            document.getElementById("display-lng").style.display = "inline";
-            document.getElementById("photo-upload-section").style.display = "none";
-
-            document.querySelector(".profile-edit-button button:first-child").style.display = "inline";
-                alert("Profil aktualisiert!");
-                // alte Karte sicher entfernen
-                renderMap(parseFloat(latitude), parseFloat(longitude), "Aktualisierter Standort");
-            })
-            .catch(err => {
-                console.error("Fehler:", err);
-                alert("Fehler beim Speichern.");
-            });
+                    document.getElementById("input-location").style.display = "none";
+                    document.getElementById("input-lat").style.display = "none";
+                    document.getElementById("input-lng").style.display = "none";
+                    document.getElementById("input-skills").style.display = "none";
+                    document.getElementById("geo-btn").style.display = "none";
+                    document.getElementById("save-btn").style.display = "none";
+                    document.getElementById("display-location").style.display = "inline";
+                    document.getElementById("display-lat").style.display = "inline";
+                    document.getElementById("display-lng").style.display = "inline";
+                    document.getElementById("display-skills").style.display = "inline";
+                    document.querySelector(".profile-edit-button button:first-child").style.display = "inline";
+                    document.getElementById("photo-upload-section").style.display = "none";
+                    renderMap(parseFloat(latitude), parseFloat(longitude), "Aktualisierter Standort");
+                    alert("Profil aktualisiert!");
+                })
+                .catch(err => alert("Fehler beim Speichern."));
         }
 
         function fillCurrentLocation() {
@@ -280,68 +344,36 @@
                 alert("Geolocation wird nicht unterstützt.");
                 return;
             }
-            navigator.geolocation.getCurrentPosition(function(pos) {
+            navigator.geolocation.getCurrentPosition(function (pos) {
                 document.getElementById("input-lat").value = pos.coords.latitude.toFixed(6);
                 document.getElementById("input-lng").value = pos.coords.longitude.toFixed(6);
-            }, function() {
+            }, function () {
                 alert("Standort konnte nicht ermittelt werden.");
             });
         }
 
-        function renderMap(lat, lng, popupText = "Standort von {{ user.username }}") {
-    if (map) {
-        map.remove();
-    }
-    if (lat && lng) {
-        map = L.map('map').setView([lat, lng], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-        L.marker([lat, lng])
-            .addTo(map)
-            .bindPopup(popupText)
-            .openPopup();
-    } else {
-        document.getElementById("map").innerHTML = "<p style='color:#aaa;'>Kein Standort verfügbar</p>";
-    }
-}
-
-// direkt aufrufen beim Laden
-renderMap(latitude, longitude);
-
-function uploadPhoto() {
-    const fileInput = document.getElementById("upload-photo");
-    const file = fileInput.files[0];
-    if (!file) {
-        alert("Bitte wähle ein Bild aus.");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("photo", file);
-    formData.append("user_id", userId);
-
-    fetch("http://localhost:5000/user/upload_photo", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.photo_url) {
-            const img = document.querySelector(".profile-img-large");
-            img.src = data.photo_url + "?t=" + new Date().getTime(); // Cache umgehen
-            alert("Profilbild aktualisiert!");
-        } else {
-            alert("Fehler beim Hochladen: " + data.message);
+        function uploadPhoto() {
+            const file = document.getElementById("upload-photo").files[0];
+            if (!file) return alert("Bitte wähle ein Bild aus.");
+            const formData = new FormData();
+            formData.append("photo", file);
+            formData.append("user_id", userId);
+            fetch("http://localhost:5000/user/upload_photo", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.photo_url) {
+                        document.querySelector(".profile-img-large").src = data.photo_url + "?t=" + new Date().getTime();
+                        alert("Profilbild aktualisiert!");
+                    } else {
+                        alert("Fehler beim Hochladen: " + data.message);
+                    }
+                })
+                .catch(() => alert("Fehler beim Hochladen."));
         }
-    })
-    .catch(err => {
-        console.error("Upload-Fehler:", err);
-        alert("Fehler beim Hochladen.");
-    });
-}
-
-
     </script>
 </body>
+
 </html>

@@ -82,7 +82,8 @@ def upload_photo():
 def search_users():
     skill = request.args.get('skill')
     users = User.query.filter(User.skills.like(f"%{skill}%")).all()
-    result = [{'id': u.id, 'username': u.username, 'skills': u.skills} for u in users]
+    result = [{'id': u.id, 'username': u.username, 'skills': u.skills, 'team_id': u.team_id,
+        'photo_url': u.photo_url} for u in users]
     return jsonify(result)
 
 # 📍 Standort speichern

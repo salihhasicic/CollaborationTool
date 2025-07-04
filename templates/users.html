@@ -1,112 +1,201 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
+
 <head>
+    <meta charset="UTF-8">
     <title>Benutzerübersicht</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+        h2 {
+            color: #111827;
+            margin-bottom: 18px;
+        }
+
+        form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        input[type="text"] {
+            padding: 10px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 1em;
+            color: #111827;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            flex-grow: 1;
+        }
+
+        input:focus {
+            border-color: #2A4E50;
+            background: #e0ecff;
+            outline: none;
+        }
+
+        button {
+            background: #3C6E71;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: #2A4E50;
+        }
+
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .user-card {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .user-card img {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3C6E71;
+            /* Anpassung hier */
+            background: #fff;
+            box-shadow: 0 0 0 2px #e5e7eb;
+            /* optional für eleganten Außenrahmen */
+        }
+
+        .user-card strong {
+            font-size: 1.1em;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .skill-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            font-size: 0.8em;
+            border-radius: 999px;
+            margin: 2px;
+            display: inline-block;
+        }
+
+        .user-card .actions {
+            margin-top: 14px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
         #nearby-list {
             margin-top: 18px;
-            background: #f7fafc;
+            background: #f7fafb;
             border-radius: 10px;
             padding: 18px;
-            box-shadow: 0 1px 6px rgba(37,99,235,0.04);
+            box-shadow: 0 1px 6px rgba(37, 99, 235, 0.04);
         }
     </style>
 </head>
+
 <body>
     <nav class="sidebar">
-    <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
-    <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
-    <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
-    <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
-    {% if team_id %}
+        <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+        <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+        <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+        <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
+        {% if team_id %}
         <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
-        <a href="/chat/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
-    {% endif %}
-    <a href="/team_manage"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team verwalten</span></a>
-    {% if logged_in %}
-        <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein Profil</span></a>
+        <a href="/chat/{{ team_id }}"><img
+                src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
+        {% endif %}
+        <a href="/team_manage"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team
+                verwalten</span></a>
+        {% if logged_in %}
+        <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein
+                Profil</span></a>
         <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
-    {% else %}
+        {% else %}
         <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
-    {% endif %}
-</nav>
+        {% endif %}
+    </nav>
+
     <div class="container">
         <h2>Alle Benutzer</h2>
+
         <form method="get" action="/users">
             <input type="text" name="skill" placeholder="Suche nach Skill" value="{{ skill or '' }}">
             <button type="submit">Suchen</button>
+            <button type="button" onclick="findNearby()">Umkreis</button>
         </form>
-        <button type="button" onclick="findNearby()">Nutzer im Umkreis (30 km)</button>
+
         <div id="nearby-list"></div>
-        <ul>
+
+        <div class="user-grid">
             {% for user in users %}
-            <li>
-                <div class="user-info">
-                    <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}"
-                         class="profile-img" alt="Profilbild">
-                    <div>
-                        <strong style="font-size:1.15em;">{{ user.username }}</strong><br>
-                        {% set skills = user.skills.split(',') if user.skills else [] %}
-                        {% for skill in skills %}
-                            <span class="skill-badge">{{ skill }}</span>
-                        {% endfor %}
-                    </div>
+            <div class="user-card">
+                <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}" alt="Profilbild">
+                <strong>{{ user.username }}</strong>
+                <div>
+                    {% set skills = user.skills.split(',') if user.skills else [] %}
+                    {% for skill in skills %}
+                    <span class="skill-badge">{{ skill }}</span>
+                    {% endfor %}
                 </div>
-                <div style="display:flex; gap:8px;">
-                    <a href="/profile/{{ user.id }}"><button type="button">Profil</button></a>
-                    <form method="post" action="/team/add" style="display:inline;">
-                        <input type="hidden" name="user_id" value="{{ user.id }}">
-                        <input type="hidden" name="team_id" value="1">
-                        <button type="submit">Zum Team</button>
-                    </form>
+                <div class="actions">
+                    <a href="/profile/{{ user.id }}"><button>Profil</button></a>
+                    {% if user.team_id %}
+                    <a href="/team/{{ user.team_id }}">
+                        <button>Zum Team</button>
+                    </a>
+                    {% else %}
+                    <span style="color: #888;">Kein Team</span>
+                    {% endif %}
                 </div>
-            </li>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
+
     <script>
-        console.log("users.html script geladen");
-
         function findNearby() {
-            console.log("findNearby aufgerufen");
-
             const token = localStorage.getItem('access_token');
             if (!token) {
                 alert("Kein Token gefunden. Bitte einloggen.");
                 return;
             }
-
             fetch("http://127.0.0.1:5000/user/nearby?radius=30", {
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
+                headers: { "Authorization": "Bearer " + token },
                 credentials: 'include'
             })
-            .then(res => {
-                console.log("Fetch geantwortet:", res.status, res.statusText);
-                if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-                return res.json();
-            })
-            .then(data => {
-                console.log("Daten erhalten:", data);
-                let html = "<b>Nutzer im Umkreis:</b><ul>";
-                if (data.length === 0) {
-                    html += "<li>Keine gefunden.</li>";
-                } else {
-                    data.forEach(u => {
-                        html += `<li>${u.username} (${u.distance_km} km)</li>`;
-                    });
-                }
-                html += "</ul>";
-                document.getElementById("nearby-list").innerHTML = html;
-            })
-            .catch(err => {
-                console.error("Nearby error:", err);
-                document.getElementById("nearby-list").innerHTML = "Fehler beim Abrufen: " + err.message;
-            });
+                .then(res => res.ok ? res.json() : Promise.reject(res))
+                .then(data => {
+                    let html = "<b>Nutzer im Umkreis:</b><ul>";
+                    html += data.length === 0 ? "<li>Keine gefunden.</li>" : data.map(u => `<li>${u.username} (${u.distance_km} km)</li>`).join("");
+                    html += "</ul>";
+                    document.getElementById("nearby-list").innerHTML = html;
+                })
+                .catch(err => {
+                    console.error("Nearby error:", err);
+                    document.getElementById("nearby-list").innerHTML = "Fehler beim Abrufen.";
+                });
         }
     </script>
-
 </body>
+
 </html>

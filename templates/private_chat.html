@@ -5,78 +5,93 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .chat-container {
-            max-width: 540px;
+            max-width: 620px;
             margin: 32px auto;
-            background: #f7fafc;
+            background: #f9fafb;
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(37,99,235,0.08);
-            padding: 24px 18px 18px 18px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            padding: 24px;
         }
+
         .chat-header {
             font-size: 1.3em;
             font-weight: 600;
-            color: var(--primary-dark, #2563eb);
+            color: #2A4E50;
             margin-bottom: 18px;
+            border-bottom: 2px solid #2A4E50;
+            padding-bottom: 6px;
         }
+
         .chat-messages {
-            min-height: 220px;
-            max-height: 340px;
+            min-height: 240px;
+            max-height: 360px;
             overflow-y: auto;
             margin-bottom: 18px;
-            padding-right: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
+
         .chat-msg-row {
             display: flex;
             flex-direction: row;
             align-items: flex-end;
-            margin-bottom: 12px;
         }
+
         .chat-msg-row.me {
             justify-content: flex-end;
         }
+
         .chat-msg-row.them {
             justify-content: flex-start;
         }
+
         .chat-msg-bubble {
             padding: 10px 16px;
             border-radius: 16px;
             max-width: 75%;
             font-size: 1.08em;
             word-break: break-word;
-            box-shadow: 0 1px 4px rgba(37,99,235,0.05);
-            margin-bottom: 2px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
         }
+
         .chat-msg-row.me .chat-msg-bubble {
-            background: linear-gradient(90deg, #2563eb 0%, #fbbf24 100%);
+            background: #A7CAB1;
+            color: #1b1f1e;
+            border: 1.5px solid #6b9d86;
+        }
+
+        .chat-msg-row.them .chat-msg-bubble {
+            background: #3C6E71;
             color: #fff;
         }
-        .chat-msg-row.them .chat-msg-bubble {
-            background: #fffbe6;
-            color: #222;
-            border: 1.5px solid #fbbf24;
-        }
+
         .chat-msg-meta {
             font-size: 0.92em;
             color: #888;
-            margin-top: 1px;
-            margin-left: 8px;
-            margin-right: 8px;
+            margin: 4px 8px;
             min-width: 110px;
             text-align: right;
         }
+
         .chat-form-row {
             display: flex;
             gap: 8px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 12px;
         }
+
         .chat-form-row input[type="text"] {
             flex: 1;
             padding: 10px;
             border-radius: 8px;
             border: 1.5px solid #d1d5db;
             font-size: 1em;
+            background: #fff;
         }
+
         .chat-form-row button {
-            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            background: #3C6E71;
             color: #fff;
             border: none;
             border-radius: 8px;
@@ -86,28 +101,30 @@
             font-size: 1em;
             transition: background 0.2s;
         }
+
         .chat-form-row button:hover {
-            background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
+            background: #2A4E50;
         }
     </style>
 </head>
 <body>
     <nav class="sidebar">
-    <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
-    <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
-    <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
-    <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
-    {% if team_id %}
+        <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+        <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+        <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+        <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
+        {% if team_id %}
         <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
         <a href="/chat/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
-    {% endif %}
-    {% if logged_in %}
+        {% endif %}
+        <a href="/team_manage"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team verwalten</span></a>
+        {% if logged_in %}
         <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein Profil</span></a>
         <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
-    {% else %}
+        {% else %}
         <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
-    {% endif %}
-</nav>
+        {% endif %}
+    </nav>
     <div class="chat-container">
         <div class="chat-header">
             Privater Chat mit <span id="chat-partner"></span>
@@ -121,19 +138,12 @@
         </form>
     </div>
     <script>
-        // IDs aus URL oder Session holen
         const currentUserId = localStorage.getItem('user_id');
         const partnerId = window.location.pathname.split('/').pop();
 
         function escapeHtml(text) {
-            var map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, m => map[m]);
         }
 
         function loadMessages() {
@@ -156,14 +166,11 @@
                     });
                     document.getElementById('messages').innerHTML = html || "<div style='color:#aaa;'>Noch keine Nachrichten</div>";
                     document.getElementById('chat-partner').innerText = partnerName || partnerId;
-                    // Scroll nach unten
                     const msgDiv = document.getElementById('messages');
                     msgDiv.scrollTop = msgDiv.scrollHeight;
                 });
         }
         loadMessages();
-
-        // Nachrichten auch neu laden, wenn man auf den Chat-Link klickt (z.B. zurück zur Seite)
         window.onfocus = loadMessages;
 
         document.getElementById('sendForm').onsubmit = function(e) {
@@ -171,7 +178,7 @@
             const content = document.getElementById('msgInput').value;
             fetch('/chat/private/send', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     sender_id: currentUserId,
                     receiver_id: partnerId,

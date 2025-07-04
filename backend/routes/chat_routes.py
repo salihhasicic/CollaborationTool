@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import Message
+from models import Message, User
 from extensions import db
 from utils import get_gpt_reply
 
@@ -17,8 +17,12 @@ def send_message():
 @chat_bp.route('/team/<int:team_id>', methods=['GET'])
 def get_team_messages(team_id):
     messages = Message.query.filter_by(team_id=team_id).order_by(Message.timestamp).all()
+
+    users = {u.id: u.username for u in User.query.all()}
+    
     result = [{
         'sender_id': m.sender_id,
+        'sender_name': users.get(m.sender_id, f'User {m.sender_id}'),
         'content': m.content,
         'timestamp': m.timestamp.isoformat()
     } for m in messages]
