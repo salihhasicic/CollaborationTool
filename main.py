@@ -114,27 +114,47 @@ def add_to_team():
     else:
         return "Fehler beim Hinzufügen", 500
 
+
+
 @app.route('/chat/<int:team_id>', methods=['GET', 'POST'])
 @login_required
 def chat(team_id):
     if request.method == 'POST':
-        message = request.form['message']
-        sender_id = request.form['sender_id']
-        response = requests.post(f'{BACKEND_URL}/chat/send', json={
-            'sender_id': int(sender_id),
-            'team_id': team_id,
-            'content': message
-        })
-        if response.status_code != 200:
-            return "Fehler beim Senden", 500
+        if request.is_json:
+            #  → Hier kommt Dein AI-Suggest-Fetch an
+            data = request.get_json()
+            ai_input = data.get('message')
+            # …mach etwas mit ai_input (z.B. an eine AI-API weiterleiten)…
+            return jsonify({'suggested_reply': '…hier AI-Text…'})
+        else:
+            #  → Hier kommt Dein normales Chat-Formular an
+            message   = request.form['message']
+            sender_id = request.form['sender_id']
+            resp = requests.post(f'{BACKEND_URL}/chat/send', json={
+                'sender_id': int(sender_id),
+                'team_id': team_id,
+                'content': message
+            })
+            if resp.status_code != 200:
+                return "Fehler beim Senden", 500
 
+    # GET-Fall (und nach POST) → Nachrichten holen + Dropdown-Teams laden …
     res = requests.get(f'{BACKEND_URL}/chat/team/{team_id}')
-    if res.status_code == 200:
-        messages = res.json()
-        # Hier backend_url übergeben!
-        return render_template('chat.html', messages=messages, team_id=team_id, backend_url=BACKEND_URL, logged_in='user_id' in session)
-    else:
-        return "Fehler beim Laden der Nachrichten", 500
+    messages = res.json() if res.status_code == 200 else []
+    teams_res = requests.get(f'{BACKEND_URL}/team/all')
+    teams     = teams_res.json() if teams_res.status_code == 200 else []
+
+    return render_template(
+        'chat.html',
+        messages=messages,
+        team_id=team_id,
+        teams=teams,
+        backend_url=BACKEND_URL,
+        logged_in='user_id' in session,
+        user_id=session.get('user_id')
+    )
+
+
 
 @app.route('/profile/<int:user_id>')
 @login_required
@@ -602,6 +622,77 @@ def create_general_task_view():
                            team_id=team_id,
                            logged_in=True,
                            user_id=user_id)
+
+@app.route('/team_manage')
+@login_required
+def team_manage():
+    current_user_id = session.get('user_id')
+    team_id = None
+    team = {}
+    all_users = []
+    team_members = []
+
+    # Aktuellen Nutzer & sein Team laden
+    if current_user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_res.status_code == 200:
+            user = user_res.json()
+            team_id = user.get('team_id')
+
+    # Nur wenn wir eine Team-ID haben …
+    if team_id:
+        # Team-Objekt (z.B. für Name)
+        team_res = requests.get(f'{BACKEND_URL}/team/{team_id}')
+        if team_res.status_code == 200:
+            team = team_res.json()
+
+        # Alle User laden
+        users_res = requests.get(f'{BACKEND_URL}/user/search', params={'skill': ''})
+        if users_res.status_code == 200:
+            all_users = users_res.json()
+
+        # Team-Mitglieder herausfiltern
+        team_members = [u for u in all_users if u.get('team_id') == team_id]
+
+    return render_template(
+        'team_manage.html',
+        team=team,
+        team_members=team_members,
+        users=all_users,
+        team_id=team_id,
+        logged_in='user_id' in session,
+        user_id=current_user_id
+    )
+
+
+@app.route('/teams/new')
+@login_required
+def create_team_view():
+    current_user_id = session.get('user_id')
+    team_id = None
+    if current_user_id:
+        user_res = requests.get(f'{BACKEND_URL}/user/{current_user_id}')
+        if user_res.status_code == 200:
+            user = user_res.json()
+            team_id = user.get('team_id')
+    return render_template(
+        'create_team.html',
+        team_id=team_id,
+        logged_in='user_id' in session,
+        user_id=current_user_id
+    )
+
+@app.route('/team/delete', methods=['POST'])
+@login_required
+def delete_team():
+    team_id = request.form.get('team_id')
+    # Macht einen DELETE-Request an dein Backend
+    resp = requests.delete(f'{BACKEND_URL}/team/{team_id}')
+    if resp.status_code == 200:
+        return redirect(url_for('team_manage'))
+    else:
+        return f"Fehler beim Löschen (Status {resp.status_code}): {resp.text}", 500
+
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
