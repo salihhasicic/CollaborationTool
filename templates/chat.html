@@ -113,6 +113,15 @@
             </div>
             <div id="ai-answer" class="ai-chat-answer"></div>
         </div>
+        <!-- Team-Wechsel Dropdown -->
+        <div class="team-switch" style="margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+            <label for="team_select"><strong>Team wechseln:</strong></label>
+            <select id="team_select" onchange="window.location.href='/chat/'+this.value" style="padding:6px 12px; border:1px solid #ccc; border-radius:4px;">
+                {% for t in teams %}
+                    <option value="{{ t.id }}" {% if t.id == team_id %}selected{% endif %}>{{ t.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
         <!-- Team Chat -->
         <h2>Chat – Team {{ team_id }}</h2>
         <div class="chat-box" id="chat-box">

@@ -120,23 +120,41 @@ def add_to_team():
 @login_required
 def chat(team_id):
     if request.method == 'POST':
-        message = request.form['message']
-        sender_id = request.form['sender_id']
-        response = requests.post(f'{BACKEND_URL}/chat/send', json={
-            'sender_id': int(sender_id),
-            'team_id': team_id,
-            'content': message
-        })
-        if response.status_code != 200:
-            return "Fehler beim Senden", 500
+        if request.is_json:
+            #  → Hier kommt Dein AI-Suggest-Fetch an
+            data = request.get_json()
+            ai_input = data.get('message')
+            # …mach etwas mit ai_input (z.B. an eine AI-API weiterleiten)…
+            return jsonify({'suggested_reply': '…hier AI-Text…'})
+        else:
+            #  → Hier kommt Dein normales Chat-Formular an
+            message   = request.form['message']
+            sender_id = request.form['sender_id']
+            resp = requests.post(f'{BACKEND_URL}/chat/send', json={
+                'sender_id': int(sender_id),
+                'team_id': team_id,
+                'content': message
+            })
+            if resp.status_code != 200:
+                return "Fehler beim Senden", 500
 
+    # GET-Fall (und nach POST) → Nachrichten holen + Dropdown-Teams laden …
     res = requests.get(f'{BACKEND_URL}/chat/team/{team_id}')
-    if res.status_code == 200:
-        messages = res.json()
-        # Hier backend_url übergeben!
-        return render_template('chat.html', messages=messages, team_id=team_id, backend_url=BACKEND_URL, logged_in='user_id' in session)
-    else:
-        return "Fehler beim Laden der Nachrichten", 500
+    messages = res.json() if res.status_code == 200 else []
+    teams_res = requests.get(f'{BACKEND_URL}/team/all')
+    teams     = teams_res.json() if teams_res.status_code == 200 else []
+
+    return render_template(
+        'chat.html',
+        messages=messages,
+        team_id=team_id,
+        teams=teams,
+        backend_url=BACKEND_URL,
+        logged_in='user_id' in session,
+        user_id=session.get('user_id')
+    )
+
+
 
 @app.route('/profile/<int:user_id>')
 @login_required
