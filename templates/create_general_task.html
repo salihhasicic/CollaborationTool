@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
+
 <head>
+    <meta charset="UTF-8">
     <title>Neuen Task erstellen</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-         .form-card {
+        h2 {
+            color: #111827;
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        .form-card {
             background: #f9fafb;
             padding: 32px;
             border-radius: 12px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
             max-width: 480px;
             margin: 32px auto;
-        }
-
-        .form-card h2 {
-            margin-top: 0;
-            color: var(--primary-dark);
-            margin-bottom: 24px;
         }
 
         .form-group {
@@ -35,18 +37,22 @@
         .form-group input[type="text"],
         .form-group input[type="date"],
         .form-group select {
+            width: 100%;
+            box-sizing: border-box;
             padding: 12px;
-            border: 1.5px solid var(--gray);
+            border: 1.5px solid #cbd5e1;
             border-radius: 8px;
             font-size: 1em;
-            background: #f7fafc;
-            transition: border 0.2s ease;
+            background: #f8fafc;
+            color: #111827;
             font-family: 'Segoe UI', 'Roboto', sans-serif;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: border 0.2s ease, background 0.2s ease;
         }
 
         .form-group input:focus,
         .form-group select:focus {
-            border-color: var(--primary);
+            border-color: #2A4E50;
             background: #e0ecff;
             outline: none;
         }
@@ -56,13 +62,8 @@
             cursor: pointer;
         }
 
-        .date-input::-webkit-calendar-picker-indicator {
-            filter: invert(0.5);
-            cursor: pointer;
-        }
-
         .btn-submit {
-            background: var(--primary);
+            background: #3C6E71;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -70,83 +71,102 @@
             font-size: 1.05em;
             font-weight: 500;
             cursor: pointer;
-            box-shadow: var(--shadow);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
             transition: background 0.2s ease;
+            width: 100%;
+            margin-top: 12px;
         }
 
         .btn-submit:hover {
-            background: var(--primary-dark);
+            background: #2A4E50;
         }
 
         .back-btn {
+            display: block;
             margin-top: 24px;
+            text-align: center;
         }
 
         .back-btn button {
             background: #e5e7eb;
-            color: #111;
+            color: #111827;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
         }
 
         .back-btn button:hover {
             background: #d1d5db;
         }
+
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.5);
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
-<nav class="sidebar">
-    <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
-    <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
-    <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
-    <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
-    {% if team_id %}
+    <nav class="sidebar">
+        <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+        <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+        <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+        <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
+        {% if team_id %}
         <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
         <a href="/chat/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
-    {% endif %}
-    {% if logged_in %}
+        {% endif %}
+        {% if logged_in %}
         <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein Profil</span></a>
         <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
-    {% else %}
+        {% else %}
         <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
-    {% endif %}
-</nav>
+        {% endif %}
+    </nav>
 
-<div class="container">
-    <div class="form-card">
-        <h2>Neuen Task erstellen</h2>
-        <form method="post">
-            <div class="form-group">
-                <label for="project_id">Projekt auswählen</label>
-                <select name="project_id" id="project_id" required>
-                    {% for p in projects %}
+    <div class="container">
+        <div class="form-card">
+            <h2>Neuen Task erstellen</h2>
+            <form method="post">
+                <div class="form-group">
+                    <label for="project_id">Projekt auswählen</label>
+                    <select name="project_id" id="project_id" required>
+                        {% for p in projects %}
                         <option value="{{ p.id }}">{{ p.name }}</option>
-                    {% endfor %}
-                </select>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Titel</label>
+                    <input type="text" name="title" id="title" placeholder="z. B. Testing vorbereiten" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Beschreibung</label>
+                    <input type="text" name="description" id="description" placeholder="Kurzbeschreibung">
+                </div>
+
+                <div class="form-group">
+                    <label for="deadline">Deadline (optional)</label>
+                    <input type="date" name="deadline" id="deadline">
+                </div>
+
+                <button type="submit" class="btn-submit">Task anlegen</button>
+            </form>
+
+            <div class="back-btn">
+                <a href="/start">
+                    <button type="button">← Zurück zum Dashboard</button>
+                </a>
             </div>
-
-            <div class="form-group">
-                <label for="title">Titel</label>
-                <input type="text" name="title" id="title" placeholder="z. B. Testing vorbereiten" required>
-            </div>
-
-            <div class="form-group">
-                <label for="description">Beschreibung</label>
-                <input type="text" name="description" id="description" placeholder="Kurzbeschreibung">
-            </div>
-
-            <div class="form-group">
-                <label for="deadline">Deadline (optional)</label>
-                <input type="date" name="deadline" id="deadline">
-            </div>
-
-            <button type="submit" class="btn-submit">Task anlegen</button>
-        </form>
-
-        <div class="back-btn">
-            <a href="/start">
-                <button type="button" class="btn-submit" style="background:#e5e7eb; color:#111;">Zurück zum Dashboard</button>
-            </a>
         </div>
     </div>
-</div>
 </body>
+
 </html>
