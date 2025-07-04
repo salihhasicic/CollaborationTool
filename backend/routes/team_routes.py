@@ -113,3 +113,13 @@ def download_team_file(team_id, filename):
 def get_all_teams():
     teams = Team.query.all()
     return jsonify([{'id': t.id, 'name': t.name} for t in teams])
+
+@team_bp.route('/<int:team_id>', methods=['DELETE'])
+def delete_team_backend(team_id):
+    team = Team.query.get(team_id)
+    if not team:
+        return jsonify({'message': 'Team nicht gefunden'}), 404
+    db.session.delete(team)
+    db.session.commit()
+    return jsonify({'message': 'Team gelöscht'}), 200
+
