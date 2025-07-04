@@ -1,144 +1,363 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
+
 <head>
+    <meta charset="UTF-8">
     <title>Team {{ team_id }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        .ablage-section {
-            margin-top: 32px;
-            background: #f7fafc;
+        body {
+            font-family: system-ui, sans-serif;
+            background: #ffffff;
+            color: #1f2937;
+        }
+
+        .container {
+            padding: 24px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h2 {
+            color: #111827;
+        }
+
+        h3 {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #2A4E50;
+            padding-bottom: 4px;
+        }
+
+        select,
+        button,
+        input[type="file"] {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 0.95em;
+        }
+
+        .btn {
+            background: #3C6E71;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #2A4E50;
+        }
+
+        .section {
+            background: #f9fafb;
             border-radius: 10px;
-            box-shadow: 0 1px 8px rgba(37,99,235,0.06);
-            padding: 22px 24px 18px 24px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 28px;
         }
-        .ablage-section h3 {
-            margin-top: 0;
-            color: var(--primary-dark);
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
         }
-        .ablage-form textarea {
+
+        .profile-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .skill-badge {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            font-size: 0.85em;
+            font-weight: 500;
+            border-radius: 999px;
+            margin: 3px 4px 0 0;
+        }
+
+        textarea {
             width: 100%;
             min-height: 80px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 0.95em;
             margin-bottom: 10px;
+        }
+
+        pre {
+            background: #fff;
+            border-radius: 6px;
+            padding: 10px;
+            overflow-x: auto;
+        }
+
+        ul.team-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px 0;
+        }
+
+        #file-list li {
+            margin-bottom: 6px;
+        }
+
+        #upload-status {
+            margin-top: 8px;
+            color: #2563eb;
+        }
+
+        @media (max-width: 900px) {
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .team-card {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .team-card .profile-img {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3C6E71;
+            /* Anpassung hier */
+            background: #fff;
+            box-shadow: 0 0 0 2px #e5e7eb;
+            /* optional für eleganten Außenrahmen */
+        }
+
+        .skill-list {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .file-card {
+            background: #e6f4ec;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: box-shadow 0.2s;
+            cursor: pointer;
+            border: 1px solid #b7dbc9;
+        }
+
+        .file-card:hover {
+            box-shadow: 0 4px 14px rgba(60, 110, 113, 0.15);
+            background: #d8efe4;
+        }
+
+        .file-name {
+            font-weight: 600;
+            font-size: 1.05em;
+            color: #1b2e28;
+        }
+
+        .file-meta {
+            font-size: 0.9em;
+            color: #555;
         }
     </style>
 </head>
+
 <body>
+
     <nav class="sidebar">
-    <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
-    <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
-    <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
-    <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
-    {% if team_id %}
+        <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+        <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+        <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+        <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
+        {% if team_id %}
         <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
-        <a href="/chat/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
-    {% endif %}
-    {% if logged_in %}
-        <a href="/profile/{{ user_id  }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein Profil</span></a>
+        <a href="/chat/{{ team_id }}"><img
+                src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
+        {% endif %}
+        <a href="/team_manage"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team
+                verwalten</span></a>
+        {% if logged_in %}
+        <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein
+                Profil</span></a>
         <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
-    {% else %}
+        {% else %}
         <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
-    {% endif %}
-</nav>
+        {% endif %}
+    </nav>
+
     <div class="container">
         <h2>Team {{ team_id }}</h2>
+
+        <!-- Teamwechsel -->
         <form method="post" style="margin-bottom:24px;">
             <label for="team_select"><strong>Team wechseln:</strong></label>
-            <select name="team_select" id="team_select" style="margin-left:10px; padding:6px 12px; border-radius:6px;">
+            <select name="team_select" id="team_select">
                 {% for t in teams %}
-                    <option value="{{ t.id }}" {% if t.id == team_id %}selected{% endif %}>{{ t.name }}</option>
+                <option value="{{ t.id }}" {% if t.id==team_id %}selected{% endif %}>{{ t.name }}</option>
                 {% endfor %}
             </select>
-            <button type="submit" style="margin-left:10px;">Anzeigen</button>
+            <button class="btn" type="submit" style="margin-left: 10px;">Anzeigen</button>
         </form>
-        <ul class="team-list">
-            {% for user in team_members %}
-            <li>
-                <div class="user-info">
-                    <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}" class="profile-img" alt="Profilbild">
-                    <div>
-                        <strong style="font-size:1.15em;">{{ user.username }}</strong><br>
-                        {% set skills = user.skills.split(',') if user.skills else [] %}
-                        {% for skill in skills %}
-                            <span class="skill-badge">{{ skill }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-        <a href="/users"><button type="button">Zurück zur Benutzerliste</button></a>
 
-        <!-- Datenablage / Notizen -->
-        <div class="ablage-section">
-            <h3>Datenablage / Notizen</h3>
+        <div class="section">
+            <h3>👥 Teammitglieder</h3>
+            <div class="team-grid">
+                {% for user in team_members %}
+                <a href="/profile/{{ user.id }}" style="text-decoration: none; color: inherit;">
+                    <div class="team-card" style="cursor: pointer;">
+                        <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}"
+                            class="profile-img" alt="Profilbild">
+                        <div>
+                            <strong style="font-size:1.1em;">{{ user.username }}</strong><br>
+                            {% set skills = user.skills.split(',') if user.skills else [] %}
+                            <div class="skill-list">
+                                {% for skill in skills %}
+                                <span class="skill-badge">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            <a href="/users" class="btn">Alle Benutzer anzeigen</a>
+            <div style="margin-top: 24px;">
+                <h4 style="margin-bottom: 8px;">➕ Mitglied zum Team hinzufügen</h4>
+                <form method="post" action="/team/add"
+                    style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <select name="user_id" required style="min-width: 200px;">
+                        {% for user in all_users if user.team_id != team_id %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="hidden" name="team_id" value="{{ team_id }}">
+                    <button type="submit" class="btn">Hinzufügen</button>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Notizen -->
+        <div class="section">
+            <h3>🗒️ Notizen</h3>
             <form class="ablage-form" method="post" action="/team/{{ team_id }}">
-                <textarea name="ablage" placeholder="Hier können Team-Mitglieder Notizen oder Links ablegen...">{% if ablage %}{{ ablage }}{% endif %}</textarea>
-                <button type="submit">Speichern</button>
+                <textarea name="ablage"
+                    placeholder="Hier können Team-Mitglieder Notizen oder Links ablegen...">{% if ablage %}{{ ablage }}{% endif %}</textarea>
+                <button class="btn" type="submit">Speichern</button>
             </form>
             {% if ablage %}
             <div style="margin-top:10px; color:#444;">
                 <strong>Aktuelle Ablage:</strong><br>
-                <pre style="background:#fff; border-radius:6px; padding:10px;">{{ ablage }}</pre>
+                <pre>{{ ablage }}</pre>
             </div>
             {% endif %}
         </div>
 
         <!-- Dateiablage -->
-        <div class="ablage-section" style="margin-top:32px;">
-            <h3>Dateiablage</h3>
+        <div class="section">
+            <h3>📎 Dateiablage</h3>
             <form id="uploadForm" enctype="multipart/form-data">
                 <input type="file" name="file" required>
-                <button type="submit">Hochladen</button>
+                <button class="btn" type="submit">Hochladen</button>
             </form>
-            <div id="upload-status" style="margin-top:8px;color:#2563eb;"></div>
+            <div id="upload-status"></div>
             <div style="margin-top:18px;">
                 <strong>Team-Dateien:</strong>
                 <ul id="file-list"></ul>
             </div>
         </div>
-        <script>
-            // Backend-URL wie in main.py
-            const BACKEND_URL = "http://127.0.0.1:5000";
+    </div>
 
-            document.getElementById('uploadForm').onsubmit = function(e) {
-                e.preventDefault();
-                var formData = new FormData(this);
-                // Uploader (user_id oder username) mitsenden
-                formData.append('uploader', localStorage.getItem('user_id') || 'unbekannt');
-                fetch(`${BACKEND_URL}/team/{{ team_id }}/upload`, {
-                    method: 'POST',
-                    body: formData
-                })
+    <script>
+        const BACKEND_URL = "http://127.0.0.1:5000";
+
+        document.getElementById('uploadForm').onsubmit = function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('uploader', localStorage.getItem('user_id') || 'unbekannt');
+            fetch(`${BACKEND_URL}/team/{{ team_id }}/upload`, {
+                method: 'POST',
+                body: formData
+            })
                 .then(r => r.json())
                 .then(data => {
                     document.getElementById('upload-status').innerText = data.message || data.error || '';
                     loadFiles();
                 });
-            };
+        };
 
-            function loadFiles() {
-                fetch(`${BACKEND_URL}/team/{{ team_id }}/files`)
+        function loadFiles() {
+            fetch(`${BACKEND_URL}/team/{{ team_id }}/files`)
                 .then(r => r.json())
                 .then(data => {
                     let ul = document.getElementById('file-list');
+                    ul.className = "file-list";
                     ul.innerHTML = '';
-                    // Erwartet: data.files = [{filename, uploader, uploaded_at}]
                     if (data.files && data.files.length > 0) {
-                        data.files.forEach(function(f) {
-                            ul.innerHTML += `<li>
-                                <a href="${BACKEND_URL}/team/{{ team_id }}/files/${encodeURIComponent(f.filename)}" target="_blank">${f.filename}</a>
-                                <span style="color:#888;font-size:0.95em;">
-                                    (hochgeladen von ${f.uploader || 'unbekannt'} am ${f.uploaded_at ? new Date(f.uploaded_at).toLocaleString() : '-'})
-                                </span>
-                            </li>`;
+                        data.files.forEach(function (f) {
+                            let li = document.createElement('li');
+                            li.className = 'file-card';
+                            li.onclick = () => {
+                                window.open(`${BACKEND_URL}/team/{{ team_id }}/files/${encodeURIComponent(f.filename)}`, '_blank');
+                            };
+                            li.innerHTML = `
+                        <div class="file-name">${f.filename}</div>
+                        <div class="file-meta">
+                            Hochgeladen von ${f.uploader || 'unbekannt'}<br>
+                            am ${f.uploaded_at ? new Date(f.uploaded_at).toLocaleString() : '-'}
+                        </div>
+                    `;
+                            ul.appendChild(li);
                         });
                     } else {
                         ul.innerHTML = '<li style="color:#aaa;">Keine Dateien vorhanden.</li>';
                     }
                 });
-            }
-            loadFiles();
-        </script>
-    </div>
+        }
+
+
+        loadFiles();
+    </script>
 </body>
+
 </html>

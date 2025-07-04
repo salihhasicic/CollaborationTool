@@ -4,6 +4,7 @@ import requests
 from functools import wraps
 from datetime import datetime
 import random
+from flask import jsonify
 
 app = Flask(__name__)
 app.secret_key = "supersecret"  # Für Session-Handling
@@ -39,7 +40,7 @@ def login():
 
             session['user_id'] = user_id
 
-            resp = make_response(redirect(url_for('list_users')))
+            resp = make_response(redirect(url_for('dashboard')))
             if access_token:
                 resp.set_cookie(
                     'jwt_token', access_token,
@@ -96,7 +97,7 @@ def show_team(team_id):
     if response.status_code == 200:
         all_users = response.json()
         team_members = [u for u in all_users if u.get('team_id') == team_id]
-        return render_template('team.html', team_id=team_id, team_members=team_members, ablage=ablage, logged_in='user_id' in session, teams=teams, user_id=session.get('user_id'))
+        return render_template('team.html', team_id=team_id, team_members=team_members, ablage=ablage, logged_in='user_id' in session, teams=teams, user_id=session.get('user_id'), all_users=all_users)
     else:
         return "Fehler beim Laden des Teams", 500
 

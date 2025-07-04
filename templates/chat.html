@@ -1,215 +1,406 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
+
 <head>
+    <meta charset="UTF-8">
     <title>Team Chat {{ team_id }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        .chat-form {
+        body {
+            font-family: system-ui, sans-serif;
+            background: #ffffff;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 24px auto;
+            padding: 24px;
+        }
+
+        h2 {
+            color: #111827;
+            font-size: 1.6em;
+            margin-bottom: 16px;
+        }
+
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        .team-chat-column,
+        .ai-chat-column {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
-            gap: 10px;
         }
-        .chat-form textarea {
-            resize: vertical;
-        }
-        .ai-chat-section {
-            background: #f7fafc;
-            border: 1.5px solid #fbbf24;
-            border-radius: 10px;
-            padding: 18px 22px 12px 22px;
-            margin-bottom: 28px;
-            box-shadow: 0 1px 8px rgba(251,191,36,0.08);
-        }
-        .ai-chat-label {
-            font-weight: bold;
-            color: #b68900;
-            margin-bottom: 8px;
-            font-size: 1.1em;
-        }
-        .ai-chat-row {
+
+        .chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
             display: flex;
-            gap: 10px;
-            margin-bottom: 8px;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+            max-height: 500px;
         }
-        .ai-chat-row input {
-            flex: 1;
-            padding: 10px;
-            border-radius: 7px;
-            border: 1.5px solid #e5e7eb;
-            font-size: 1em;
+
+        .chat-message {
+            background: #e6f4ec;
+            padding: 12px 16px;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
         }
-        .ai-chat-row button {
-            background: #fbbf24;
-            color: #222;
+
+        .chat-sender {
             font-weight: 600;
+            color: #2A4E50;
+            margin-bottom: 4px;
+            font-size: 0.95em;
+        }
+
+        .chat-timestamp {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        .chat-form {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+        }
+
+        .chat-form textarea {
+            flex: 1;
+            height: 50px;
+            padding: 12px 16px;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 1.5px solid #ccc;
+            background: #fff;
+            resize: none;
+            line-height: normal;
+            box-sizing: border-box;
+        }
+
+        .chat-form button {
+            height: 50px;
+            padding: 0 24px;
+            font-size: 1em;
+            font-weight: 600;
+            color: white;
+            background: #3C6E71;
             border: none;
-            border-radius: 7px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-sizing: border-box;
+        }
+
+        .chat-form button:hover {
+            background: #2A4E50;
+        }
+
+        button,
+        .btn {
+            background: #3C6E71;
+            color: white;
             padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 500;
             cursor: pointer;
             transition: background 0.2s;
         }
+
+        .ai-btn {
+            background: #3C6E71;
+            color: #fff;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 20px;
+            /* Abstand zum Eingabefeld */
+        }
+
+        button:hover,
+        .btn:hover,
+        .ai-btn:hover {
+            background: #2A4E50;
+        }
+
+
+
+        .ai-chat-label {
+            font-weight: bold;
+            color: #2A4E50;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .ai-chat-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .ai-chat-row input {
+            flex: 1;
+            height: 50px;
+            padding: 12px 16px;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 1.5px solid #ccc;
+            background: #fff;
+            box-sizing: border-box;
+            line-height: normal;
+
+
+        }
+
+        .ai-chat-row button {
+            height: 50px;
+            padding: 0 24px;
+            font-size: 1em;
+            font-weight: 600;
+            color: white;
+            background: #3C6E71;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-sizing: border-box;
+        }
+
+
         .ai-chat-row button:hover {
-            background: #ffe066;
+            background: #2A4E50;
         }
+
         .ai-chat-answer {
-            margin-top: 8px;
-            background: #fffbe6;
-            border-left: 4px solid #fbbf24;
-            padding: 10px 16px;
+            background: #A7CAB1;
+            padding: 12px 16px;
             border-radius: 7px;
-            color: #222;
+            color: #333;
             font-style: italic;
-            min-height: 24px;
         }
+
         .ai-suggestion {
-            background: #f7fafc;
-            border-left: 4px solid #fbbf24;
+            background: #A7CAB1;
             padding: 10px 16px;
-            margin-bottom: 10px;
+            margin: 12px 0;
             border-radius: 7px;
             color: #222;
             font-style: italic;
             display: none;
         }
+
         .ai-suggestion.visible {
             display: block;
         }
+
         .ai-suggestion-action {
             margin-left: 12px;
             color: #2563eb;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.98em;
+            font-size: 0.95em;
         }
+
         .ai-suggestion-action:hover {
             text-decoration: underline;
         }
+
+        .team-switch {
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1.5px solid #ccc;
+            font-size: 0.95em;
+        }
     </style>
 </head>
+
 <body>
     <nav class="sidebar">
-    <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
-    <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
-    <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
-    <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
-    {% if team_id %}
+        <a href="/start"><img src="{{ url_for('static', filename='icon-dashboard.svg') }}"><span>Dashboard</span></a>
+        <a href="/projects"><img src="{{ url_for('static', filename='icon-project.svg') }}"><span>Projekte</span></a>
+        <a href="/users"><img src="{{ url_for('static', filename='icon-users.svg') }}"><span>Benutzer</span></a>
+        <a href="/chats"><img src="{{ url_for('static', filename='icon-chat.svg') }}"><span>Chat</span></a>
+        {% if team_id %}
         <a href="/team/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team</span></a>
-        <a href="/chat/{{ team_id }}"><img src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
-    {% endif %}
-    {% if logged_in %}
-        <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein Profil</span></a>
+        <a href="/chat/{{ team_id }}"><img
+                src="{{ url_for('static', filename='icon-team-chat.svg') }}"><span>Team-Chat</span></a>
+        {% endif %}
+        <a href="/team_manage"><img src="{{ url_for('static', filename='icon-team.svg') }}"><span>Team
+                verwalten</span></a>
+        {% if logged_in %}
+        <a href="/profile/{{ user_id }}"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Mein
+                Profil</span></a>
         <a href="/logout"><img src="{{ url_for('static', filename='icon-logout.svg') }}"><span>Logout</span></a>
-    {% else %}
+        {% else %}
         <a href="/login"><img src="{{ url_for('static', filename='icon-profile.svg') }}"><span>Login</span></a>
-    {% endif %}
-</nav>
+        {% endif %}
+    </nav>
+
     <div class="container">
-        <!-- KI-Chat Sektion -->
-        <div class="ai-chat-section">
-            <div class="ai-chat-label">Chatte mit der KI</div>
-            <div class="ai-chat-row">
-                <input type="text" id="ai-input" placeholder="Frage an die KI..." onkeydown="if(event.key==='Enter'){event.preventDefault();askAI();}">
-                <button type="button" onclick="askAI()">Senden</button>
-            </div>
-            <div id="ai-answer" class="ai-chat-answer"></div>
-        </div>
-        <!-- Team-Wechsel Dropdown -->
-        <div class="team-switch" style="margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+        <div class="team-switch">
             <label for="team_select"><strong>Team wechseln:</strong></label>
-            <select id="team_select" onchange="window.location.href='/chat/'+this.value" style="padding:6px 12px; border:1px solid #ccc; border-radius:4px;">
+            <select id="team_select" onchange="window.location.href='/chat/'+this.value">
                 {% for t in teams %}
-                    <option value="{{ t.id }}" {% if t.id == team_id %}selected{% endif %}>{{ t.name }}</option>
+                <option value="{{ t.id }}" {% if t.id==team_id %}selected{% endif %}>{{ t.name }}</option>
                 {% endfor %}
             </select>
         </div>
-        <!-- Team Chat -->
-        <h2>Chat – Team {{ team_id }}</h2>
-        <div class="chat-box" id="chat-box">
-            {% for msg in messages %}
-            <div class="chat-message">
-                <span class="chat-sender">{{ msg.sender_id }}</span>:
-                {{ msg.message or msg.content }}
-                <span class="chat-timestamp">({{ msg.timestamp }})</span>
+
+        <h2>Team-Chat – Team {{ team_id }}</h2>
+
+        <div class="chat-layout">
+            <!-- Linke Spalte: Team-Chat -->
+            <div class="team-chat-column">
+                <div class="chat-box" id="chat-box">
+                    {% for msg in messages %}
+                    <div class="chat-message">
+                        <span class="chat-sender">
+                            {% if msg.sender_id == user_id %}
+                            Du
+                            {% else %}
+                            {{ msg.sender_name }}
+                            {% endif %}
+                        </span>
+                        {{ msg.message or msg.content }}
+                        <div class="chat-timestamp" data-timestamp="{{ msg.timestamp }}">
+                            {{ msg.timestamp }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="ai-btn" type="button" onclick="suggestAIReply()">AI-Antwort vorschlagen</button>
+                <div id="ai-suggestion" class="ai-suggestion"></div>
+                <form method="post" action="/chat/{{ team_id }}" class="chat-form" id="chat-form">
+                    <input type="hidden" name="sender_id" value="{{ user_id }}">
+                    <textarea name="message" id="message" rows="3" required
+                        placeholder="Nachricht eingeben..."></textarea>
+                    <button type="submit">Senden</button>
+                </form>
+                <br>
+                <a href="/team/{{ team_id }}"><button type="button">Zurück zum Team</button></a>
             </div>
-            {% endfor %}
+
+            <!-- Rechte Spalte: KI -->
+            <div class="ai-chat-column">
+                <div class="ai-chat-label">🤖 Chatte mit der KI</div>
+                <div class="ai-chat-row">
+                    <input type="text" id="ai-input" placeholder="Frage an die KI..."
+                        onkeydown="if(event.key==='Enter'){event.preventDefault();askAI();}">
+                    <button type="button" onclick="askAI()">Senden</button>
+                </div>
+                <div id="ai-answer" class="ai-chat-answer">Noch keine Frage gestellt.</div>
+            </div>
         </div>
-        <button class="ai-btn" type="button" onclick="suggestAIReply()">AI-Antwort vorschlagen</button>
-        <div id="ai-suggestion" class="ai-suggestion"></div>
-        <form method="post" action="/chat/{{ team_id }}" class="chat-form" id="chat-form">
-            <input type="hidden" name="sender_id" value="1">
-            <textarea name="message" id="message" rows="3" required placeholder="Nachricht eingeben..."></textarea>
-            <button type="submit">Senden</button>
-        </form>
-        <br>
-        <a href="/team/{{ team_id }}"><button type="button">Zurück zum Team</button></a>
     </div>
+
     <script>
-        // Nutze die vom Backend übergebene Variable
         const BACKEND_URL = "{{ backend_url }}";
 
-        window.onload = function() {
-            var chatBox = document.getElementById('chat-box');
+        window.onload = function () {
+            const chatBox = document.getElementById('chat-box');
             chatBox.scrollTop = chatBox.scrollHeight;
-        }
+        };
+
         function suggestAIReply() {
-            var chatBox = document.getElementById('chat-box');
-            var messages = chatBox.getElementsByClassName('chat-message');
+            const chatBox = document.getElementById('chat-box');
+            const messages = chatBox.getElementsByClassName('chat-message');
             if (messages.length === 0) return;
-            var lastMsg = messages[messages.length-1].innerText;
-            var msgText = lastMsg.replace(/^[^:]+:\s*/, '').replace(/\([^)]+\)$/, '').trim();
-            var aiDiv = document.getElementById('ai-suggestion');
+            const lastMsg = messages[messages.length - 1].innerText;
+            const msgText = lastMsg.replace(/^[^:]+:\s*/, '').replace(/\([^)]+\)$/, '').trim();
+            const aiDiv = document.getElementById('ai-suggestion');
             aiDiv.classList.remove('visible');
-            aiDiv.innerHTML = "AI denkt ...";
+            aiDiv.innerHTML = "KI denkt ...";
             aiDiv.classList.add('visible');
+
             fetch(`${BACKEND_URL}/chat/suggest`, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({message: msgText})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msgText })
             })
-            .then(r => r.json())
-            .then(data => {
-                if (data.suggested_reply) {
-                    aiDiv.innerHTML = 
-                        `<span>${data.suggested_reply}</span>
-                        <span class="ai-suggestion-action" onclick="useAISuggestion()">Übernehmen</span>`;
-                    aiDiv.classList.add('visible');
-                    window._aiSuggestion = data.suggested_reply;
-                } else {
-                    aiDiv.innerHTML = "AI konnte keine Antwort generieren.";
-                }
-            });
+                .then(r => r.json())
+                .then(data => {
+                    if (data.suggested_reply) {
+                        aiDiv.innerHTML = `<span>${data.suggested_reply}</span><span class="ai-suggestion-action" onclick="useAISuggestion()">Übernehmen</span>`;
+                        window._aiSuggestion = data.suggested_reply;
+                    } else {
+                        aiDiv.innerHTML = "KI konnte keine Antwort generieren.";
+                    }
+                });
         }
+
         function useAISuggestion() {
             if (window._aiSuggestion) {
                 document.getElementById('message').value = window._aiSuggestion;
                 document.getElementById('ai-suggestion').classList.remove('visible');
             }
         }
+
         function askAI() {
-            var input = document.getElementById('ai-input');
-            var answerDiv = document.getElementById('ai-answer');
-            var question = input.value.trim();
+            const input = document.getElementById('ai-input');
+            const question = input.value.trim();
+            const answerDiv = document.getElementById('ai-answer');
             if (!question) return;
+
             answerDiv.innerHTML = "KI denkt ...";
             fetch(`${BACKEND_URL}/chat/suggest`, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({message: question})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: question })
             })
-            .then(r => r.json())
-            .then(data => {
-                if (data.suggested_reply) {
-                    answerDiv.innerHTML = data.suggested_reply;
-                } else if (data.error) {
-                    answerDiv.innerHTML = "Fehler: " + data.error;
-                } else {
-                    answerDiv.innerHTML = "KI konnte keine Antwort generieren.";
-                }
-            })
-            .catch(() => {
-                answerDiv.innerHTML = "Fehler bei der Kommunikation mit der KI.";
-            });
+                .then(r => r.json())
+                .then(data => {
+                    if (data.suggested_reply) {
+                        answerDiv.innerHTML = data.suggested_reply;
+                    } else {
+                        answerDiv.innerHTML = "Keine Antwort verfügbar.";
+                    }
+                })
+                .catch(() => {
+                    answerDiv.innerHTML = "Fehler bei der Kommunikation mit der KI.";
+                });
         }
+
+
+        document.querySelectorAll('.chat-timestamp').forEach(el => {
+            const raw = el.getAttribute('data-timestamp');
+            const date = new Date(raw);
+            if (!isNaN(date)) {
+                el.textContent = date.toLocaleString('de-DE', {
+                    day: 'numeric',
+                    month: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            }
+        });
     </script>
 </body>
+
 </html>
