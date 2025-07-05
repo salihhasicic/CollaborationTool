@@ -122,15 +122,27 @@ def add_to_team():
 def chat(team_id):
     if request.method == 'POST':
         if request.is_json:
-            #  → Hier kommt Dein AI-Suggest-Fetch an
+            # → AI-Suggest-Anfrage
             data = request.get_json()
-            ai_input = data.get('message')
-            # …mach etwas mit ai_input (z.B. an eine AI-API weiterleiten)…
-            return jsonify({'suggested_reply': '…hier AI-Text…'})
+            ai_input = data.get('message', '').strip()
+            if not ai_input:
+                return jsonify({'error': 'Keine Nachricht übergeben'}), 400
+
+            # Weiterleiten an dein Backend-Suggest-Endpoint
+            ai_resp = requests.post(f'{BACKEND_URL}/chat/suggest', json={'message': ai_input})
+            if ai_resp.status_code == 200:
+                suggestion = ai_resp.json().get('suggested_reply')
+                return jsonify({'suggested_reply': suggestion})
+            else:
+                return jsonify({'error': 'AI-Service nicht erreichbar'}), ai_resp.status_code
+
         else:
-            #  → Hier kommt Dein normales Chat-Formular an
-            message   = request.form['message']
-            sender_id = request.form['sender_id']
+            # → Normales Chat-Formular
+            message   = request.form.get('message', '').strip()
+            sender_id = request.form.get('sender_id')
+            if not message or not sender_id:
+                return "Fehler: fehlende Felder", 400
+
             resp = requests.post(f'{BACKEND_URL}/chat/send', json={
                 'sender_id': int(sender_id),
                 'team_id': team_id,
@@ -138,10 +150,12 @@ def chat(team_id):
             })
             if resp.status_code != 200:
                 return "Fehler beim Senden", 500
+            # nach erfolgreichem Senden einfach weiter zum GET-Teil
 
-    # GET-Fall (und nach POST) → Nachrichten holen + Dropdown-Teams laden …
-    res = requests.get(f'{BACKEND_URL}/chat/team/{team_id}')
-    messages = res.json() if res.status_code == 200 else []
+    # GET-Fall (oder nach POST)
+    messages_res = requests.get(f'{BACKEND_URL}/chat/team/{team_id}')
+    messages     = messages_res.json() if messages_res.status_code == 200 else []
+
     teams_res = requests.get(f'{BACKEND_URL}/team/all')
     teams     = teams_res.json() if teams_res.status_code == 200 else []
 

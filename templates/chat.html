@@ -286,7 +286,9 @@
                             {{ msg.sender_name }}
                             {% endif %}
                         </span>
-                        {{ msg.message or msg.content }}
+                        <div class="chat-content">
+                            {{ msg.message or msg.content }}
+                        </div>
                         <div class="chat-timestamp" data-timestamp="{{ msg.timestamp }}">
                             {{ msg.timestamp }}
                         </div>
@@ -328,10 +330,16 @@
 
         function suggestAIReply() {
             const chatBox = document.getElementById('chat-box');
-            const messages = chatBox.getElementsByClassName('chat-message');
-            if (messages.length === 0) return;
-            const lastMsg = messages[messages.length - 1].innerText;
-            const msgText = lastMsg.replace(/^[^:]+:\s*/, '').replace(/\([^)]+\)$/, '').trim();
+            const msgs = chatBox.getElementsByClassName('chat-message');
+            if (msgs.length === 0) return;
+
+            // Nimm nur den eigentlichen Nachrichten-Text aus dem .chat-content-Container
+            const lastMsgEl = msgs[msgs.length - 1];
+            const msgText = lastMsgEl
+                .querySelector('.chat-content')
+                .innerText
+                .trim();
+
             const aiDiv = document.getElementById('ai-suggestion');
             aiDiv.classList.remove('visible');
             aiDiv.innerHTML = "KI denkt ...";
@@ -342,16 +350,20 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: msgText })
             })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.suggested_reply) {
-                        aiDiv.innerHTML = `<span>${data.suggested_reply}</span><span class="ai-suggestion-action" onclick="useAISuggestion()">Übernehmen</span>`;
-                        window._aiSuggestion = data.suggested_reply;
-                    } else {
-                        aiDiv.innerHTML = "KI konnte keine Antwort generieren.";
-                    }
-                });
+            .then(r => r.json())
+            .then(data => {
+                if (data.suggested_reply) {
+                    aiDiv.innerHTML = `
+                        <span>${data.suggested_reply}</span>
+                        <span class="ai-suggestion-action" onclick="useAISuggestion()">Übernehmen</span>
+                    `;
+                    window._aiSuggestion = data.suggested_reply;
+                } else {
+                    aiDiv.innerHTML = "KI konnte keine Antwort generieren.";
+                }
+            });
         }
+
 
         function useAISuggestion() {
             if (window._aiSuggestion) {
