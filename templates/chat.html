@@ -2,6 +2,7 @@
 <html lang="de">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Team Chat {{ team_id }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -237,6 +238,8 @@
             font-size: 0.95em;
         }
     </style>
+    <script src="/static/app.js"></script>
+<link rel="stylesheet" href="/static/responsive.css">
 </head>
 
 <body>
@@ -321,97 +324,73 @@
     </div>
 
     <script>
-        const BACKEND_URL = "{{ backend_url }}";
 
-        window.onload = function () {
-            const chatBox = document.getElementById('chat-box');
-            chatBox.scrollTop = chatBox.scrollHeight;
-        };
-
-        function suggestAIReply() {
-            const chatBox = document.getElementById('chat-box');
-            const msgs = chatBox.getElementsByClassName('chat-message');
-            if (msgs.length === 0) return;
-
-            // Nimm nur den eigentlichen Nachrichten-Text aus dem .chat-content-Container
-            const lastMsgEl = msgs[msgs.length - 1];
-            const msgText = lastMsgEl
-                .querySelector('.chat-content')
-                .innerText
-                .trim();
-
-            const aiDiv = document.getElementById('ai-suggestion');
-            aiDiv.classList.remove('visible');
-            aiDiv.innerHTML = "KI denkt ...";
-            aiDiv.classList.add('visible');
-
-            fetch(`${BACKEND_URL}/chat/suggest`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msgText })
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.suggested_reply) {
-                    aiDiv.innerHTML = `
-                        <span>${data.suggested_reply}</span>
-                        <span class="ai-suggestion-action" onclick="useAISuggestion()">Übernehmen</span>
-                    `;
-                    window._aiSuggestion = data.suggested_reply;
-                } else {
-                    aiDiv.innerHTML = "KI konnte keine Antwort generieren.";
-                }
-            });
+const teamId = {{ team_id|tojson }};
+const currentUserId = {{ user_id|tojson }};
+const box = document.getElementById('chat-box');
+const form = document.getElementById('chat-form');
+const field = document.getElementById('message');
+const chatError = textElement('p', '', 'chat-error'); chatError.setAttribute('role', 'status'); form.after(chatError);
+let signature = '', loading = false, suggestion = '';
+async function refreshChat() {
+    if (loading) return;
+    loading = true;
+    try {
+        const messages = await requestJSON(`/api/chat/team/${teamId}`);
+        const next = JSON.stringify(messages);
+        if (next !== signature) {
+            const scroll = !signature || box.scrollHeight-box.scrollTop-box.clientHeight < 80;
+            signature = next;
+            box.replaceChildren(...messages.map(m => {
+                const row = textElement('div', '', 'chat-message');
+                const time = textElement('div', new Date(m.timestamp).toLocaleString('de-DE'), 'chat-timestamp');
+                time.dataset.timestamp = m.timestamp;
+                row.append(textElement('span', m.sender_id === currentUserId ? 'Du' : m.sender_name, 'chat-sender'), textElement('div', m.content, 'chat-content'), time);
+                return row;
+            }));
+            if (scroll) box.scrollTop = box.scrollHeight;
         }
+    } catch(e) { chatError.textContent = e.message; }
+    finally {loading = false;}
+}
+form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const content = field.value.trim();
+    if (!content) {chatError.textContent = 'Bitte eine Nachricht eingeben.'; return;}
+    const button = form.querySelector('button'); button.disabled = true;
+    try {
+        await requestJSON('/api/chat/send', jsonOptions({team_id: teamId, content}));
+        field.value = ''; signature = ''; chatError.textContent = ''; await refreshChat();
+    } catch(e) {chatError.textContent = e.message;}
+    finally {button.disabled = false;}
+});
+async function suggestAIReply() {
+    const last = box.querySelector('.chat-message:last-child .chat-content');
+    const target = document.getElementById('ai-suggestion');
+    target.classList.add('visible'); suggestion = '';
+    if (!last) {target.textContent = 'Schreibe zuerst eine Nachricht.'; return;}
+    target.textContent = 'KI denkt ...';
+    try {
+        const data = await requestJSON('/api/chat/suggest', jsonOptions({message: last.textContent}));
+        suggestion = data.suggested_reply;
+        const action = textElement('button', 'Übernehmen', 'ai-suggestion-action'); action.type = 'button'; action.onclick = useAISuggestion;
+        target.replaceChildren(textElement('span', suggestion), action);
+    } catch(e) {target.textContent = e.message;}
+}
+function useAISuggestion() {
+    if (suggestion) {field.value = suggestion; document.getElementById('ai-suggestion').classList.remove('visible');}
+}
+async function askAI() {
+    const question = document.getElementById('ai-input').value.trim();
+    if (!question) return;
+    const target = document.getElementById('ai-answer'); target.textContent = 'KI denkt ...';
+    try {target.textContent = (await requestJSON('/api/chat/suggest', jsonOptions({message: question}))).suggested_reply;}
+    catch(e) {target.textContent = e.message;}
+}
+refreshChat();
+const timer = setInterval(refreshChat, 1500);
+window.addEventListener('pagehide', () => clearInterval(timer), {once:true});
 
-
-        function useAISuggestion() {
-            if (window._aiSuggestion) {
-                document.getElementById('message').value = window._aiSuggestion;
-                document.getElementById('ai-suggestion').classList.remove('visible');
-            }
-        }
-
-        function askAI() {
-            const input = document.getElementById('ai-input');
-            const question = input.value.trim();
-            const answerDiv = document.getElementById('ai-answer');
-            if (!question) return;
-
-            answerDiv.innerHTML = "KI denkt ...";
-            fetch(`${BACKEND_URL}/chat/suggest`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: question })
-            })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.suggested_reply) {
-                        answerDiv.innerHTML = data.suggested_reply;
-                    } else {
-                        answerDiv.innerHTML = "Keine Antwort verfügbar.";
-                    }
-                })
-                .catch(() => {
-                    answerDiv.innerHTML = "Fehler bei der Kommunikation mit der KI.";
-                });
-        }
-
-
-        document.querySelectorAll('.chat-timestamp').forEach(el => {
-            const raw = el.getAttribute('data-timestamp');
-            const date = new Date(raw);
-            if (!isNaN(date)) {
-                el.textContent = date.toLocaleString('de-DE', {
-                    day: 'numeric',
-                    month: 'numeric',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-            }
-        });
     </script>
 </body>
 

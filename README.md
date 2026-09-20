@@ -1,3 +1,19 @@
+## Aktueller Stand nach Funktionstest und Fehlerbehebung
+
+Die Fehlerbehebungen und erfolgreichen Nachprüfungen sind in [qa/fixes/BEHEBUNGEN.md](qa/fixes/BEHEBUNGEN.md) dokumentiert. Für die lokale Anwendung beide Python-Server starten:
+
+```sh
+.venv/bin/python backend/app.py
+# In einem zweiten Terminal:
+.venv/bin/python main.py
+```
+
+Anmeldung unter http://localhost:3000/login, zum Beispiel `bob` / `5678` oder `alice` / `1234`. Nach diesem Update einmal neu anmelden. Datenbankschema und historische private Nachrichten werden beim Start automatisch und ohne Zurücksetzen der vorhandenen Daten migriert. Für eine vollständig neue Datenbank legt `.venv/bin/python backend/db_init.py` die Demo-Nutzer an.
+
+Dateien gleichen Namens werden als getrennte Versionen gespeichert. Teams mit Mitgliedern oder gespeicherten Daten können nicht gelöscht werden. Private und Teamchats laden neue Nachrichten automatisch nach.
+
+Für echte KI-Antworten wird weiterhin `OPENAI_API_KEY` in der lokalen `.env` benötigt; ohne Schlüssel zeigt die App eine verständliche Meldung. Ein Modell kann bei Bedarf über `OPENAI_MODEL` konfiguriert werden.
+
 # SYNQ – Webbasierte Team-Collaboration-App
 
 SYNQ ist ein Full-Stack Webprojekt (Gruppe 6 im Kurs Full Stack Web Development FS2025) und dient als Collaboration-Tool für Teams. Die Anwendung wurde in Python mit Flask entwickelt und bietet Funktionen zur Bildung von Teams, zur Kommunikation und zum gemeinsamen Arbeiten. Nutzer können Profile mit Foto anlegen, sich zu Teams zusammenschließen und über Chats, Dateiablagen sowie weitere Werkzeuge effektiv zusammenarbeiten. Das Tool enthält neben den Grundfunktionalitäten (Profile, Team-Chat, Suche & Matching) auch Geo-Location-basierte Features, KI-gestützte Antwortvorschläge und ein einfaches Projektmanagement-System.
@@ -10,7 +26,7 @@ SYNQ ist ein Full-Stack Webprojekt (Gruppe 6 im Kurs Full Stack Web Development 
 
 - Team-Chat (Gruppenchat): Innerhalb eines Teams können Mitglieder in einem gemeinsamen Chat kommunizieren (1:n Nachrichten). Alle Teammitglieder sehen die gesendeten Nachrichten in Echtzeit (aktuell mittels periodischer Abrufe oder Seitenaktualisierung, da keine WebSocket-Integration erfolgt ist). Neue Nachrichten enthalten Absender, Inhalt und Zeitstempel.
 
-- Private Chats (1:1): Zusätzlich zum Teamchat gibt es die Möglichkeit zu direkten Privatnachrichten zwischen zwei Nutzern. Der Nutzer kann über ein Profil einen privaten Chat starten (Button „💬 Privater Chat“ im Benutzerprofil). Das System speichert diese 1:1-Nachrichten und ermöglicht es, den Gesprächsverlauf zwischen zwei Nutzern jederzeit einzusehen. (In dieser Umsetzung werden private Nachrichten aus Demonstrationsgründen in einer JSON-Datei persistiert, statt in der Datenbank.)
+- Private Chats (1:1): Zusätzlich zum Teamchat gibt es die Möglichkeit zu direkten Privatnachrichten zwischen zwei Nutzern. Der Nutzer kann über ein Profil einen privaten Chat starten (Button „💬 Privater Chat“ im Benutzerprofil). Das System speichert diese 1:1-Nachrichten und ermöglicht es, den Gesprächsverlauf zwischen zwei Nutzern jederzeit einzusehen. (Private Nachrichten werden transaktional in SQLite gespeichert; vorhandene JSON-Verläufe werden einmalig migriert.)
 
 - Dateiablage im Team: Für jedes Team steht eine gemeinsame Dateiablage zur Verfügung. Teammitglieder können Dateien hochladen und im Team teilen. Die Dateien werden serverseitig im Ordner backend/uploads gespeichert (pro Team getrennt organisiert). Über die Weboberfläche können Teammitglieder die hochgeladenen Dateien einsehen und herunterladen.
 
@@ -26,9 +42,9 @@ Das Projekt wurde mit einem Python/Flask-Stack umgesetzt. Zum Einsatz kommen ins
 
 - Flask – Micro-Webframework in Python für das Backend und Server-seitige Rendering der Frontend-Seiten. Flask wird hier mit Blueprints strukturiert (Modularisierung der Routen nach Bereichen) und nutzt Jinja2 für die HTML-Templates.
 
-- Datenbank (SQLite) – Verwendung von SQLite als eingebettete Datenbank via Flask-SQLAlchemy (ORM). Das Datenbankschema umfasst Modelle für Benutzer, Teams, Chat-Nachrichten (Teamchat), Projekte und Tasks. Die ORM-Models definieren Beziehungen zwischen diesen Entitäten (z.B. One-to-Many von Team zu User, von Projekt zu Task, etc.). Für private Nachrichten wurde aus Einfachheitsgründen eine JSON-Datei statt eines DB-Modells genutzt.
+- Datenbank (SQLite) – Verwendung von SQLite als eingebettete Datenbank via Flask-SQLAlchemy (ORM). Das Datenbankschema umfasst Modelle für Benutzer, Teams, Chat-Nachrichten (Teamchat), Projekte und Tasks. Die ORM-Models definieren Beziehungen zwischen diesen Entitäten (z.B. One-to-Many von Team zu User, von Projekt zu Task, etc.). Auch private Nachrichten werden in der Datenbank gespeichert.
 
-- Authentifizierung & Autorisierung – Registrierung und Login werden über Flask-Routen realisiert. Passwörter werden mit Werkzeug gehasht gespeichert. Nach dem Login erhält der Nutzer einen JSON Web Token (JWT) für geschützte API-Aufrufe. Die Bibliothek flask_jwt_extended wird eingesetzt, um JWTs zu erstellen und zu prüfen. Der Token wird sowohl als Cookie (HttpOnly) als auch im lokalen Speicher des Browsers verwahrt, um AJAX-Requests (z.B. Nearby Users) authentifizieren zu können.
+- Authentifizierung & Autorisierung – Registrierung und Login werden über Flask-Routen realisiert. Passwörter werden mit Werkzeug gehasht gespeichert. Nach dem Login erhält der Nutzer einen JSON Web Token (JWT) für geschützte API-Aufrufe. Die Bibliothek flask_jwt_extended wird eingesetzt, um JWTs zu erstellen und zu prüfen. Der Token wird als HttpOnly-Cookie gespeichert; Browseranfragen laufen über einen geschützten Proxy auf derselben Origin. Beim Logout wird der Token serverseitig widerrufen.
 
 - Frontend-Technologien – Die Oberfläche besteht aus HTML5-/CSS3-Templates (gerendert durch Flask) und etwas JavaScript für interaktive Funktionen. Es gibt ein globales Stylesheet (static/style.css) mit vordefinierten CSS-Variablen und Klassen für ein konsistentes Design (Farben, Abstände, Buttons etc.). Die UI ist responsiv und im modernen Flat-Design gestaltet (z.B. runde Profilbilder mit Rahmen, Badges für Skills). Icons für Navigation (Dashboard, Projekte, Chat, Team, Profil, Logout) liegen als SVG-Dateien vor und werden im Menü verwendet.
 
@@ -36,7 +52,7 @@ Das Projekt wurde mit einem Python/Flask-Stack umgesetzt. Zum Einsatz kommen ins
 
 - OpenAI API – Zur Realisierung der KI-Antwortvorschläge im Chat ist die OpenAI Python-Bibliothek eingebunden. Über die ChatCompletion-Schnittstelle (Model gpt-3.5-turbo) wird basierend auf der letzten empfangenen Nachricht ein Antwortvorschlag generiert. Diese Funktion wird serverseitig in einer Utility-Funktion aufgerufen und liefert einen vom Modell erdachten Antworttext zurück. (Hinweis: Ein gültiger API-Key muss konfiguriert sein, siehe weiter unten.)
 
-- Weitere Libraries: Flask-CORS wird eingesetzt, um Cross-Origin-Aufrufe zwischen Frontend (Port 3000) und Backend-API (Port 5000) zu erlauben (wichtig für das getrennte Running der Komponenten während der Entwicklung). Requests (Python) wird im Frontend-Server genutzt, um die interne API aufzurufen. Zudem kommen einige Standardbibliotheken zum Einsatz (datetime, math für Distanzberechnung, os, uuid für Dateioperationen, etc.).
+- Weitere Libraries: Flask-CORS wird eingesetzt, um Cross-Origin-Aufrufe zwischen Frontend (Port 3000) und Backend-API (Port 5001) zu erlauben (wichtig für das getrennte Running der Komponenten während der Entwicklung). Requests (Python) wird im Frontend-Server genutzt, um die interne API aufzurufen. Zudem kommen einige Standardbibliotheken zum Einsatz (datetime, math für Distanzberechnung, os, uuid für Dateioperationen, etc.).
 
 ### Installationsanleitung (lokal ausführen)
 
@@ -68,13 +84,13 @@ Wenn kein Key vorhanden ist, können Sie die KI-Features vorerst nicht verwenden
 ```
 python backend/db_init.py
 ```
-Dadurch wird die SQLite-DB-Datei (z.B. collab.db) neu erstellt. Es werden auch Demo-Daten angelegt, u.a. drei Beispiel-Teams (Dev Team, Design Team, AI Team) und mehrere Beispielnutzer (Alice, Bob, Carla, …) mit voreingestellten Profilen und Teams. Die Demo-User haben einfache Passwörter (z.B. Benutzer alice mit Passwort 1234), die zum Testen verwendet werden können. (Wenn Sie eigene Daten bevorzugen, können Sie diesen Schritt überspringen – die Datenbank wird dann beim ersten Start automatisch erzeugt, ist aber leer und Sie müssen sich zunächst registrieren.)
+Dadurch wird die SQLite-DB-Datei backend/instance/collab.db angelegt. Vorhandene Nutzer und Teams bleiben bei erneutem Aufruf erhalten. Es werden auch Demo-Daten angelegt, u.a. drei Beispiel-Teams (Dev Team, Design Team, AI Team) und mehrere Beispielnutzer (Alice, Bob, Carla, …) mit voreingestellten Profilen und Teams. Die Demo-User haben einfache Passwörter (z.B. Benutzer alice mit Passwort 1234), die zum Testen verwendet werden können. Ein weiterer Demo-Zugang ist bob mit Passwort 5678.
 
 6. Backend-Server starten: Starten Sie nun die Flask-App für das Backend (API) durch Ausführen von backend/app.py:
 ```
 python backend/app.py
 ```
-Der API-Server läuft per Voreinstellung auf http://127.0.0.1:5000. Sie sollten im Terminal sehen, dass Flask im Debug-Modus startet. Lassen Sie dieses Terminal offen, da hier Logs für API-Aufrufe erscheinen (und der Server ansonsten beendet würde).
+Der API-Server läuft per Voreinstellung auf http://127.0.0.1:5001, um den macOS-Port 5000 zu vermeiden. Für einen anderen Port setzen Sie BACKEND_PORT beim Backend und die passende BACKEND_URL beim Frontend. Sie sollten im Terminal sehen, dass Flask im Debug-Modus startet. Lassen Sie dieses Terminal offen, da hier Logs für API-Aufrufe erscheinen (und der Server ansonsten beendet würde).
 
 7. Frontend-Server starten: Öffnen Sie ein zweites Terminal-Fenster bzw. eine neue Shell. Starten Sie die Flask-App für das Frontend durch:
 ```
@@ -96,7 +112,7 @@ Team-Bildung und Skill-basiertes Matching: Nutzer können Teams erstellen und ve
 
 Team-Chat (Gruppenchat): Innerhalb eines Teams können Mitglieder in einem gemeinsamen Chat kommunizieren (1:n Nachrichten). Alle Teammitglieder sehen die gesendeten Nachrichten in Echtzeit (aktuell mittels periodischer Abrufe oder Seitenaktualisierung, da keine WebSocket-Integration erfolgt ist). Neue Nachrichten enthalten Absender, Inhalt und Zeitstempel.
 
-Private Chats (1:1): Zusätzlich zum Teamchat gibt es die Möglichkeit zu direkten Privatnachrichten zwischen zwei Nutzern. Der Nutzer kann über ein Profil einen privaten Chat starten (Button „💬 Privater Chat“ im Benutzerprofil). Das System speichert diese 1:1-Nachrichten und ermöglicht es, den Gesprächsverlauf zwischen zwei Nutzern jederzeit einzusehen. (In dieser Umsetzung werden private Nachrichten aus Demonstrationsgründen in einer JSON-Datei persistiert, statt in der Datenbank.)
+Private Chats (1:1): Zusätzlich zum Teamchat gibt es die Möglichkeit zu direkten Privatnachrichten zwischen zwei Nutzern. Der Nutzer kann über ein Profil einen privaten Chat starten (Button „💬 Privater Chat“ im Benutzerprofil). Das System speichert diese 1:1-Nachrichten und ermöglicht es, den Gesprächsverlauf zwischen zwei Nutzern jederzeit einzusehen. (Private Nachrichten werden transaktional in SQLite gespeichert; vorhandene JSON-Verläufe werden einmalig migriert.)
 
 Dateiablage im Team: Für jedes Team steht eine gemeinsame Dateiablage zur Verfügung. Teammitglieder können Dateien hochladen und im Team teilen. Die Dateien werden serverseitig im Ordner backend/uploads gespeichert (pro Team getrennt organisiert). Über die Weboberfläche können Teammitglieder die hochgeladenen Dateien einsehen und herunterladen.
 
@@ -112,9 +128,9 @@ Das Projekt wurde mit einem Python/Flask-Stack umgesetzt. Zum Einsatz kommen ins
 
 Flask – Micro-Webframework in Python für das Backend und Server-seitige Rendering der Frontend-Seiten. Flask wird hier mit Blueprints strukturiert (Modularisierung der Routen nach Bereichen) und nutzt Jinja2 für die HTML-Templates.
 
-Datenbank (SQLite) – Verwendung von SQLite als eingebettete Datenbank via Flask-SQLAlchemy (ORM). Das Datenbankschema umfasst Modelle für Benutzer, Teams, Chat-Nachrichten (Teamchat), Projekte und Tasks. Die ORM-Models definieren Beziehungen zwischen diesen Entitäten (z.B. One-to-Many von Team zu User, von Projekt zu Task, etc.). Für private Nachrichten wurde aus Einfachheitsgründen eine JSON-Datei statt eines DB-Modells genutzt.
+Datenbank (SQLite) – Verwendung von SQLite als eingebettete Datenbank via Flask-SQLAlchemy (ORM). Das Datenbankschema umfasst Modelle für Benutzer, Teams, Chat-Nachrichten (Teamchat), Projekte und Tasks. Die ORM-Models definieren Beziehungen zwischen diesen Entitäten (z.B. One-to-Many von Team zu User, von Projekt zu Task, etc.). Auch private Nachrichten werden in der Datenbank gespeichert.
 
-Authentifizierung & Autorisierung – Registrierung und Login werden über Flask-Routen realisiert. Passwörter werden mit Werkzeug gehasht gespeichert. Nach dem Login erhält der Nutzer einen JSON Web Token (JWT) für geschützte API-Aufrufe. Die Bibliothek flask_jwt_extended wird eingesetzt, um JWTs zu erstellen und zu prüfen. Der Token wird sowohl als Cookie (HttpOnly) als auch im lokalen Speicher des Browsers verwahrt, um AJAX-Requests (z.B. Nearby Users) authentifizieren zu können.
+Authentifizierung & Autorisierung – Registrierung und Login werden über Flask-Routen realisiert. Passwörter werden mit Werkzeug gehasht gespeichert. Nach dem Login erhält der Nutzer einen JSON Web Token (JWT) für geschützte API-Aufrufe. Die Bibliothek flask_jwt_extended wird eingesetzt, um JWTs zu erstellen und zu prüfen. Der Token wird als HttpOnly-Cookie gespeichert; Browseranfragen laufen über einen geschützten Proxy auf derselben Origin. Beim Logout wird der Token serverseitig widerrufen.
 
 Frontend-Technologien – Die Oberfläche besteht aus HTML5-/CSS3-Templates (gerendert durch Flask) und etwas JavaScript für interaktive Funktionen. Es gibt ein globales Stylesheet (static/style.css) mit vordefinierten CSS-Variablen und Klassen für ein konsistentes Design (Farben, Abstände, Buttons etc.). Die UI ist responsiv und im modernen Flat-Design gestaltet (z.B. runde Profilbilder mit Rahmen, Badges für Skills). Icons für Navigation (Dashboard, Projekte, Chat, Team, Profil, Logout) liegen als SVG-Dateien vor und werden im Menü verwendet.
 
@@ -122,7 +138,7 @@ Leaflet (OpenStreetMap) – Für die Kartenanzeige auf dem Profil wird Leaflet J
 
 OpenAI API – Zur Realisierung der KI-Antwortvorschläge im Chat ist die OpenAI Python-Bibliothek eingebunden. Über die ChatCompletion-Schnittstelle (Model gpt-3.5-turbo) wird basierend auf der letzten empfangenen Nachricht ein Antwortvorschlag generiert. Diese Funktion wird serverseitig in einer Utility-Funktion aufgerufen und liefert einen vom Modell erdachten Antworttext zurück. (Hinweis: Ein gültiger API-Key muss konfiguriert sein, siehe weiter unten.)
 
-Weitere Libraries: Flask-CORS wird eingesetzt, um Cross-Origin-Aufrufe zwischen Frontend (Port 3000) und Backend-API (Port 5000) zu erlauben (wichtig für das getrennte Running der Komponenten während der Entwicklung). Requests (Python) wird im Frontend-Server genutzt, um die interne API aufzurufen. Zudem kommen einige Standardbibliotheken zum Einsatz (datetime, math für Distanzberechnung, os, uuid für Dateioperationen, etc.).
+Weitere Libraries: Flask-CORS wird eingesetzt, um Cross-Origin-Aufrufe zwischen Frontend (Port 3000) und Backend-API (Port 5001) zu erlauben (wichtig für das getrennte Running der Komponenten während der Entwicklung). Requests (Python) wird im Frontend-Server genutzt, um die interne API aufzurufen. Zudem kommen einige Standardbibliotheken zum Einsatz (datetime, math für Distanzberechnung, os, uuid für Dateioperationen, etc.).
 
 Installationsanleitung (lokal ausführen)
 
@@ -160,13 +176,13 @@ Datenbank initialisieren: Das Projekt verwendet SQLite als lokale Datenbank. Um 
 
 python backend/db_init.py
 
-Dadurch wird die SQLite-DB-Datei (z.B. collab.db) neu erstellt. Es werden auch Demo-Daten angelegt, u.a. drei Beispiel-Teams (Dev Team, Design Team, AI Team) und mehrere Beispielnutzer (Alice, Bob, Carla, …) mit voreingestellten Profilen und Teams. Die Demo-User haben einfache Passwörter (z.B. Benutzer alice mit Passwort 1234), die zum Testen verwendet werden können. (Wenn Sie eigene Daten bevorzugen, können Sie diesen Schritt überspringen – die Datenbank wird dann beim ersten Start automatisch erzeugt, ist aber leer und Sie müssen sich zunächst registrieren.)
+Dadurch wird die SQLite-DB-Datei backend/instance/collab.db angelegt. Vorhandene Nutzer und Teams bleiben bei erneutem Aufruf erhalten. Es werden auch Demo-Daten angelegt, u.a. drei Beispiel-Teams (Dev Team, Design Team, AI Team) und mehrere Beispielnutzer (Alice, Bob, Carla, …) mit voreingestellten Profilen und Teams. Die Demo-User haben einfache Passwörter (z.B. Benutzer alice mit Passwort 1234), die zum Testen verwendet werden können. Ein weiterer Demo-Zugang ist bob mit Passwort 5678.
 
 Backend-Server starten: Starten Sie nun die Flask-App für das Backend (API) durch Ausführen von backend/app.py:
 
 python backend/app.py
 
-Der API-Server läuft per Voreinstellung auf http://127.0.0.1:5000. Sie sollten im Terminal sehen, dass Flask im Debug-Modus startet. Lassen Sie dieses Terminal offen, da hier Logs für API-Aufrufe erscheinen (und der Server ansonsten beendet würde).
+Der API-Server läuft per Voreinstellung auf http://127.0.0.1:5001, um den macOS-Port 5000 zu vermeiden. Für einen anderen Port setzen Sie BACKEND_PORT beim Backend und die passende BACKEND_URL beim Frontend. Sie sollten im Terminal sehen, dass Flask im Debug-Modus startet. Lassen Sie dieses Terminal offen, da hier Logs für API-Aufrufe erscheinen (und der Server ansonsten beendet würde).
 
 Frontend-Server starten: Öffnen Sie ein zweites Terminal-Fenster bzw. eine neue Shell. Starten Sie die Flask-App für das Frontend durch:
 

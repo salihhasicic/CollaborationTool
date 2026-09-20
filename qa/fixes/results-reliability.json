@@ -1,0 +1,42 @@
+{
+  "results": [
+    {
+      "name": "50 gleichzeitige Chatnachrichten vollständig und genau einmal gespeichert",
+      "status": "PASS",
+      "detail": {
+        "sent": 50,
+        "saved": 50
+      }
+    },
+    {
+      "name": "Angemeldeter Nutzer kann keinen Absender vortäuschen",
+      "status": "PASS",
+      "detail": "403 für falsche Absender in beiden Chats"
+    },
+    {
+      "name": "Eigentums- und Teamrechte",
+      "status": "PASS",
+      "detail": "Fremdes Gespräch, Teamchat und Profiländerung gesperrt"
+    },
+    {
+      "name": "Gleicher Dateiname erhält beide Inhalte und richtigen Uploader",
+      "status": "PASS",
+      "detail": "Beide Versionen erhalten; Uploader aus verifizierter Identität"
+    },
+    {
+      "name": "Löschregeln verhindern verwaiste Daten",
+      "status": "PASS",
+      "detail": "Befülltes Team blockiert; leeres Team nur durch Eigentümer gelöscht"
+    },
+    {
+      "name": "Logout widerruft auch kopierte Tokens",
+      "status": "PASS",
+      "detail": "Cookie entfernt; kopierter JWT ebenfalls widerrufen"
+    },
+    {
+      "name": "Browseranfragen fremder Herkunft abgelehnt",
+      "status": "PASS",
+      "detail": "403"
+    }
+  ]
+}

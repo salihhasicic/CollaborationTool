@@ -1,0 +1,244 @@
+{
+  "phase": "pages-chat",
+  "tag": "QA-1789913188284",
+  "base": "http://127.0.0.1:3200",
+  "results": [
+    {
+      "name": "Login Bob über Formular",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3200/start"
+      },
+      "ms": 943
+    },
+    {
+      "name": "Login Alice in unabhängiger Sitzung",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3200/start"
+      },
+      "ms": 896
+    },
+    {
+      "name": "Seite /start",
+      "status": "PASS",
+      "detail": {
+        "title": "Dashboard – bob",
+        "forms": 0
+      },
+      "ms": 440
+    },
+    {
+      "name": "Seite /projects",
+      "status": "PASS",
+      "detail": {
+        "title": "Projekte des Teams 1",
+        "forms": 0
+      },
+      "ms": 444
+    },
+    {
+      "name": "Seite /projects/new",
+      "status": "PASS",
+      "detail": {
+        "title": "Projekt anlegen",
+        "forms": 1
+      },
+      "ms": 447
+    },
+    {
+      "name": "Seite /tasks/new",
+      "status": "PASS",
+      "detail": {
+        "title": "Neuen Task erstellen",
+        "forms": 1
+      },
+      "ms": 438
+    },
+    {
+      "name": "Seite /users",
+      "status": "PASS",
+      "detail": {
+        "title": "Benutzerübersicht",
+        "forms": 1
+      },
+      "ms": 477
+    },
+    {
+      "name": "Seite /profile/2",
+      "status": "PASS",
+      "detail": {
+        "title": "Profil",
+        "forms": 0
+      },
+      "ms": 558
+    },
+    {
+      "name": "Seite /profile/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Profil",
+        "forms": 0
+      },
+      "ms": 498
+    },
+    {
+      "name": "Seite /team/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Team 1",
+        "forms": 4
+      },
+      "ms": 464
+    },
+    {
+      "name": "Seite /team_manage",
+      "status": "PASS",
+      "detail": {
+        "title": "Team verwalten",
+        "forms": 2
+      },
+      "ms": 454
+    },
+    {
+      "name": "Seite /teams/new",
+      "status": "PASS",
+      "detail": {
+        "title": "Neues Team erstellen",
+        "forms": 1
+      },
+      "ms": 444
+    },
+    {
+      "name": "Seite /chat/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Team Chat 1",
+        "forms": 1
+      },
+      "ms": 455
+    },
+    {
+      "name": "Seite /chats",
+      "status": "PASS",
+      "detail": {
+        "title": "Private Chats",
+        "forms": 0
+      },
+      "ms": 492
+    },
+    {
+      "name": "Seite /private_chat/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Privater Chat",
+        "forms": 1
+      },
+      "ms": 438
+    },
+    {
+      "name": "Seite /register",
+      "status": "PASS",
+      "detail": {
+        "title": "Registrieren",
+        "forms": 1
+      },
+      "ms": 432
+    },
+    {
+      "name": "Seite /login",
+      "status": "PASS",
+      "detail": {
+        "title": "Login",
+        "forms": 1
+      },
+      "ms": 417
+    },
+    {
+      "name": "Privatchat /chats: Bob sendet Alice",
+      "status": "PASS",
+      "ms": 1591
+    },
+    {
+      "name": "Privatchat: Alice empfängt ohne Neuladen",
+      "status": "PASS",
+      "ms": 783
+    },
+    {
+      "name": "Privatchat: Alice empfängt nach erneutem Öffnen",
+      "status": "PASS",
+      "ms": 789
+    },
+    {
+      "name": "Privatchat: Alice antwortet Bob",
+      "status": "PASS",
+      "ms": 991
+    },
+    {
+      "name": "Privatchat: Nachrichten bleiben nach Neuladen erhalten",
+      "status": "PASS",
+      "ms": 798
+    },
+    {
+      "name": "Privatchat aus fremdem Profil öffnen und Verlauf laden",
+      "status": "PASS",
+      "ms": 808
+    },
+    {
+      "name": "Privatchat aus Profil: Senden funktioniert",
+      "status": "PASS",
+      "ms": 63
+    },
+    {
+      "name": "Teamchat: Bob sendet",
+      "status": "PASS",
+      "ms": 836
+    },
+    {
+      "name": "Teamchat: Alice empfängt ohne Neuladen",
+      "status": "PASS",
+      "ms": 1291
+    },
+    {
+      "name": "Teamchat: Alice empfängt nach Neuladen und antwortet",
+      "status": "PASS",
+      "ms": 1297
+    },
+    {
+      "name": "Teamchat: leere Nachricht wird im Formular blockiert",
+      "status": "PASS",
+      "ms": 270
+    },
+    {
+      "name": "Teamchat: KI-Fehler wird verständlich angezeigt",
+      "status": "PASS",
+      "detail": "Die KI ist noch nicht eingerichtet. Bitte einen API-Schlüssel konfigurieren.",
+      "ms": 64
+    },
+    {
+      "name": "Teamchat: keine Übernahme einer KI-Fehlermeldung",
+      "status": "PASS",
+      "detail": "Nicht konfiguriert: klare Meldung, kein fehlerhafter Vorschlag",
+      "ms": 66
+    },
+    {
+      "name": "Chat: Zeitangabe entspricht Europe/Zurich",
+      "status": "PASS",
+      "ms": 2
+    }
+  ],
+  "events": [
+    {
+      "who": "bob",
+      "type": "http",
+      "status": 503,
+      "url": "http://127.0.0.1:3200/api/chat/suggest"
+    },
+    {
+      "who": "bob",
+      "type": "http",
+      "status": 503,
+      "url": "http://127.0.0.1:3200/api/chat/suggest"
+    }
+  ]
+}

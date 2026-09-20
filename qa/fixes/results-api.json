@@ -1,0 +1,279 @@
+{
+  "phase": "api",
+  "tag": "QA-API-1789913217",
+  "results": [
+    {
+      "name": "Login: falsches Passwort",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Login: unbekannter Nutzer",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Login: fehlende Felder verursachen keinen Serverfehler",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Registrierung ohne Koordinaten",
+      "status": "PASS",
+      "detail": {
+        "http": 201
+      }
+    },
+    {
+      "name": "Registrierung mit Koordinaten",
+      "status": "PASS",
+      "detail": {
+        "http": 201
+      }
+    },
+    {
+      "name": "Registrierung: Duplikat abgelehnt",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Registrierung: ungültige Bilddatei abgelehnt",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Projekte ohne Login gesperrt",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Fremdes Team: Carla kann Projekt nicht lesen",
+      "status": "PASS",
+      "detail": {
+        "http": 403
+      }
+    },
+    {
+      "name": "Fremdes Team: Carla kann Projekt nicht verändern",
+      "status": "PASS",
+      "detail": {
+        "http": 403
+      }
+    },
+    {
+      "name": "Fremdes Team: Carla kann Task nicht übernehmen",
+      "status": "PASS",
+      "detail": {
+        "http": 403
+      }
+    },
+    {
+      "name": "Übernommener Task kann nicht doppelt übernommen werden",
+      "status": "PASS",
+      "detail": {
+        "http": 409
+      }
+    },
+    {
+      "name": "Nur Task-Verantwortlicher darf Status ändern (wie UI)",
+      "status": "PASS",
+      "detail": {
+        "http": 403
+      }
+    },
+    {
+      "name": "Task: ungültiger Status wird abgelehnt",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Projekt: ungültiger Status wird abgelehnt",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Task: ungültiges Datum verursacht keinen Serverfehler",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Projekt: ungültiges Datum verursacht keinen Serverfehler",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Task: leerer Titel wird abgelehnt",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Nicht vorhandenes Projekt liefert 404 im Backend",
+      "status": "PASS",
+      "detail": {
+        "http": 404
+      }
+    },
+    {
+      "name": "Nicht vorhandenes Projekt liefert 404 in Oberfläche",
+      "status": "PASS",
+      "detail": {
+        "http": 404
+      }
+    },
+    {
+      "name": "Team-Detail-Endpunkt für Teamname vorhanden",
+      "status": "PASS",
+      "detail": {
+        "http": 200
+      }
+    },
+    {
+      "name": "Teamnotizen akzeptieren Formularanfrage",
+      "status": "PASS",
+      "detail": {
+        "http": 200
+      }
+    },
+    {
+      "name": "Teamnotizen akzeptieren JSON",
+      "status": "PASS",
+      "detail": {
+        "http": 200
+      }
+    },
+    {
+      "name": "Gast darf privaten Chat nicht lesen",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Gast darf keinen Absender im privaten Chat vortäuschen",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Web-Proxy schützt private Nachrichten vor Gästen",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Gast darf Teamchat nicht lesen",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Gast darf Teamnachricht nicht als Bob senden",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Privatchat lehnt leere Nachrichten ab",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Teamchat lehnt leere Nachrichten ab",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Fremdes Team: Carla darf Bob-Aufgaben nicht auslesen",
+      "status": "PASS",
+      "detail": {
+        "http": 403
+      }
+    },
+    {
+      "name": "Gast darf Profil nicht verändern",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Gast darf Teamzuordnung nicht ändern",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Gast darf Teamnotizen nicht ändern",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Gast darf Teamdateien nicht lesen",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Gast darf Team nicht löschen",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Teamname darf nicht nur Leerzeichen enthalten",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "name": "Umkreissuche benötigt Login",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "name": "Logout entfernt Zugriff auf Projektliste",
+      "status": "PASS",
+      "detail": {
+        "http": 302
+      }
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 <html lang="de">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Benutzerübersicht</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -111,6 +112,8 @@
             box-shadow: 0 1px 6px rgba(37, 99, 235, 0.04);
         }
     </style>
+    <script src="/static/app.js"></script>
+<link rel="stylesheet" href="/static/responsive.css">
 </head>
 
 <body>
@@ -173,28 +176,17 @@
     </div>
 
     <script>
-        function findNearby() {
-            const token = localStorage.getItem('access_token');
-            if (!token) {
-                alert("Kein Token gefunden. Bitte einloggen.");
-                return;
-            }
-            fetch("http://127.0.0.1:5000/user/nearby?radius=30", {
-                headers: { "Authorization": "Bearer " + token },
-                credentials: 'include'
-            })
-                .then(res => res.ok ? res.json() : Promise.reject(res))
-                .then(data => {
-                    let html = "<b>Nutzer im Umkreis:</b><ul>";
-                    html += data.length === 0 ? "<li>Keine gefunden.</li>" : data.map(u => `<li>${u.username} (${u.distance_km} km)</li>`).join("");
-                    html += "</ul>";
-                    document.getElementById("nearby-list").innerHTML = html;
-                })
-                .catch(err => {
-                    console.error("Nearby error:", err);
-                    document.getElementById("nearby-list").innerHTML = "Fehler beim Abrufen.";
-                });
-        }
+
+async function findNearby() {
+    const target = document.getElementById('nearby-list');
+    try {
+        const users = await requestJSON('/api/user/nearby?radius=30');
+        const list = document.createElement('ul');
+        list.append(...(users.length ? users.map(u => textElement('li', `${u.username} (${u.distance_km} km)`)) : [textElement('li', 'Keine gefunden.')]));
+        target.replaceChildren(textElement('b', 'Nutzer im Umkreis:'), list);
+    } catch(e) {target.textContent = e.message;}
+}
+
     </script>
 </body>
 

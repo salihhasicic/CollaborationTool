@@ -2,6 +2,7 @@
 <html lang="de">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Profil</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -161,6 +162,8 @@
     padding: 6px 10px;
 }
     </style>
+    <script src="/static/app.js"></script>
+<link rel="stylesheet" href="/static/responsive.css">
 </head>
 
 <body>
@@ -222,11 +225,11 @@
                 <p><strong>Ort:</strong> <span id="display-location">{{ user.location or "–" }}</span>
                     <input type="text" id="input-location" value="{{ user.location or '' }}" style="display:none;">
                 </p>
-                <p><strong>Latitude:</strong> <span id="display-lat">{{ user.latitude or "–" }}</span>
-                    <input type="text" id="input-lat" value="{{ user.latitude or '' }}" style="display:none;" readonly>
+                <p><strong>Latitude:</strong> <span id="display-lat">{{ user.latitude if user.latitude is not none else "–" }}</span>
+                    <input type="text" id="input-lat" value="{{ user.latitude if user.latitude is not none else '' }}" style="display:none;" readonly>
                 </p>
-                <p><strong>Longitude:</strong> <span id="display-lng">{{ user.longitude or "–" }}</span>
-                    <input type="text" id="input-lng" value="{{ user.longitude or '' }}" style="display:none;" readonly>
+                <p><strong>Longitude:</strong> <span id="display-lng">{{ user.longitude if user.longitude is not none else "–" }}</span>
+                    <input type="text" id="input-lng" value="{{ user.longitude if user.longitude is not none else '' }}" style="display:none;" readonly>
                 </p>
                 <button type="button" onclick="fillCurrentLocation()" id="geo-btn" style="display:none;">📍 Aktuellen
                     Standort verwenden</button>
@@ -262,117 +265,58 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        let map;
-        let userId = {{ user.id if user and user.id else 'null' }};
-        const latitude = {{ user.latitude or 'null' }};
-        const longitude = {{ user.longitude or 'null' }};
 
-        function renderMap(lat, lng, popupText = "Standort von {{ user.username }}") {
-            if (map) map.remove();
-            if (lat && lng) {
-                map = L.map('map').setView([lat, lng], 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors'
-                }).addTo(map);
-                L.marker([lat, lng]).addTo(map).bindPopup(popupText).openPopup();
-            } else {
-                document.getElementById("map").innerHTML = "<p style='color:#aaa;'>Kein Standort verfügbar</p>";
-            }
+let map;
+const userId = {{ user.id|tojson }};
+const username = {{ user.username|tojson }};
+function renderMap(lat, lng, popupText = `Standort von ${username}`) {
+    const target = document.getElementById('map');
+    if (map) {map.remove(); map = null;}
+    if (lat === null || lng === null || !Number.isFinite(Number(lat)) || !Number.isFinite(Number(lng))) {target.textContent = 'Kein Standort verfügbar.'; return;}
+    if (typeof L === 'undefined') {target.textContent = 'Die Karte ist momentan nicht verfügbar.'; return;}
+    target.textContent = '';
+    map = L.map('map').setView([lat, lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap contributors'}).addTo(map);
+    L.marker([lat,lng]).addTo(map).bindPopup(textElement('span', popupText)).openPopup();
+}
+renderMap({{ user.latitude|tojson }}, {{ user.longitude|tojson }});
+function enableEdit() {
+    ['location','lat','lng','skills'].forEach(key => {document.getElementById('display-'+key).style.display='none';document.getElementById('input-'+key).style.display='inline';});
+    ['photo-upload-section','geo-btn','save-btn'].forEach(id=>document.getElementById(id).style.display='block');
+    document.querySelector('.profile-edit-button button:first-child').style.display='none';
+}
+async function saveChanges() {
+    const location = document.getElementById('input-location').value;
+    const latitude = document.getElementById('input-lat').value;
+    const longitude = document.getElementById('input-lng').value;
+    const skills = document.getElementById('input-skills').value;
+    try {
+        await requestJSON('/api/user/update', jsonOptions({user_id:userId,location,latitude,longitude,skills}));
+        for (const [key,value] of Object.entries({location,lat:latitude,lng:longitude,skills})) {
+            document.getElementById('display-'+key).textContent = value || '–';
+            document.getElementById('display-'+key).style.display='inline';
+            document.getElementById('input-'+key).style.display='none';
         }
+        ['photo-upload-section','geo-btn','save-btn'].forEach(id=>document.getElementById(id).style.display='none');
+        document.querySelector('.profile-edit-button button:first-child').style.display='inline';
+        renderMap(latitude===''?null:Number(latitude),longitude===''?null:Number(longitude));
+        document.getElementById('geo-status').textContent='Profil aktualisiert!';
+    } catch(e) {document.getElementById('geo-status').textContent=e.message;}
+}
+function fillCurrentLocation() {
+    navigator.geolocation.getCurrentPosition(pos=>{document.getElementById('input-lat').value=pos.coords.latitude.toFixed(6);document.getElementById('input-lng').value=pos.coords.longitude.toFixed(6);},()=>{document.getElementById('geo-status').textContent='Standort konnte nicht ermittelt werden.';});
+}
+async function uploadPhoto() {
+    const file=document.getElementById('upload-photo').files[0];
+    if(!file) {document.getElementById('geo-status').textContent='Bitte ein Bild auswählen.';return;}
+    const body=new FormData();body.append('photo',file);body.append('user_id',userId);
+    try {
+        const data=await requestJSON('/api/user/upload_photo',{method:'POST',body});
+        document.querySelector('.profile-img-large').src=data.photo_url;
+        document.getElementById('geo-status').textContent='Profilbild aktualisiert!';
+    } catch(e) {document.getElementById('geo-status').textContent=e.message;}
+}
 
-        renderMap(latitude, longitude);
-
-        function enableEdit() {
-            document.getElementById("photo-upload-section").style.display = "block";
-            document.getElementById("display-location").style.display = "none";
-            document.getElementById("input-location").style.display = "inline";
-            document.getElementById("display-lat").style.display = "none";
-            document.getElementById("input-lat").style.display = "inline";
-            document.getElementById("display-lng").style.display = "none";
-            document.getElementById("input-lng").style.display = "inline";
-            document.getElementById("display-skills").style.display = "none";
-            document.getElementById("input-skills").style.display = "inline";
-            document.getElementById("geo-btn").style.display = "inline";
-            document.getElementById("save-btn").style.display = "inline";
-            document.querySelector(".profile-edit-button button:first-child").style.display = "none";
-        }
-
-        function saveChanges() {
-            const location = document.getElementById("input-location").value;
-            const latitude = document.getElementById("input-lat").value;
-            const longitude = document.getElementById("input-lng").value;
-            const skills = document.getElementById("input-skills").value;
-
-            fetch("http://localhost:5000/user/update", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user_id: userId,
-                    location,
-                    latitude,
-                    longitude,
-                    skills
-                })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("display-location").textContent = location || "–";
-                    document.getElementById("display-lat").textContent = latitude || "–";
-                    document.getElementById("display-lng").textContent = longitude || "–";
-                    document.getElementById("display-skills").textContent = skills || "–";
-
-                    document.getElementById("input-location").style.display = "none";
-                    document.getElementById("input-lat").style.display = "none";
-                    document.getElementById("input-lng").style.display = "none";
-                    document.getElementById("input-skills").style.display = "none";
-                    document.getElementById("geo-btn").style.display = "none";
-                    document.getElementById("save-btn").style.display = "none";
-                    document.getElementById("display-location").style.display = "inline";
-                    document.getElementById("display-lat").style.display = "inline";
-                    document.getElementById("display-lng").style.display = "inline";
-                    document.getElementById("display-skills").style.display = "inline";
-                    document.querySelector(".profile-edit-button button:first-child").style.display = "inline";
-                    document.getElementById("photo-upload-section").style.display = "none";
-                    renderMap(parseFloat(latitude), parseFloat(longitude), "Aktualisierter Standort");
-                    alert("Profil aktualisiert!");
-                })
-                .catch(err => alert("Fehler beim Speichern."));
-        }
-
-        function fillCurrentLocation() {
-            if (!navigator.geolocation) {
-                alert("Geolocation wird nicht unterstützt.");
-                return;
-            }
-            navigator.geolocation.getCurrentPosition(function (pos) {
-                document.getElementById("input-lat").value = pos.coords.latitude.toFixed(6);
-                document.getElementById("input-lng").value = pos.coords.longitude.toFixed(6);
-            }, function () {
-                alert("Standort konnte nicht ermittelt werden.");
-            });
-        }
-
-        function uploadPhoto() {
-            const file = document.getElementById("upload-photo").files[0];
-            if (!file) return alert("Bitte wähle ein Bild aus.");
-            const formData = new FormData();
-            formData.append("photo", file);
-            formData.append("user_id", userId);
-            fetch("http://localhost:5000/user/upload_photo", {
-                method: "POST",
-                body: formData
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.photo_url) {
-                        document.querySelector(".profile-img-large").src = data.photo_url + "?t=" + new Date().getTime();
-                        alert("Profilbild aktualisiert!");
-                    } else {
-                        alert("Fehler beim Hochladen: " + data.message);
-                    }
-                })
-                .catch(() => alert("Fehler beim Hochladen."));
-        }
     </script>
 </body>
 

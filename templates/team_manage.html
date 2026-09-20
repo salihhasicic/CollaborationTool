@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Team verwalten</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -93,6 +94,8 @@
             margin-top: 8px;
         }
     </style>
+    <script src="/static/app.js"></script>
+<link rel="stylesheet" href="/static/responsive.css">
 </head>
 <body>
 
@@ -137,60 +140,37 @@
     </div>
 
     <script>
-        document.getElementById("createTeamForm").onsubmit = function(e) {
-            e.preventDefault();
-            const name = document.getElementById("teamName").value;
-            const token = localStorage.getItem('access_token');
-            fetch("http://127.0.0.1:5000/team/create", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
-                body: JSON.stringify({ name })
-            })
-            .then(res => res.json().then(data => ({status: res.status, data})))
-            .then(({status, data}) => {
-                if (status === 201) {
-                    document.getElementById("team-create-status").innerHTML = "✅ Team erfolgreich erstellt: <b>" + name + "</b>";
-                    document.getElementById("teamName").value = "";
-                    loadTeams();
-                } else {
-                    document.getElementById("team-create-status").innerText = data.error || "Fehler beim Erstellen.";
-                }
-            })
-            .catch(() => {
-                document.getElementById("team-create-status").innerText = "Netzwerkfehler.";
-            });
-        };
 
-        function loadTeams() {
-    fetch("http://127.0.0.1:5000/team/all")
-        .then(res => res.json())
-        .then(teams => {
-            const list = document.getElementById("team-list");
-            list.innerHTML = '';
-            teams.forEach(team => {
-                const li = document.createElement('li');
-                li.className = 'team-card-clickable';
-                li.onclick = () => window.location.href = `/team/${team.id}`;
-                li.innerHTML = `
-                    <div style="cursor: pointer;>
-                        <strong style="font-size:1.1em;">${team.name}</strong>
-                        <div style="font-size:0.9em; color:#666;">Team-ID: ${team.id}</div>
-                    </div>
-                    <form method="post" action="/team/delete" style="margin:0;">
-                        <input type="hidden" name="team_id" value="${team.id}">
-                        <button class="btn-delete">Löschen</button>
-                    </form>
-                `;
-                list.appendChild(li);
+const status = document.getElementById('team-create-status');
+document.getElementById('createTeamForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+        const data = await requestJSON('/api/team/create', jsonOptions({name: document.getElementById('teamName').value}));
+        status.textContent = `Team erfolgreich erstellt: ${data.name}`;
+        document.getElementById('teamName').value = ''; await loadTeams();
+    } catch(e) {status.textContent = e.message;}
+});
+async function loadTeams() {
+    try {
+        const teams = await requestJSON('/api/team/all');
+        document.getElementById('team-list').replaceChildren(...teams.map(team => {
+            const li = textElement('li', '', 'team-card-clickable');
+            const link = textElement('a', team.name); link.href = `/team/${team.id}`;
+            const form = document.createElement('form'); form.action = '/team/delete'; form.method = 'post';
+            const input = document.createElement('input'); input.type = 'hidden'; input.name = 'team_id'; input.value = team.id;
+            const button = textElement('button', 'Löschen', 'btn-delete'); button.type = 'submit';
+            form.append(input, button);
+            form.addEventListener('submit', async e => {
+                e.preventDefault(); button.disabled = true;
+                try {await requestJSON(`/api/team/${team.id}`, {method:'DELETE'}); status.textContent = 'Team gelöscht.'; await loadTeams();}
+                catch(e) {status.textContent = e.message; button.disabled = false;}
             });
-        });
+            li.append(link, form); return li;
+        }));
+    } catch(e) {status.textContent = e.message;}
 }
+loadTeams();
 
-
-        document.addEventListener('DOMContentLoaded', loadTeams);
     </script>
 </body>
 </html>

@@ -1,0 +1,1276 @@
+[
+  {
+    "route": "/start",
+    "title": "Dashboard – bob",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nWillkommen zurück, bob 👋\n⚡ Quick Actions\n📁 Projekt starten\n📝 Task erstellen\n💬 Mein Team-Chat\n🔍 Benutzer nach Skill\n📦 Task-Zusammenfassung\nOffene Tasks\n0\nErledigte Tasks\n0\n📈 Projekt-Fortschritt\n📌 Deine offenen Tasks\n\nKeine offenen Tasks – alles erledigt!\n\n📁 Projekte deines Teams\n\nAktuell keine Projekte in deinem Team.",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "📁 Projekt starten",
+        "href": "/projects/new"
+      },
+      {
+        "text": "📝 Task erstellen",
+        "href": "/tasks/new"
+      },
+      {
+        "text": "💬 Mein Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "🔍 Benutzer nach Skill",
+        "href": "/users?skill="
+      }
+    ],
+    "forms": [],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/projects",
+    "title": "Projekte des Teams 1",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nProjekte des Teams 1\n➕ Neues Projekt anlegen\n📝 To Do\n🚧 In Progress\n✅ Done",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "➕ Neues Projekt anlegen",
+        "href": "/projects/new"
+      }
+    ],
+    "forms": [],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/projects/new",
+    "title": "Projekt anlegen",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nNeues Projekt anlegen\nProjektname\nDeadline (optional)\nProjekt anlegen\n← Zurück zu den Projekten",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "← Zurück zu den Projekten",
+        "href": "/projects"
+      }
+    ],
+    "forms": [
+      {
+        "id": "",
+        "action": null,
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "name",
+            "name": "name",
+            "type": "text"
+          },
+          {
+            "tag": "INPUT",
+            "id": "deadline",
+            "name": "deadline",
+            "type": "date"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/tasks/new",
+    "title": "Neuen Task erstellen",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nNeuen Task erstellen\nProjekt auswählen\nTitel\nBeschreibung\nDeadline (optional)\nTask anlegen\n← Zurück zum Dashboard",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "← Zurück zum Dashboard",
+        "href": "/start"
+      }
+    ],
+    "forms": [
+      {
+        "id": "",
+        "action": null,
+        "fields": [
+          {
+            "tag": "SELECT",
+            "id": "project_id",
+            "name": "project_id",
+            "type": "select-one"
+          },
+          {
+            "tag": "INPUT",
+            "id": "title",
+            "name": "title",
+            "type": "text"
+          },
+          {
+            "tag": "INPUT",
+            "id": "description",
+            "name": "description",
+            "type": "text"
+          },
+          {
+            "tag": "INPUT",
+            "id": "deadline",
+            "name": "deadline",
+            "type": "date"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/users",
+    "title": "Benutzerübersicht",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nAlle Benutzer\nSuchen\nUmkreis\nalice\nPython Flask\nProfil\nZum Team\nbob\nJavaScript Vue\nProfil\nZum Team\ncarla\nJava Spring\nProfil\nZum Team\ndaniel\nPython Data Science\nProfil\nZum Team\nelena\nC# Unity\nProfil\nZum Team\nfritz\nKotlin Android\nProfil\nZum Team\ngregor\nGo Rust\nProfil\nZum Team\nhannah\nSwift iOS\nProfil\nZum Team\nivan\nHTML CSS\nProfil\nZum Team\njulia\nSQL DBA\nProfil\nZum Team\nkevin\nPHP Laravel\nProfil\nZum Team\nlisa\nRuby Rails\nProfil\nZum Team\nmarco\nC++ Qt\nProfil\nZum Team\nnina\nDesign UX\nProfil\nZum Team\noliver\nAngular TypeScript\nProfil\nZum Team\npaula\nNoSQL Big Data\nProfil\nZum Team\nquentin\nMachine Learning\nProfil\nZum Team\nrachel\nDocker Kubernetes\nProfil\nZum Team\nstephan\nDevOps CICD\nProfil\nZum Team\ntanja\nTesting Jest\nProfil\nZum Team",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/1"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/3"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/2"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/4"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/3"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/5"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/2"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/6"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/7"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/8"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/2"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/9"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/2"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/10"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/3"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/11"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/12"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/2"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/13"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/14"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/2"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/15"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/16"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/3"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/17"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/3"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/18"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/3"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/19"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Profil",
+        "href": "/profile/20"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/2"
+      }
+    ],
+    "forms": [
+      {
+        "id": "",
+        "action": "/users",
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "",
+            "name": "skill",
+            "type": "text"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "button"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/profile/2",
+    "title": "Profil",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nbob\nProfil bearbeiten\n📍 Standort\n\nOrt: Chur\n\nLatitude: 46.861791\n\nLongitude: 9.519274\n\n🛠️ Skills\n\nJavaScript,Vue\n\n👥 Team-Zugehörigkeit\n\nTeam-ID:\n1\n\nZum Team\nZum Team-Chat\nStandort von bob\n×\n+\n−\n Leaflet | © OpenStreetMap contributors",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Zum Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "×",
+        "href": "#close"
+      },
+      {
+        "text": "+",
+        "href": "#"
+      },
+      {
+        "text": "−",
+        "href": "#"
+      },
+      {
+        "text": " Leaflet",
+        "href": "https://leafletjs.com"
+      }
+    ],
+    "forms": [],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/profile/1",
+    "title": "Profil",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nalice\n💬 Privater Chat\n📍 Standort\n\nOrt: Zürich\n\nLatitude: 47.3769\n\nLongitude: 8.5417\n\n🛠️ Skills\n\nPython,Flask\n\n👥 Team-Zugehörigkeit\n\nTeam-ID:\n1\n\nZum Team\nZum Team-Chat\nStandort von alice\n×\n+\n−\n Leaflet | © OpenStreetMap contributors",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "💬 Privater Chat",
+        "href": "/private_chat/1"
+      },
+      {
+        "text": "Zum Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Zum Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "×",
+        "href": "#close"
+      },
+      {
+        "text": "+",
+        "href": "#"
+      },
+      {
+        "text": "−",
+        "href": "#"
+      },
+      {
+        "text": " Leaflet",
+        "href": "https://leafletjs.com"
+      }
+    ],
+    "forms": [],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/team/1",
+    "title": "Team 1",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nTeam 1\nTeam wechseln: \nDev Team\n Anzeigen\n👥 Teammitglieder\nalice\n\nPython\nFlask\nbob\n\nJavaScript\nVue\nfritz\n\nKotlin\nAndroid\ngregor\n\nGo\nRust\nkevin\n\nPHP\nLaravel\nmarco\n\nC++\nQt\noliver\n\nAngular\nTypeScript\nstephan\n\nDevOps\nCICD\nAlle Benutzer anzeigen\n➕ Mitglied zum Team hinzufügen\ncarla\ndaniel\nelena\nhannah\nivan\njulia\nlisa\nnina\npaula\nquentin\nrachel\ntanja\nHinzufügen\n🗒️ Notizen\n Speichern\n📎 Dateiablage\n Hochladen\nTeam-Dateien:\nFull_Stack_Web_Development_FS2025.pdf\nHochgeladen von bob\nam 2.7.2025, 10:54:51\nhelloworld-FS2025-fs.zip\nHochgeladen von alice\nam 4.7.2025, 15:10:54",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "alice\n\nPython\nFlask",
+        "href": "/profile/1"
+      },
+      {
+        "text": "bob\n\nJavaScript\nVue",
+        "href": "/profile/2"
+      },
+      {
+        "text": "fritz\n\nKotlin\nAndroid",
+        "href": "/profile/6"
+      },
+      {
+        "text": "gregor\n\nGo\nRust",
+        "href": "/profile/7"
+      },
+      {
+        "text": "kevin\n\nPHP\nLaravel",
+        "href": "/profile/11"
+      },
+      {
+        "text": "marco\n\nC++\nQt",
+        "href": "/profile/13"
+      },
+      {
+        "text": "oliver\n\nAngular\nTypeScript",
+        "href": "/profile/15"
+      },
+      {
+        "text": "stephan\n\nDevOps\nCICD",
+        "href": "/profile/19"
+      },
+      {
+        "text": "Alle Benutzer anzeigen",
+        "href": "/users"
+      },
+      {
+        "text": "Full_Stack_Web_Development_FS2025.pdf",
+        "href": "/api/team/1/files/Full_Stack_Web_Development_FS2025.pdf"
+      },
+      {
+        "text": "helloworld-FS2025-fs.zip",
+        "href": "/api/team/1/files/helloworld-FS2025-fs.zip"
+      }
+    ],
+    "forms": [
+      {
+        "id": "",
+        "action": null,
+        "fields": [
+          {
+            "tag": "SELECT",
+            "id": "team_select",
+            "name": "team_select",
+            "type": "select-one"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      },
+      {
+        "id": "",
+        "action": "/team/add",
+        "fields": [
+          {
+            "tag": "SELECT",
+            "id": "",
+            "name": "user_id",
+            "type": "select-one"
+          },
+          {
+            "tag": "INPUT",
+            "id": "",
+            "name": "team_id",
+            "type": "hidden"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      },
+      {
+        "id": "",
+        "action": "/team/1",
+        "fields": [
+          {
+            "tag": "TEXTAREA",
+            "id": "",
+            "name": "ablage",
+            "type": "textarea"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      },
+      {
+        "id": "uploadForm",
+        "action": null,
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "",
+            "name": "file",
+            "type": "file"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/team_manage",
+    "title": "Team verwalten",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\n👥 Team verwalten\n➕ Neues Team erstellen\nErstellen\n📋 Alle Teams\nDev Team\nLöschen",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "Dev Team",
+        "href": "/team/1"
+      }
+    ],
+    "forms": [
+      {
+        "id": "createTeamForm",
+        "action": null,
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "teamName",
+            "name": "teamName",
+            "type": "text"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      },
+      {
+        "id": "",
+        "action": "/team/delete",
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "",
+            "name": "team_id",
+            "type": "hidden"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/teams/new",
+    "title": "Neues Team erstellen",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nNeues Team erstellen\nTeamname:  Team erstellen",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      }
+    ],
+    "forms": [
+      {
+        "id": "createTeamForm",
+        "action": null,
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "teamName",
+            "name": "teamName",
+            "type": "text"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/chat/1",
+    "title": "Team Chat 1",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nTeam wechseln:\nDev Team\nTeam-Chat – Team 1\nAI-Antwort vorschlagen\nSenden\n\n\n\nZurück zum Team\n🤖 Chatte mit der KI\nSenden\nNoch keine Frage gestellt.",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      },
+      {
+        "text": "Zurück zum Team",
+        "href": "/team/1"
+      }
+    ],
+    "forms": [
+      {
+        "id": "chat-form",
+        "action": "/chat/1",
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "",
+            "name": "sender_id",
+            "type": "hidden"
+          },
+          {
+            "tag": "TEXTAREA",
+            "id": "message",
+            "name": "message",
+            "type": "textarea"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/chats",
+    "title": "Private Chats",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nPrivate Chats\nalice\nDu: Test Test Test (4.7.2025, 22:49:57)\ncarla\nNoch keine Nachrichten\ndaniel\nNoch keine Nachrichten\nelena\nNoch keine Nachrichten\nfritz\nNoch keine Nachrichten\ngregor\nNoch keine Nachrichten\nhannah\nNoch keine Nachrichten\nivan\nNoch keine Nachrichten\njulia\nNoch keine Nachrichten\nkevin\nNoch keine Nachrichten\nlisa\nNoch keine Nachrichten\nmarco\nNoch keine Nachrichten\nnina\nNoch keine Nachrichten\noliver\nNoch keine Nachrichten\npaula\nNoch keine Nachrichten\nquentin\nNoch keine Nachrichten\nrachel\nNoch keine Nachrichten\nstephan\nNoch keine Nachrichten\ntanja\nNoch keine Nachrichten\nWähle links einen Nutzer aus, um den Chat zu öffnen.",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      }
+    ],
+    "forms": [],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/private_chat/1",
+    "title": "Privater Chat",
+    "text": "Dashboard\nProjekte\nBenutzer\nChat\nTeam\nTeam-Chat\nTeam verwalten\nMein Profil\nLogout\nPrivater Chat mit alice\nalice\n2.7.2025, 08:16:00\nHallo von Postman!\nalice\n2.7.2025, 08:27:52\nhihi\nhii how are you??\nDu\n2.7.2025, 08:28:37\nalice\n2.7.2025, 08:28:44\nfineee\nHey\nDu\n2.7.2025, 10:53:18\nalice\n2.7.2025, 14:56:39\nasdfasdf\nalice\n2.7.2025, 15:47:51\ntest\nalice\n4.7.2025, 17:40:43\ntest\nTest\nDu\n4.7.2025, 18:45:29\nTest\nDu\n4.7.2025, 18:46:58\nalice\n4.7.2025, 18:47:26\nTest\nTest\nDu\n4.7.2025, 18:47:29\nTest\nDu\n4.7.2025, 18:50:15\nTest Test Test\nDu\n4.7.2025, 22:49:57\nSenden",
+    "links": [
+      {
+        "text": "Dashboard",
+        "href": "/start"
+      },
+      {
+        "text": "Projekte",
+        "href": "/projects"
+      },
+      {
+        "text": "Benutzer",
+        "href": "/users"
+      },
+      {
+        "text": "Chat",
+        "href": "/chats"
+      },
+      {
+        "text": "Team",
+        "href": "/team/1"
+      },
+      {
+        "text": "Team-Chat",
+        "href": "/chat/1"
+      },
+      {
+        "text": "Team verwalten",
+        "href": "/team_manage"
+      },
+      {
+        "text": "Mein Profil",
+        "href": "/profile/2"
+      },
+      {
+        "text": "Logout",
+        "href": "/logout"
+      }
+    ],
+    "forms": [
+      {
+        "id": "sendForm",
+        "action": null,
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "msgInput",
+            "name": "",
+            "type": "text"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/register",
+    "title": "Registrieren",
+    "text": "Registrieren\nProfilbild:\nBenutzername:\nPasswort:\nTeam:\nBitte wählen...\nDev Team\nSkills (Kommagetrennt):\nStandort:\nStandort konnte nicht automatisch ermittelt werden.\nRegistrieren\nSchon einen Account?\nLogin",
+    "links": [
+      {
+        "text": "Login",
+        "href": "/login"
+      }
+    ],
+    "forms": [
+      {
+        "id": "registerForm",
+        "action": "/register",
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "photo",
+            "name": "photo",
+            "type": "file"
+          },
+          {
+            "tag": "INPUT",
+            "id": "username",
+            "name": "username",
+            "type": "text"
+          },
+          {
+            "tag": "INPUT",
+            "id": "password",
+            "name": "password",
+            "type": "password"
+          },
+          {
+            "tag": "SELECT",
+            "id": "team_id",
+            "name": "team_id",
+            "type": "select-one"
+          },
+          {
+            "tag": "INPUT",
+            "id": "skills",
+            "name": "skills",
+            "type": "text"
+          },
+          {
+            "tag": "INPUT",
+            "id": "location",
+            "name": "location",
+            "type": "text"
+          },
+          {
+            "tag": "INPUT",
+            "id": "latitude",
+            "name": "latitude",
+            "type": "hidden"
+          },
+          {
+            "tag": "INPUT",
+            "id": "longitude",
+            "name": "longitude",
+            "type": "hidden"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "route": "/login",
+    "title": "Login",
+    "text": "Login\nLogin\nBenutzername\nPasswort\n Einloggen\nNoch kein Account?\nRegistrieren",
+    "links": [
+      {
+        "text": "Login",
+        "href": "/login"
+      },
+      {
+        "text": "Registrieren",
+        "href": "/register"
+      }
+    ],
+    "forms": [
+      {
+        "id": "loginForm",
+        "action": null,
+        "fields": [
+          {
+            "tag": "INPUT",
+            "id": "username",
+            "name": "username",
+            "type": "text"
+          },
+          {
+            "tag": "INPUT",
+            "id": "password",
+            "name": "password",
+            "type": "password"
+          },
+          {
+            "tag": "BUTTON",
+            "id": "",
+            "name": "",
+            "type": "submit"
+          }
+        ]
+      }
+    ],
+    "width": 1440,
+    "scrollWidth": 1440
+  }
+]

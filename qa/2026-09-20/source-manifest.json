@@ -1,0 +1,157 @@
+[
+  {
+    "path": "main.py",
+    "sha256": "c350428ef89729a847961d77bbb3705bf8c7451e093f960a4ddf2e93ea3f6543",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/config.py",
+    "sha256": "57244b3c893e6e687d48f1489f8518fff8fd9b92dabe4232dc75b298bf167f3b",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/models.py",
+    "sha256": "e49212bc732ec3b8133ae75fecf4418928ed72f0083b6de40b125eecbe2d2407",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/extensions.py",
+    "sha256": "80ed315e56743af6c322cbea92e65105b3873dff3a98c99de3ce94ae07becac5",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/utils.py",
+    "sha256": "fac450d951fc4e62ce6d68108b098b67a20c686df282855526376a4325143bba",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/app.py",
+    "sha256": "1d89003d7c833f9ba818b68be118740df785a6df535f8d6d233249a8b757df15",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/db_init.py",
+    "sha256": "d951aa3511d373b5429579cf861671972f7243dac3b8949482ec45c7b3eafa3d",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/routes/user_routes.py",
+    "sha256": "63ea480129ccc4ce176536172fad75ec1e6a1555584e522a67e04082432da7c2",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/routes/auth_routes.py",
+    "sha256": "ff755733d26c3e61216f05d4fd8805aae06b99e4c5b42b64802169ee7c5611b8",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/routes/team_routes.py",
+    "sha256": "6fbd3a6045b0a9f114646d1cc7e38df5238f837aec76f45dd79c854e48f4bfdd",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/routes/private_chat_routes.py",
+    "sha256": "8a4725f2f3df2810f07818ec42e86585318a947104821a4900b537589e6c2be2",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/routes/project_routes.py",
+    "sha256": "957fb1b24b81f22d7531a7d3f471b1b61b5ea0c2d3f15b80dbdfa3d368818259",
+    "test_copy_identical": true
+  },
+  {
+    "path": "backend/routes/chat_routes.py",
+    "sha256": "15c475956b5b1ec917f60e67235de03e1dcd20c9e761231031aa0497d1c0d22d",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/profile.html",
+    "sha256": "fe9fc1ff97f676058652570423ed9593dfbee51cf73cb544d7eb00a359866b53",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/team.html",
+    "sha256": "cbd90ee8e5edecc79dbfd50489399a7543da6c545af3cfd9066c54f406015357",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/private_chat.html",
+    "sha256": "4f2728f399fc16909bc9ae88271ddbecbf6420cdde2785d0f4ff76e4e4292996",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/index.html",
+    "sha256": "31b23839e1c0d5e654375df4ca693f28c7ad9bb19621ecae39fc228f8d0eb4ba",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/team_manage.html",
+    "sha256": "4d615496d946c5e61998ab94576dbea496048a9179cec16559b82c8149adf3fd",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/register.html",
+    "sha256": "2a6f56f44802ad87e7e86ea8bd63f56b044f9273e554e6c8bb1f548622ce9bf6",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/login.html",
+    "sha256": "0a0962404651287580970e97d5aff8a52c082aa449defa86fae04d8b418a4fbe",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/dashboard.html",
+    "sha256": "da05517cafef0e927dec33c7ba115c491faa6ef8252bf4391360bd198b57ac71",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/create_task.html",
+    "sha256": "3e02ec965423fe0e0b21d5ea233c62b50fe0e4927d8c99395227e18cf4c98ee1",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/projects.html",
+    "sha256": "3ed8f63cdc302032ee80c7ba922d936a3f0624e0661e98db40bb0ee7e653be62",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/create_general_task.html",
+    "sha256": "74988db812934737a646ada9b2c0c7406582c53b778baa6fc9b067848446991e",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/users.html",
+    "sha256": "71646352fc788ca2317a8f98cf1b9bd3f6ca676b7c18e66013a2cb9c9c1059a4",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/create_project.html",
+    "sha256": "9e0464cde7363503fb43c4cba116ec27fd7ad59305adaf8241b94c515124eb85",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/chats.html",
+    "sha256": "9a2b06446d7f487d0f43c1f9a9f784e2ccfb79743c566c89b2303b7a026b06e4",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/project_detail.html",
+    "sha256": "11112fccb26b40a0d91cdf33ab6c71adbcafa9c1171fb8d774f23cd296c4d23c",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/create_team.html",
+    "sha256": "ad422a9614367665423a44953807ddf888f8701d4db02f069ae042c9c233b05b",
+    "test_copy_identical": true
+  },
+  {
+    "path": "templates/chat.html",
+    "sha256": "291421de7ba4a3e2a1340ea221973971e5807f8e13eb3591da92bba00d3ac193",
+    "test_copy_identical": true
+  },
+  {
+    "path": "static/style.css",
+    "sha256": "64a21ae48787c6e0fe8e729201bcdf6fb62fcbab5a9709ac507cb0ee7852d691",
+    "test_copy_identical": true
+  }
+]

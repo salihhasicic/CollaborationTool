@@ -1,0 +1,1191 @@
+{
+  "total": 128,
+  "counts": {
+    "PASS": 76,
+    "FAIL": 52
+  },
+  "results": [
+    {
+      "id": "pages-chat-01",
+      "phase": "pages-chat",
+      "name": "Login Bob über Formular",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3100/start"
+      },
+      "ms": 1077
+    },
+    {
+      "id": "pages-chat-02",
+      "phase": "pages-chat",
+      "name": "Login Alice in unabhängiger Sitzung",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3100/start"
+      },
+      "ms": 1407
+    },
+    {
+      "id": "pages-chat-03",
+      "phase": "pages-chat",
+      "name": "Seite /start",
+      "status": "PASS",
+      "detail": {
+        "title": "Dashboard – bob",
+        "forms": 0
+      },
+      "ms": 571
+    },
+    {
+      "id": "pages-chat-04",
+      "phase": "pages-chat",
+      "name": "Seite /projects",
+      "status": "PASS",
+      "detail": {
+        "title": "Projekte des Teams 1",
+        "forms": 0
+      },
+      "ms": 433
+    },
+    {
+      "id": "pages-chat-05",
+      "phase": "pages-chat",
+      "name": "Seite /projects/new",
+      "status": "PASS",
+      "detail": {
+        "title": "Projekt anlegen",
+        "forms": 1
+      },
+      "ms": 445
+    },
+    {
+      "id": "pages-chat-06",
+      "phase": "pages-chat",
+      "name": "Seite /tasks/new",
+      "status": "PASS",
+      "detail": {
+        "title": "Neuen Task erstellen",
+        "forms": 1
+      },
+      "ms": 452
+    },
+    {
+      "id": "pages-chat-07",
+      "phase": "pages-chat",
+      "name": "Seite /users",
+      "status": "PASS",
+      "detail": {
+        "title": "Benutzerübersicht",
+        "forms": 1
+      },
+      "ms": 704
+    },
+    {
+      "id": "pages-chat-08",
+      "phase": "pages-chat",
+      "name": "Seite /profile/2",
+      "status": "PASS",
+      "detail": {
+        "title": "Profil",
+        "forms": 0
+      },
+      "ms": 604
+    },
+    {
+      "id": "pages-chat-09",
+      "phase": "pages-chat",
+      "name": "Seite /profile/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Profil",
+        "forms": 0
+      },
+      "ms": 544
+    },
+    {
+      "id": "pages-chat-10",
+      "phase": "pages-chat",
+      "name": "Seite /team/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Team 1",
+        "forms": 4
+      },
+      "ms": 456
+    },
+    {
+      "id": "pages-chat-11",
+      "phase": "pages-chat",
+      "name": "Seite /team/2",
+      "status": "PASS",
+      "detail": {
+        "title": "Team 2",
+        "forms": 4
+      },
+      "ms": 456
+    },
+    {
+      "id": "pages-chat-12",
+      "phase": "pages-chat",
+      "name": "Seite /team_manage",
+      "status": "PASS",
+      "detail": {
+        "title": "Team verwalten",
+        "forms": 4
+      },
+      "ms": 438
+    },
+    {
+      "id": "pages-chat-13",
+      "phase": "pages-chat",
+      "name": "Seite /teams/new",
+      "status": "PASS",
+      "detail": {
+        "title": "Neues Team erstellen",
+        "forms": 1
+      },
+      "ms": 446
+    },
+    {
+      "id": "pages-chat-14",
+      "phase": "pages-chat",
+      "name": "Seite /chat/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Team Chat 1",
+        "forms": 1
+      },
+      "ms": 455
+    },
+    {
+      "id": "pages-chat-15",
+      "phase": "pages-chat",
+      "name": "Seite /chats",
+      "status": "PASS",
+      "detail": {
+        "title": "Private Chats",
+        "forms": 0
+      },
+      "ms": 470
+    },
+    {
+      "id": "pages-chat-16",
+      "phase": "pages-chat",
+      "name": "Seite /private_chat/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Privater Chat",
+        "forms": 1
+      },
+      "ms": 421
+    },
+    {
+      "id": "pages-chat-17",
+      "phase": "pages-chat",
+      "name": "Seite /register",
+      "status": "PASS",
+      "detail": {
+        "title": "Registrieren",
+        "forms": 1
+      },
+      "ms": 420
+    },
+    {
+      "id": "pages-chat-18",
+      "phase": "pages-chat",
+      "name": "Seite /login",
+      "status": "PASS",
+      "detail": {
+        "title": "Login",
+        "forms": 1
+      },
+      "ms": 413
+    },
+    {
+      "id": "pages-chat-19",
+      "phase": "pages-chat",
+      "name": "Privatchat /chats: Bob sendet Alice",
+      "status": "PASS",
+      "ms": 1627
+    },
+    {
+      "id": "pages-chat-20",
+      "phase": "pages-chat",
+      "name": "Privatchat: Alice empfängt ohne Neuladen",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.chat-msg-bubble').filter({ hasText: 'QA-1789899721827 Bob → Alice äöü 🙂' }).first() to be visible\u001b[22m\n",
+      "ms": 6002,
+      "screenshots": [
+        "pages-chat-19-bob.png",
+        "pages-chat-19-alice.png"
+      ]
+    },
+    {
+      "id": "pages-chat-21",
+      "phase": "pages-chat",
+      "name": "Privatchat: Alice empfängt nach erneutem Öffnen",
+      "status": "PASS",
+      "ms": 794
+    },
+    {
+      "id": "pages-chat-22",
+      "phase": "pages-chat",
+      "name": "Privatchat: Alice antwortet Bob",
+      "status": "PASS",
+      "ms": 971
+    },
+    {
+      "id": "pages-chat-23",
+      "phase": "pages-chat",
+      "name": "Privatchat: Nachrichten bleiben nach Neuladen erhalten",
+      "status": "PASS",
+      "ms": 789
+    },
+    {
+      "id": "pages-chat-24",
+      "phase": "pages-chat",
+      "name": "Privatchat aus fremdem Profil öffnen und Verlauf laden",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#messages').filter({ hasText: 'QA-1789899721827 Bob → Alice äöü 🙂' }).first() to be visible\u001b[22m\n",
+      "ms": 5779,
+      "screenshots": [
+        "pages-chat-23-bob.png",
+        "pages-chat-23-alice.png"
+      ]
+    },
+    {
+      "id": "pages-chat-25",
+      "phase": "pages-chat",
+      "name": "Privatchat aus Profil: Senden funktioniert",
+      "status": "FAIL",
+      "detail": "Senden liefert HTTP 500\n\n500 !== 200\n",
+      "ms": 57,
+      "screenshots": [
+        "pages-chat-24-bob.png",
+        "pages-chat-24-alice.png"
+      ]
+    },
+    {
+      "id": "pages-chat-26",
+      "phase": "pages-chat",
+      "name": "Teamchat: Bob sendet",
+      "status": "PASS",
+      "ms": 817
+    },
+    {
+      "id": "pages-chat-27",
+      "phase": "pages-chat",
+      "name": "Teamchat: Alice empfängt ohne Neuladen",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.chat-content').filter({ hasText: 'QA-1789899721827 Teamnachricht von Bob' }).first() to be visible\u001b[22m\n",
+      "ms": 6001,
+      "screenshots": [
+        "pages-chat-26-bob.png",
+        "pages-chat-26-alice.png"
+      ]
+    },
+    {
+      "id": "pages-chat-28",
+      "phase": "pages-chat",
+      "name": "Teamchat: Alice empfängt nach Neuladen und antwortet",
+      "status": "PASS",
+      "ms": 1333
+    },
+    {
+      "id": "pages-chat-29",
+      "phase": "pages-chat",
+      "name": "Teamchat: leere Nachricht wird im Formular blockiert",
+      "status": "PASS",
+      "ms": 272
+    },
+    {
+      "id": "pages-chat-30",
+      "phase": "pages-chat",
+      "name": "Teamchat: KI-Frage liefert brauchbare Antwort",
+      "status": "FAIL",
+      "detail": "[Fehler bei GPT: No API key provided. You can set your API key in code using 'openai.api_key = ', or you can set the environment variable OPENAI_API_KEY=). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = '. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.]",
+      "ms": 62,
+      "screenshots": [
+        "pages-chat-29-bob.png",
+        "pages-chat-29-alice.png"
+      ]
+    },
+    {
+      "id": "pages-chat-31",
+      "phase": "pages-chat",
+      "name": "Teamchat: KI-Antwortvorschlag und Übernehmen",
+      "status": "FAIL",
+      "detail": "[Fehler bei GPT: No API key provided. You can set your API key in code using 'openai.api_key = ', or you can set the environment variable OPENAI_API_KEY=). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = '. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.] Übernehmen",
+      "ms": 83,
+      "screenshots": [
+        "pages-chat-30-bob.png",
+        "pages-chat-30-alice.png"
+      ]
+    },
+    {
+      "id": "pages-chat-32",
+      "phase": "pages-chat",
+      "name": "Chat: Zeitangabe entspricht Europe/Zurich",
+      "status": "FAIL",
+      "detail": "{\"raw\":\"2026-09-20T10:22:37.320885\",\"displayed\":\"20.9.2026, 10:22:37\",\"expected\":\"20.9.2026, 12:22:37\"}\n+ actual - expected\n\n+ '20.9.2026, 10:22:37'\n- '20.9.2026, 12:22:37'\n               ^\n",
+      "ms": 3,
+      "screenshots": [
+        "pages-chat-31-bob.png",
+        "pages-chat-31-alice.png"
+      ]
+    },
+    {
+      "id": "workflows-03",
+      "phase": "workflows",
+      "name": "Registrierung: Standort erlaubt, mit Profilbild",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.message.success').filter({ hasText: 'erfolgreich' }).first() to be visible\u001b[22m\n",
+      "ms": 5846,
+      "screenshots": [
+        "workflows-2-bob.png",
+        "workflows-2-alice.png",
+        "workflows-2-registrierung.png"
+      ]
+    },
+    {
+      "id": "workflows-06",
+      "phase": "workflows",
+      "name": "Registrierung: ohne Standortfreigabe möglich",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.message.success').filter({ hasText: 'erfolgreich' }).first() to be visible\u001b[22m\n",
+      "ms": 5904,
+      "screenshots": [
+        "workflows-5-bob.png",
+        "workflows-5-alice.png",
+        "workflows-5-registrierung.png",
+        "workflows-5-ohne-standort.png"
+      ]
+    },
+    {
+      "id": "workflows-07",
+      "phase": "workflows",
+      "name": "Benutzersuche nach Skill Python",
+      "status": "PASS",
+      "detail": {
+        "anzahl": 2
+      },
+      "ms": 816
+    },
+    {
+      "id": "workflows-08",
+      "phase": "workflows",
+      "name": "Benutzersuche: keine Treffer",
+      "status": "PASS",
+      "ms": 946
+    },
+    {
+      "id": "workflows-09",
+      "phase": "workflows",
+      "name": "Umkreissuche Bob",
+      "status": "PASS",
+      "detail": "Nutzer im Umkreis:\nivan (25.9 km)\nlisa (25.26 km)\npaula (26.81 km)\nqa-register-repro (0 km)",
+      "ms": 778
+    },
+    {
+      "id": "workflows-10",
+      "phase": "workflows",
+      "name": "Profilkarte lädt",
+      "status": "PASS",
+      "detail": {
+        "tiles": 10
+      },
+      "ms": 503
+    },
+    {
+      "id": "workflows-11",
+      "phase": "workflows",
+      "name": "Profil: Ort und Skills speichern und erneut laden",
+      "status": "PASS",
+      "ms": 1216
+    },
+    {
+      "id": "workflows-12",
+      "phase": "workflows",
+      "name": "Profil: aktuellen Standort übernehmen",
+      "status": "PASS",
+      "ms": 872
+    },
+    {
+      "id": "workflows-13",
+      "phase": "workflows",
+      "name": "Profil: Bild hochladen und nach Neuladen anzeigen",
+      "status": "PASS",
+      "ms": 925
+    },
+    {
+      "id": "workflows-14",
+      "phase": "workflows",
+      "name": "Fremdes Profil zeigt keine Bearbeiten-Schaltfläche",
+      "status": "PASS",
+      "ms": 385
+    },
+    {
+      "id": "workflows-15",
+      "phase": "workflows",
+      "name": "Projekt über Formular erstellen",
+      "status": "PASS",
+      "detail": {
+        "projectId": 2
+      },
+      "ms": 1830
+    },
+    {
+      "id": "workflows-16",
+      "phase": "workflows",
+      "name": "Projekt ist für Alice sichtbar",
+      "status": "PASS",
+      "ms": 382
+    },
+    {
+      "id": "workflows-17",
+      "phase": "workflows",
+      "name": "Projekt: Name ist auf Detailseite sichtbar",
+      "status": "FAIL",
+      "detail": "Projektname fehlt auf Detailseite",
+      "ms": 385,
+      "screenshots": [
+        "workflows-16-bob.png",
+        "workflows-16-alice.png",
+        "workflows-16-registrierung.png",
+        "workflows-16-ohne-standort.png"
+      ]
+    },
+    {
+      "id": "workflows-18",
+      "phase": "workflows",
+      "name": "Projekt: Teamname ist auf Detailseite sichtbar",
+      "status": "FAIL",
+      "detail": "Teamname fehlt auf Detailseite",
+      "ms": 1,
+      "screenshots": [
+        "workflows-17-bob.png",
+        "workflows-17-alice.png",
+        "workflows-17-registrierung.png",
+        "workflows-17-ohne-standort.png"
+      ]
+    },
+    {
+      "id": "workflows-19",
+      "phase": "workflows",
+      "name": "Projekt: Deadline ändern",
+      "status": "PASS",
+      "ms": 72
+    },
+    {
+      "id": "workflows-20",
+      "phase": "workflows",
+      "name": "Projekt: Deadline entfernen",
+      "status": "PASS",
+      "ms": 942
+    },
+    {
+      "id": "workflows-21",
+      "phase": "workflows",
+      "name": "Task über Projekt erstellen",
+      "status": "PASS",
+      "detail": {
+        "taskId": 1
+      },
+      "ms": 826
+    },
+    {
+      "id": "workflows-22",
+      "phase": "workflows",
+      "name": "Task übernehmen als Bob",
+      "status": "PASS",
+      "ms": 954
+    },
+    {
+      "id": "workflows-23",
+      "phase": "workflows",
+      "name": "Alice sieht Bobs Task als zugewiesen",
+      "status": "PASS",
+      "ms": 387
+    },
+    {
+      "id": "workflows-24",
+      "phase": "workflows",
+      "name": "Task: Status In Progress und Projektstatus",
+      "status": "PASS",
+      "ms": 798
+    },
+    {
+      "id": "workflows-25",
+      "phase": "workflows",
+      "name": "Task: Deadline ändern",
+      "status": "PASS",
+      "ms": 423
+    },
+    {
+      "id": "workflows-26",
+      "phase": "workflows",
+      "name": "Task: Deadline entfernen",
+      "status": "PASS",
+      "ms": 958
+    },
+    {
+      "id": "workflows-27",
+      "phase": "workflows",
+      "name": "Dashboard zeigt übernommene offene Aufgabe",
+      "status": "PASS",
+      "ms": 441
+    },
+    {
+      "id": "workflows-28",
+      "phase": "workflows",
+      "name": "Task: Done und 100 Prozent Projektfortschritt",
+      "status": "PASS",
+      "ms": 1196
+    },
+    {
+      "id": "workflows-29",
+      "phase": "workflows",
+      "name": "Allgemeines Task-Formular erstellt zweite Aufgabe",
+      "status": "PASS",
+      "ms": 1250
+    },
+    {
+      "id": "workflows-30",
+      "phase": "workflows",
+      "name": "Teamnotiz speichern und bei Alice sichtbar",
+      "status": "FAIL",
+      "detail": "Expected values to be strictly equal:\n+ actual - expected\n\n+ ''\n- 'QA-1789899822472 Notiz'\n",
+      "ms": 1194,
+      "screenshots": [
+        "workflows-29-bob.png",
+        "workflows-29-alice.png",
+        "workflows-29-registrierung.png",
+        "workflows-29-ohne-standort.png"
+      ]
+    },
+    {
+      "id": "workflows-31",
+      "phase": "workflows",
+      "name": "Teamdatei hochladen und bei Alice anzeigen",
+      "status": "PASS",
+      "ms": 1177
+    },
+    {
+      "id": "workflows-32",
+      "phase": "workflows",
+      "name": "Teamdatei nennt tatsächlichen Uploader Bob",
+      "status": "FAIL",
+      "detail": "QA-1789899822472-upload.txt\nHochgeladen von unbekannt\nam 20.9.2026, 10:24:28",
+      "ms": 2,
+      "screenshots": [
+        "workflows-31-bob.png",
+        "workflows-31-alice.png",
+        "workflows-31-registrierung.png",
+        "workflows-31-ohne-standort.png"
+      ]
+    },
+    {
+      "id": "workflows-33",
+      "phase": "workflows",
+      "name": "Teamdatei herunterladen: Inhalt stimmt",
+      "status": "PASS",
+      "ms": 268
+    },
+    {
+      "id": "workflows-34",
+      "phase": "workflows",
+      "name": "Team: Mitglied hinzufügen",
+      "status": "PASS",
+      "ms": 815
+    },
+    {
+      "id": "workflows-35",
+      "phase": "workflows",
+      "name": "Team: Mitglied zurück ins ursprüngliche Team verschieben",
+      "status": "PASS",
+      "ms": 806
+    },
+    {
+      "id": "workflows-36",
+      "phase": "workflows",
+      "name": "Team-Auswahl wechselt die angezeigte Seite",
+      "status": "PASS",
+      "ms": 953
+    },
+    {
+      "id": "workflows-37",
+      "phase": "workflows",
+      "name": "Teamverwaltung zeigt die Teamnamen",
+      "status": "PASS",
+      "ms": 383
+    },
+    {
+      "id": "workflows-38",
+      "phase": "workflows",
+      "name": "Team über Teamverwaltung erstellen",
+      "status": "PASS",
+      "detail": {
+        "teamId": 4
+      },
+      "ms": 392
+    },
+    {
+      "id": "workflows-39",
+      "phase": "workflows",
+      "name": "Team über separate Seite /teams/new erstellen",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#team-create-status').filter({ hasText: 'erfolgreich' }).first() to be visible\u001b[22m\n",
+      "ms": 5766,
+      "screenshots": [
+        "workflows-38-bob.png",
+        "workflows-38-alice.png",
+        "workflows-38-registrierung.png",
+        "workflows-38-ohne-standort.png"
+      ]
+    },
+    {
+      "id": "workflows-40",
+      "phase": "workflows",
+      "name": "Leeres Testteam über Oberfläche löschen",
+      "status": "PASS",
+      "ms": 1887
+    },
+    {
+      "id": "edgecases-03",
+      "phase": "edgecases",
+      "name": "Registrierung ohne Bild mit Standortfreigabe",
+      "status": "PASS",
+      "ms": 874
+    },
+    {
+      "id": "edgecases-04",
+      "phase": "edgecases",
+      "name": "Neu registrierter Nutzer kann sich anmelden",
+      "status": "PASS",
+      "ms": 857
+    },
+    {
+      "id": "edgecases-05",
+      "phase": "edgecases",
+      "name": "Doppelte Registrierung zeigt verständliche Fehlermeldung",
+      "status": "PASS",
+      "ms": 1310
+    },
+    {
+      "id": "edgecases-06",
+      "phase": "edgecases",
+      "name": "Registrierung mit Bild erzeugt keinen Serverfehler",
+      "status": "FAIL",
+      "detail": "Bildregistrierung: HTTP 500\n\n500 !== 200\n",
+      "ms": 772,
+      "screenshots": [
+        "edgecases-5-bob.png",
+        "edgecases-5-alice.png",
+        "edgecases-5-neuregistrierung.png"
+      ]
+    },
+    {
+      "id": "edgecases-07",
+      "phase": "edgecases",
+      "name": "Login mit falschem Passwort zeigt Fehler",
+      "status": "PASS",
+      "ms": 838
+    },
+    {
+      "id": "edgecases-08",
+      "phase": "edgecases",
+      "name": "Login-Pflicht: Dashboard für ausgeloggte Sitzung gesperrt",
+      "status": "PASS",
+      "ms": 361
+    },
+    {
+      "id": "edgecases-09",
+      "phase": "edgecases",
+      "name": "Logout: Projektinhalte verschwinden nach Abmelden",
+      "status": "FAIL",
+      "detail": "Projektname bleibt nach Logout sichtbar",
+      "ms": 1587,
+      "screenshots": [
+        "edgecases-8-bob.png",
+        "edgecases-8-alice.png",
+        "edgecases-8-neuregistrierung.png"
+      ]
+    },
+    {
+      "id": "edgecases-10",
+      "phase": "edgecases",
+      "name": "Logout: Projektänderungen sind nach Abmelden gesperrt",
+      "status": "FAIL",
+      "detail": "Projektbearbeitung bleibt nach Logout erreichbar\n\n1 !== 0\n",
+      "ms": 382,
+      "screenshots": [
+        "edgecases-9-bob.png",
+        "edgecases-9-alice.png",
+        "edgecases-9-neuregistrierung.png"
+      ]
+    },
+    {
+      "id": "edgecases-11",
+      "phase": "edgecases",
+      "name": "Abgelaufener/ungültiger JWT: verständlicher Login statt Dashboard-500",
+      "status": "FAIL",
+      "detail": "Dashboard stürzt mit ungültigem Token ab",
+      "ms": 1204,
+      "screenshots": [
+        "edgecases-10-bob.png",
+        "edgecases-10-alice.png",
+        "edgecases-10-neuregistrierung.png"
+      ]
+    },
+    {
+      "id": "edgecases-12",
+      "phase": "edgecases",
+      "name": "Navigationslinks: alle vorhandenen Menüpunkte erreichbar",
+      "status": "PASS",
+      "detail": [
+        "/start",
+        "/projects",
+        "/users",
+        "/chats",
+        "/team/1",
+        "/chat/1",
+        "/team_manage",
+        "/profile/2"
+      ],
+      "ms": 3505
+    },
+    {
+      "id": "edgecases-13",
+      "phase": "edgecases",
+      "name": "Profilübersicht: Demo-Profilbilder laden",
+      "status": "FAIL",
+      "detail": "19 defekte Profilbilder\n\n19 !== 0\n",
+      "ms": 1592,
+      "screenshots": [
+        "edgecases-12-bob.png",
+        "edgecases-12-alice.png",
+        "edgecases-12-neuregistrierung.png"
+      ]
+    },
+    {
+      "id": "edgecases-14",
+      "phase": "edgecases",
+      "name": "Privatchat: HTML-Nachricht wird im Nachrichtenbereich als Text dargestellt",
+      "status": "PASS",
+      "ms": 850
+    },
+    {
+      "id": "edgecases-15",
+      "phase": "edgecases",
+      "name": "Privatchat: HTML bleibt auch in der Vorschau Text",
+      "status": "FAIL",
+      "detail": "HTML-Tag wird in der Chatvorschau als Element gerendert\n\n1 !== 0\n",
+      "ms": 388,
+      "screenshots": [
+        "edgecases-14-bob.png",
+        "edgecases-14-alice.png",
+        "edgecases-14-neuregistrierung.png"
+      ]
+    },
+    {
+      "id": "edgecases-16",
+      "phase": "edgecases",
+      "name": "Privatchat: gespeicherter JavaScript-Marker wird nicht ausgeführt",
+      "status": "FAIL",
+      "detail": "Gespeicherter Testcode wurde beim Empfänger ausgeführt\n\n'executed' !== null\n",
+      "ms": 2079,
+      "screenshots": [
+        "edgecases-15-bob.png",
+        "edgecases-15-alice.png",
+        "edgecases-15-neuregistrierung.png"
+      ]
+    },
+    {
+      "id": "edgecases-17",
+      "phase": "edgecases",
+      "name": "Mobile Ansicht nutzt Gerätebreite und vermeidet horizontales Scrollen",
+      "status": "FAIL",
+      "detail": "[{\"route\":\"/start\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/users\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/profile/2\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/projects\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/project/2\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/chat/1\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/chats\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/team/1\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/team_manage\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/teams/new\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/register\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/login\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null}]\n\n12 !== 0\n",
+      "ms": 0,
+      "screenshots": [
+        "edgecases-16-bob.png",
+        "edgecases-16-alice.png",
+        "edgecases-16-neuregistrierung.png",
+        "edgecases-16-mobil.png"
+      ]
+    },
+    {
+      "id": "edgecases-18",
+      "phase": "edgecases",
+      "name": "Mobile Ansicht: Login funktioniert",
+      "status": "PASS",
+      "ms": 832
+    },
+    {
+      "id": "edgecases-19",
+      "phase": "edgecases",
+      "name": "Desktop: große Ansichten ohne horizontalen Überlauf",
+      "status": "PASS",
+      "detail": [
+        {
+          "route": "/start",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/users",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/projects",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/project/2",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/chats",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/team/1",
+          "width": 1440,
+          "scrollWidth": 1440
+        }
+      ],
+      "ms": 2257
+    },
+    {
+      "id": "api-01",
+      "phase": "api",
+      "name": "Login: falsches Passwort",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "id": "api-02",
+      "phase": "api",
+      "name": "Login: unbekannter Nutzer",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "id": "api-03",
+      "phase": "api",
+      "name": "Login: fehlende Felder verursachen keinen Serverfehler",
+      "status": "FAIL",
+      "detail": "HTTP 500, erwartet (400, 401, 422); Antwort: <!doctype html>\n<html lang=en>\n<title>500 Internal Server Error</title>\n<h1>Internal Server Error</h1>\n<p>The server encountered an internal error and was unable to complete your r"
+    },
+    {
+      "id": "api-04",
+      "phase": "api",
+      "name": "Registrierung ohne Koordinaten",
+      "status": "FAIL",
+      "detail": "HTTP 500, erwartet (201,); Antwort: <!doctype html>\n<html lang=en>\n<title>500 Internal Server Error</title>\n<h1>Internal Server Error</h1>\n<p>The server encountered an internal error and was unable to complete your r"
+    },
+    {
+      "id": "api-05",
+      "phase": "api",
+      "name": "Registrierung mit Koordinaten",
+      "status": "PASS",
+      "detail": {
+        "http": 201
+      }
+    },
+    {
+      "id": "api-06",
+      "phase": "api",
+      "name": "Registrierung: Duplikat abgelehnt",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "id": "api-07",
+      "phase": "api",
+      "name": "Registrierung: ungültige Bilddatei abgelehnt",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "id": "api-08",
+      "phase": "api",
+      "name": "Projekte ohne Login gesperrt",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "id": "api-09",
+      "phase": "api",
+      "name": "Fremdes Team: Carla kann Projekt nicht lesen",
+      "status": "PASS",
+      "detail": {
+        "http": 403
+      }
+    },
+    {
+      "id": "api-10",
+      "phase": "api",
+      "name": "Fremdes Team: Carla kann Projekt nicht verändern",
+      "status": "PASS",
+      "detail": {
+        "http": 403
+      }
+    },
+    {
+      "id": "api-11",
+      "phase": "api",
+      "name": "Fremdes Team: Carla kann Task nicht übernehmen",
+      "status": "PASS",
+      "detail": {
+        "http": 403
+      }
+    },
+    {
+      "id": "api-12",
+      "phase": "api",
+      "name": "Übernommener Task kann nicht doppelt übernommen werden",
+      "status": "PASS",
+      "detail": {
+        "http": 400
+      }
+    },
+    {
+      "id": "api-13",
+      "phase": "api",
+      "name": "Nur Task-Verantwortlicher darf Status ändern (wie UI)",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: {\"id\":3,\"project_status\":\"In Progress\",\"status\":\"In Progress\"}\n"
+    },
+    {
+      "id": "api-14",
+      "phase": "api",
+      "name": "Task: ungültiger Status wird abgelehnt",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (400, 422); Antwort: {\"id\":3,\"project_status\":\"In Progress\",\"status\":\"ungueltig\"}\n"
+    },
+    {
+      "id": "api-15",
+      "phase": "api",
+      "name": "Projekt: ungültiger Status wird abgelehnt",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (400, 422); Antwort: {\"id\":3,\"status\":\"ungueltig\"}\n"
+    },
+    {
+      "id": "api-16",
+      "phase": "api",
+      "name": "Task: ungültiges Datum verursacht keinen Serverfehler",
+      "status": "FAIL",
+      "detail": "HTTP 500, erwartet (400, 422); Antwort: <!doctype html>\n<html lang=en>\n<title>500 Internal Server Error</title>\n<h1>Internal Server Error</h1>\n<p>The server encountered an internal error and was unable to complete your r"
+    },
+    {
+      "id": "api-17",
+      "phase": "api",
+      "name": "Projekt: ungültiges Datum verursacht keinen Serverfehler",
+      "status": "FAIL",
+      "detail": "HTTP 500, erwartet (400, 422); Antwort: <!doctype html>\n<html lang=en>\n<title>500 Internal Server Error</title>\n<h1>Internal Server Error</h1>\n<p>The server encountered an internal error and was unable to complete your r"
+    },
+    {
+      "id": "api-18",
+      "phase": "api",
+      "name": "Task: leerer Titel wird abgelehnt",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (400, 422); Antwort: {\"id\":4,\"project_id\":3,\"project_status\":\"To Do\",\"status\":\"To Do\",\"title\":\"\"}\n"
+    },
+    {
+      "id": "api-19",
+      "phase": "api",
+      "name": "Nicht vorhandenes Projekt liefert 404 im Backend",
+      "status": "PASS",
+      "detail": {
+        "http": 404
+      }
+    },
+    {
+      "id": "api-20",
+      "phase": "api",
+      "name": "Nicht vorhandenes Projekt liefert 404 in Oberfläche",
+      "status": "FAIL",
+      "detail": "HTTP 500, erwartet (404,); Antwort: Fehler beim Laden der Tasks (Status: 404): <!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you e"
+    },
+    {
+      "id": "api-21",
+      "phase": "api",
+      "name": "Team-Detail-Endpunkt für Teamname vorhanden",
+      "status": "FAIL",
+      "detail": "HTTP 405, erwartet (200,); Antwort: <!doctype html>\n<html lang=en>\n<title>405 Method Not Allowed</title>\n<h1>Method Not Allowed</h1>\n<p>The method is not allowed for the requested URL.</p>\n"
+    },
+    {
+      "id": "api-22",
+      "phase": "api",
+      "name": "Teamnotizen akzeptieren Formularanfrage",
+      "status": "FAIL",
+      "detail": "HTTP 415, erwartet (200,); Antwort: <!doctype html>\n<html lang=en>\n<title>415 Unsupported Media Type</title>\n<h1>Unsupported Media Type</h1>\n<p>Did not attempt to load JSON data because the request Content-Type was n"
+    },
+    {
+      "id": "api-23",
+      "phase": "api",
+      "name": "Teamnotizen akzeptieren JSON",
+      "status": "PASS",
+      "detail": {
+        "http": 200
+      }
+    },
+    {
+      "id": "api-24",
+      "phase": "api",
+      "name": "Gast darf privaten Chat nicht lesen",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: [{\"content\":\"Hallo von Postman!\",\"receiver_id\":2,\"receiver_name\":\"bob\",\"sender_id\":1,\"sender_name\":\"alice\",\"timestamp\":\"2025-07-02T06:16:00.561838\"},{\"content\":\"hihi\",\"receiver_id\""
+    },
+    {
+      "id": "api-25",
+      "phase": "api",
+      "name": "Gast darf keinen Absender im privaten Chat vortäuschen",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: {\"message\":\"Nachricht gesendet.\"}\n"
+    },
+    {
+      "id": "api-26",
+      "phase": "api",
+      "name": "Web-Proxy schützt private Nachrichten vor Gästen",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: {\"message\":\"Nachricht gesendet.\"}\n"
+    },
+    {
+      "id": "api-27",
+      "phase": "api",
+      "name": "Gast darf Teamchat nicht lesen",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: [{\"content\":\"QA-1789899539675 Teamnachricht von Bob\",\"sender_id\":2,\"sender_name\":\"bob\",\"timestamp\":\"2026-09-20T10:19:45.504365\"},{\"content\":\"QA-1789899539675 Teamantwort von Alice\""
+    },
+    {
+      "id": "api-28",
+      "phase": "api",
+      "name": "Gast darf Teamnachricht nicht als Bob senden",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: {\"message\":\"Message sent\"}\n"
+    },
+    {
+      "id": "api-29",
+      "phase": "api",
+      "name": "Privatchat lehnt leere Nachrichten ab",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (400, 422); Antwort: {\"message\":\"Nachricht gesendet.\"}\n"
+    },
+    {
+      "id": "api-30",
+      "phase": "api",
+      "name": "Teamchat lehnt leere Nachrichten ab",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (400, 422); Antwort: {\"message\":\"Message sent\"}\n"
+    },
+    {
+      "id": "api-31",
+      "phase": "api",
+      "name": "Fremdes Team: Carla darf Bob-Aufgaben nicht auslesen",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: [{\"deadline\":null,\"id\":1,\"project_id\":2,\"status\":\"Done\",\"title\":\"QA-1789899822472 Aufgabe\"},{\"deadline\":null,\"id\":3,\"project_id\":3,\"status\":\"To Do\",\"title\":\"QA-API-1789899923 Task\""
+    },
+    {
+      "id": "api-32",
+      "phase": "api",
+      "name": "Gast darf Profil nicht verändern",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: {\"message\":\"User updated\"}\n"
+    },
+    {
+      "id": "api-33",
+      "phase": "api",
+      "name": "Gast darf Teamzuordnung nicht ändern",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: {\"message\":\"User added to team\"}\n"
+    },
+    {
+      "id": "api-34",
+      "phase": "api",
+      "name": "Gast darf Teamnotizen nicht ändern",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: {\"ablage\":\"QA-API-1789899923 Gastnotiz\",\"message\":\"Ablage gespeichert\"}\n"
+    },
+    {
+      "id": "api-35",
+      "phase": "api",
+      "name": "Gast darf Teamdateien nicht lesen",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: {\"files\":[{\"filename\":\"Full_Stack_Web_Development_FS2025.pdf\",\"uploaded_at\":\"2025-07-02T08:54:51.522076\",\"uploader\":\"bob\"},{\"filename\":\"helloworld-FS2025-fs.zip\",\"uploaded_at\":\"202"
+    },
+    {
+      "id": "api-36",
+      "phase": "api",
+      "name": "Gast darf Team nicht löschen",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (401, 403); Antwort: {\"message\":\"Team gel\\u00f6scht\"}\n"
+    },
+    {
+      "id": "api-37",
+      "phase": "api",
+      "name": "Teamname darf nicht nur Leerzeichen enthalten",
+      "status": "FAIL",
+      "detail": "HTTP 201, erwartet (400, 422); Antwort: {\"message\":\"Team created\",\"team_id\":4}\n"
+    },
+    {
+      "id": "api-38",
+      "phase": "api",
+      "name": "Umkreissuche benötigt Login",
+      "status": "PASS",
+      "detail": {
+        "http": 401
+      }
+    },
+    {
+      "id": "api-39",
+      "phase": "api",
+      "name": "Logout entfernt Zugriff auf Projektliste",
+      "status": "FAIL",
+      "detail": "HTTP 200, erwartet (302, 401, 403); Antwort: <!DOCTYPE html>\n<html lang=\"de\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Projekte des Teams None</title>\n    <link rel=\"stylesheet\" href=\"/static/style.css\">\n    <style>\n    "
+    },
+    {
+      "id": "extra-01",
+      "phase": "extra",
+      "name": "Logout: tatsächliche Projektänderung muss gesperrt sein",
+      "status": "FAIL",
+      "detail": "Projektdeadline nach Logout geändert; HTTP 302, gespeichert 2026-12-24T00:00:00"
+    },
+    {
+      "id": "extra-02",
+      "phase": "extra",
+      "name": "Dateiablage: gleicher Dateiname bleibt eindeutig",
+      "status": "FAIL",
+      "detail": "2 Dateieinträge für denselben Namen; beide laden 'Version 2'"
+    },
+    {
+      "id": "extra-03",
+      "phase": "extra",
+      "name": "Team mit Mitgliedern und Projekt löschen: keine verwaisten Daten",
+      "status": "FAIL",
+      "detail": "HTTP 200; 1 Projekt(e) ohne zugehöriges Team nach Löschen"
+    },
+    {
+      "id": "extra-04",
+      "phase": "extra",
+      "name": "Bob und Alice senden gleichzeitig: alle 20 Nachrichten bleiben erhalten",
+      "status": "FAIL",
+      "detail": "20 gesendet, 17 gespeichert; fehlend ['QA-EXTRA-1789900134-parallel-3-1', 'QA-EXTRA-1789900134-parallel-4-2', 'QA-EXTRA-1789900134-parallel-6-2']; HTTP-Status [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200]"
+    }
+  ]
+}

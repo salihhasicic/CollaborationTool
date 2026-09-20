@@ -1,0 +1,309 @@
+{
+  "phase": "edgecases",
+  "tag": "QA-1789900031960",
+  "base": "http://127.0.0.1:3100",
+  "results": [
+    {
+      "name": "Login Bob über Formular",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3100/start"
+      },
+      "ms": 888
+    },
+    {
+      "name": "Login Alice in unabhängiger Sitzung",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3100/start"
+      },
+      "ms": 842
+    },
+    {
+      "name": "Registrierung ohne Bild mit Standortfreigabe",
+      "status": "PASS",
+      "ms": 874
+    },
+    {
+      "name": "Neu registrierter Nutzer kann sich anmelden",
+      "status": "PASS",
+      "ms": 857
+    },
+    {
+      "name": "Doppelte Registrierung zeigt verständliche Fehlermeldung",
+      "status": "PASS",
+      "ms": 1310
+    },
+    {
+      "name": "Registrierung mit Bild erzeugt keinen Serverfehler",
+      "status": "FAIL",
+      "detail": "Bildregistrierung: HTTP 500\n\n500 !== 200\n",
+      "ms": 772,
+      "screenshots": [
+        "edgecases-5-bob.png",
+        "edgecases-5-alice.png",
+        "edgecases-5-neuregistrierung.png"
+      ]
+    },
+    {
+      "name": "Login mit falschem Passwort zeigt Fehler",
+      "status": "PASS",
+      "ms": 838
+    },
+    {
+      "name": "Login-Pflicht: Dashboard für ausgeloggte Sitzung gesperrt",
+      "status": "PASS",
+      "ms": 361
+    },
+    {
+      "name": "Logout: Projektinhalte verschwinden nach Abmelden",
+      "status": "FAIL",
+      "detail": "Projektname bleibt nach Logout sichtbar",
+      "ms": 1587,
+      "screenshots": [
+        "edgecases-8-bob.png",
+        "edgecases-8-alice.png",
+        "edgecases-8-neuregistrierung.png"
+      ]
+    },
+    {
+      "name": "Logout: Projektänderungen sind nach Abmelden gesperrt",
+      "status": "FAIL",
+      "detail": "Projektbearbeitung bleibt nach Logout erreichbar\n\n1 !== 0\n",
+      "ms": 382,
+      "screenshots": [
+        "edgecases-9-bob.png",
+        "edgecases-9-alice.png",
+        "edgecases-9-neuregistrierung.png"
+      ]
+    },
+    {
+      "name": "Abgelaufener/ungültiger JWT: verständlicher Login statt Dashboard-500",
+      "status": "FAIL",
+      "detail": "Dashboard stürzt mit ungültigem Token ab",
+      "ms": 1204,
+      "screenshots": [
+        "edgecases-10-bob.png",
+        "edgecases-10-alice.png",
+        "edgecases-10-neuregistrierung.png"
+      ]
+    },
+    {
+      "name": "Navigationslinks: alle vorhandenen Menüpunkte erreichbar",
+      "status": "PASS",
+      "detail": [
+        "/start",
+        "/projects",
+        "/users",
+        "/chats",
+        "/team/1",
+        "/chat/1",
+        "/team_manage",
+        "/profile/2"
+      ],
+      "ms": 3505
+    },
+    {
+      "name": "Profilübersicht: Demo-Profilbilder laden",
+      "status": "FAIL",
+      "detail": "19 defekte Profilbilder\n\n19 !== 0\n",
+      "ms": 1592,
+      "screenshots": [
+        "edgecases-12-bob.png",
+        "edgecases-12-alice.png",
+        "edgecases-12-neuregistrierung.png"
+      ]
+    },
+    {
+      "name": "Privatchat: HTML-Nachricht wird im Nachrichtenbereich als Text dargestellt",
+      "status": "PASS",
+      "ms": 850
+    },
+    {
+      "name": "Privatchat: HTML bleibt auch in der Vorschau Text",
+      "status": "FAIL",
+      "detail": "HTML-Tag wird in der Chatvorschau als Element gerendert\n\n1 !== 0\n",
+      "ms": 388,
+      "screenshots": [
+        "edgecases-14-bob.png",
+        "edgecases-14-alice.png",
+        "edgecases-14-neuregistrierung.png"
+      ]
+    },
+    {
+      "name": "Privatchat: gespeicherter JavaScript-Marker wird nicht ausgeführt",
+      "status": "FAIL",
+      "detail": "Gespeicherter Testcode wurde beim Empfänger ausgeführt\n\n'executed' !== null\n",
+      "ms": 2079,
+      "screenshots": [
+        "edgecases-15-bob.png",
+        "edgecases-15-alice.png",
+        "edgecases-15-neuregistrierung.png"
+      ]
+    },
+    {
+      "name": "Mobile Ansicht nutzt Gerätebreite und vermeidet horizontales Scrollen",
+      "status": "FAIL",
+      "detail": "[{\"route\":\"/start\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/users\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/profile/2\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/projects\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/project/2\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/chat/1\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/chats\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/team/1\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/team_manage\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/teams/new\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/register\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null},{\"route\":\"/login\",\"innerWidth\":980,\"screenWidth\":390,\"scrollWidth\":980,\"viewport\":null}]\n\n12 !== 0\n",
+      "ms": 0,
+      "screenshots": [
+        "edgecases-16-bob.png",
+        "edgecases-16-alice.png",
+        "edgecases-16-neuregistrierung.png",
+        "edgecases-16-mobil.png"
+      ]
+    },
+    {
+      "name": "Mobile Ansicht: Login funktioniert",
+      "status": "PASS",
+      "ms": 832
+    },
+    {
+      "name": "Desktop: große Ansichten ohne horizontalen Überlauf",
+      "status": "PASS",
+      "detail": [
+        {
+          "route": "/start",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/users",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/projects",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/project/2",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/chats",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/team/1",
+          "width": 1440,
+          "scrollWidth": 1440
+        }
+      ],
+      "ms": 2257
+    }
+  ],
+  "events": [
+    {
+      "who": "neuregistrierung",
+      "type": "http",
+      "status": 500,
+      "url": "http://127.0.0.1:3100/register"
+    },
+    {
+      "who": "neuregistrierung",
+      "type": "http",
+      "status": 401,
+      "url": "http://127.0.0.1:3100/login"
+    },
+    {
+      "who": "neuregistrierung",
+      "type": "http",
+      "status": 500,
+      "url": "http://127.0.0.1:3100/start"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "alice",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "alice",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "alice",
+      "type": "http",
+      "status": 404,
+      "url": "http://127.0.0.1:3100/qa-missing-image"
+    },
+    {
+      "who": "mobil",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "mobil",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "mobil",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    }
+  ]
+}

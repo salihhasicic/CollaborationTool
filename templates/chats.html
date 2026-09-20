@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Private Chats</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
@@ -192,6 +193,8 @@
             background: #2A4E50;
         }
     </style>
+    <script src="/static/app.js"></script>
+<link rel="stylesheet" href="/static/responsive.css">
 </head>
 
 <body>
@@ -222,7 +225,7 @@
                 <ul class="chat-user-list" id="chat-user-list">
                     {% for user in users %}
                     {% if user.id != current_user_id %}
-                    <li onclick="loadChat({{ user.id }}, '{{ user.username }}')">
+                    <li data-chat-user="{{ user.id }}" tabindex="0" role="button">
                         <img src="{{ user.photo_url or 'https://ui-avatars.com/api/?name=' ~ user.username }}"
                             class="chat-user-avatar" alt="Profilbild">
                         <div class="chat-user-info">
@@ -242,88 +245,8 @@
             </div>
         </div>
     </div>
-    <script>
-        const currentUserId = {{ current_user_id }};
-        const users = {{ users| tojson }};
-        let currentPartnerId = null;
-
-        users.forEach(u => {
-            if (u.id == currentUserId) return;
-            fetch(`/chat/private/${currentUserId}/${u.id}`)
-                .then(r => r.json())
-                .then(msgs => {
-                    let last = msgs.length > 0 ? msgs[msgs.length - 1] : null;
-                    let el = document.getElementById('last-msg-' + u.id);
-                    if (!el) return;
-                    if (!last) {
-                        el.innerHTML = "<span style='color:#aaa;'>Noch keine Nachrichten</span>";
-                    } else {
-                        let who = last.sender_id == currentUserId ? "me" : "them";
-                        let prefix = last.sender_id == currentUserId ? "Du: " : u.username + ": ";
-                        el.classList.add(who);
-                        el.innerHTML = `<span>${prefix}${last.content}</span> <span style="color:#888;font-size:0.93em;">(${new Date(last.timestamp).toLocaleString()})</span>`;
-                    }
-                });
-        });
-
-        function escapeHtml(text) {
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
-
-        function loadChat(partnerId, partnerName) {
-            currentPartnerId = partnerId;
-            fetch(`/chat/private/${currentUserId}/${partnerId}`)
-                .then(r => r.json())
-                .then(msgs => {
-                    const preview = document.getElementById('chat-preview');
-                    let html = `<div class='chat-header-fixed'>Chat mit ${partnerName}</div><div id="chat-messages">`;
-                    msgs.forEach(m => {
-                        const isMe = m.sender_id == currentUserId;
-                        const rowClass = isMe ? 'me' : 'them';
-                        const meta = isMe ? 'Du' : partnerName;
-                        html += `
-                            <div class="chat-msg-row ${rowClass}">
-                                ${!isMe ? `<div class="chat-msg-meta">${meta}<br>${new Date(m.timestamp).toLocaleString()}</div>` : ''}
-                                <div class="chat-msg-bubble">${escapeHtml(m.content)}</div>
-                                ${isMe ? `<div class="chat-msg-meta">${meta}<br>${new Date(m.timestamp).toLocaleString()}</div>` : ''}
-                            </div>
-                        `;
-                    });
-                    if (!msgs.length) html += `<div style='color:#888;'>Noch keine Nachrichten.</div>`;
-                    html += `</div>
-                        <form id="sendForm" onsubmit="sendMessage(event)">
-                            <div class="chat-form-row">
-                                <input type="text" id="msgInput" required placeholder="Nachricht...">
-                                <button type="submit">Senden</button>
-                            </div>
-                        </form>`;
-                    preview.innerHTML = html;
-                    document.getElementById('msgInput').focus();
-                    const msgDiv = document.getElementById('chat-messages');
-                    msgDiv.scrollTop = msgDiv.scrollHeight;
-                });
-        }
-
-        function sendMessage(e) {
-            e.preventDefault();
-            const input = document.getElementById('msgInput');
-            const content = input.value;
-            if (!content || !currentPartnerId) return;
-            fetch('/chat/private/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sender_id: currentUserId,
-                    receiver_id: currentPartnerId,
-                    content: content
-                })
-            }).then(() => {
-                input.value = '';
-                loadChat(currentPartnerId, document.querySelector(`li[onclick*='${currentPartnerId}'] .chat-user-name`).innerText);
-            });
-        }
-    </script>
+    <script>window.privateChatConfig = {list: true, userId: {{ user_id|tojson }}, users: {{ users|tojson }}};</script>
+    <script src="/static/private-chat.js"></script>
 </body>
 
 </html>

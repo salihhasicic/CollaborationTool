@@ -2,6 +2,7 @@
 <html lang="de">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Team {{ team_id }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -200,6 +201,8 @@
             color: #555;
         }
     </style>
+    <script src="/static/app.js"></script>
+<link rel="stylesheet" href="/static/responsive.css">
 </head>
 
 <body>
@@ -309,54 +312,36 @@
     </div>
 
     <script>
-        const BACKEND_URL = "http://127.0.0.1:5000";
 
-        document.getElementById('uploadForm').onsubmit = function (e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            formData.append('uploader', localStorage.getItem('user_id') || 'unbekannt');
-            fetch(`${BACKEND_URL}/team/{{ team_id }}/upload`, {
-                method: 'POST',
-                body: formData
-            })
-                .then(r => r.json())
-                .then(data => {
-                    document.getElementById('upload-status').innerText = data.message || data.error || '';
-                    loadFiles();
-                });
-        };
+const teamId = {{ team_id|tojson }};
+const status = document.getElementById('upload-status');
+const upload = document.getElementById('uploadForm');
+upload.addEventListener('submit', async e => {
+    e.preventDefault();
+    const button = upload.querySelector('button'); button.disabled = true;
+    try {
+        const data = await requestJSON(`/api/team/${teamId}/upload`, {method:'POST', body:new FormData(upload)});
+        status.textContent = data.message; upload.reset(); await loadFiles();
+    } catch(e) {status.textContent = e.message;}
+    finally {button.disabled = false;}
+});
+async function loadFiles() {
+    try {
+        const data = await requestJSON(`/api/team/${teamId}/files`);
+        const list = document.getElementById('file-list'); list.className = 'file-list';
+        list.replaceChildren(...data.files.map(f => {
+            const li = textElement('li', '', 'file-card');
+            const link = textElement('a', f.filename, 'file-name');
+            link.href = `/api/team/${teamId}/files/${encodeURIComponent(f.storage_name)}`;
+            link.setAttribute('download', f.filename);
+            li.append(link, textElement('div', `Hochgeladen von ${f.uploader}\nam ${new Date(f.uploaded_at).toLocaleString()}`, 'file-meta'));
+            return li;
+        }));
+        if (!data.files.length) list.append(textElement('li', 'Keine Dateien vorhanden.'));
+    } catch(e) {status.textContent = e.message;}
+}
+loadFiles();
 
-        function loadFiles() {
-            fetch(`${BACKEND_URL}/team/{{ team_id }}/files`)
-                .then(r => r.json())
-                .then(data => {
-                    let ul = document.getElementById('file-list');
-                    ul.className = "file-list";
-                    ul.innerHTML = '';
-                    if (data.files && data.files.length > 0) {
-                        data.files.forEach(function (f) {
-                            let li = document.createElement('li');
-                            li.className = 'file-card';
-                            li.onclick = () => {
-                                window.open(`${BACKEND_URL}/team/{{ team_id }}/files/${encodeURIComponent(f.filename)}`, '_blank');
-                            };
-                            li.innerHTML = `
-                        <div class="file-name">${f.filename}</div>
-                        <div class="file-meta">
-                            Hochgeladen von ${f.uploader || 'unbekannt'}<br>
-                            am ${f.uploaded_at ? new Date(f.uploaded_at).toLocaleString() : '-'}
-                        </div>
-                    `;
-                            ul.appendChild(li);
-                        });
-                    } else {
-                        ul.innerHTML = '<li style="color:#aaa;">Keine Dateien vorhanden.</li>';
-                    }
-                });
-        }
-
-
-        loadFiles();
     </script>
 </body>
 

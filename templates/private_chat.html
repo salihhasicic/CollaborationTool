@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Privater Chat</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
@@ -106,6 +107,8 @@
             background: #2A4E50;
         }
     </style>
+    <script src="/static/app.js"></script>
+<link rel="stylesheet" href="/static/responsive.css">
 </head>
 <body>
     <nav class="sidebar">
@@ -137,58 +140,7 @@
             </div>
         </form>
     </div>
-    <script>
-        const currentUserId = localStorage.getItem('user_id');
-        const partnerId = window.location.pathname.split('/').pop();
-
-        function escapeHtml(text) {
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
-
-        function loadMessages() {
-            fetch(`/chat/private/${currentUserId}/${partnerId}`)
-                .then(r => r.json())
-                .then(msgs => {
-                    let html = '';
-                    let partnerName = '';
-                    msgs.forEach(m => {
-                        const isMe = String(m.sender_id) === String(currentUserId);
-                        const rowClass = isMe ? 'me' : 'them';
-                        if (!isMe) partnerName = m.sender_name;
-                        html += `
-                            <div class="chat-msg-row ${rowClass}">
-                                ${!isMe ? `<div class="chat-msg-meta">${m.sender_name}<br>${new Date(m.timestamp).toLocaleString()}</div>` : ''}
-                                <div class="chat-msg-bubble">${escapeHtml(m.content)}</div>
-                                ${isMe ? `<div class="chat-msg-meta">Du<br>${new Date(m.timestamp).toLocaleString()}</div>` : ''}
-                            </div>
-                        `;
-                    });
-                    document.getElementById('messages').innerHTML = html || "<div style='color:#aaa;'>Noch keine Nachrichten</div>";
-                    document.getElementById('chat-partner').innerText = partnerName || partnerId;
-                    const msgDiv = document.getElementById('messages');
-                    msgDiv.scrollTop = msgDiv.scrollHeight;
-                });
-        }
-        loadMessages();
-        window.onfocus = loadMessages;
-
-        document.getElementById('sendForm').onsubmit = function(e) {
-            e.preventDefault();
-            const content = document.getElementById('msgInput').value;
-            fetch('/chat/private/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sender_id: currentUserId,
-                    receiver_id: partnerId,
-                    content: content
-                })
-            }).then(() => {
-                document.getElementById('msgInput').value = '';
-                loadMessages();
-            });
-        };
-    </script>
+    <script>window.privateChatConfig = {list: false, userId: {{ user_id|tojson }}, partner: {id: {{ partner_id|tojson }}, username: {{ partner_name|tojson }}}};</script>
+    <script src="/static/private-chat.js"></script>
 </body>
 </html>

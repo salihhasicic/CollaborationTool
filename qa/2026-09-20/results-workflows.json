@@ -1,0 +1,403 @@
+{
+  "phase": "workflows",
+  "tag": "QA-1789899822472",
+  "base": "http://127.0.0.1:3100",
+  "results": [
+    {
+      "name": "Login Bob über Formular",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3100/start"
+      },
+      "ms": 896
+    },
+    {
+      "name": "Login Alice in unabhängiger Sitzung",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3100/start"
+      },
+      "ms": 862
+    },
+    {
+      "name": "Registrierung: Standort erlaubt, mit Profilbild",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.message.success').filter({ hasText: 'erfolgreich' }).first() to be visible\u001b[22m\n",
+      "ms": 5846,
+      "screenshots": [
+        "workflows-2-bob.png",
+        "workflows-2-alice.png",
+        "workflows-2-registrierung.png"
+      ]
+    },
+    {
+      "name": "Registrierung: neuer Nutzer kann sich einloggen",
+      "status": "FAIL",
+      "detail": "page.waitForURL: Timeout 5000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/start\" until \"load\"\n============================================================",
+      "ms": 5769,
+      "screenshots": [
+        "workflows-3-bob.png",
+        "workflows-3-alice.png",
+        "workflows-3-registrierung.png"
+      ]
+    },
+    {
+      "name": "Registrierung: doppelter Benutzername wird abgelehnt",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.message.error').filter({ hasText: 'already exists' }).first() to be visible\u001b[22m\n",
+      "ms": 5841,
+      "screenshots": [
+        "workflows-4-bob.png",
+        "workflows-4-alice.png",
+        "workflows-4-registrierung.png"
+      ]
+    },
+    {
+      "name": "Registrierung: ohne Standortfreigabe möglich",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.message.success').filter({ hasText: 'erfolgreich' }).first() to be visible\u001b[22m\n",
+      "ms": 5904,
+      "screenshots": [
+        "workflows-5-bob.png",
+        "workflows-5-alice.png",
+        "workflows-5-registrierung.png",
+        "workflows-5-ohne-standort.png"
+      ]
+    },
+    {
+      "name": "Benutzersuche nach Skill Python",
+      "status": "PASS",
+      "detail": {
+        "anzahl": 2
+      },
+      "ms": 816
+    },
+    {
+      "name": "Benutzersuche: keine Treffer",
+      "status": "PASS",
+      "ms": 946
+    },
+    {
+      "name": "Umkreissuche Bob",
+      "status": "PASS",
+      "detail": "Nutzer im Umkreis:\nivan (25.9 km)\nlisa (25.26 km)\npaula (26.81 km)\nqa-register-repro (0 km)",
+      "ms": 778
+    },
+    {
+      "name": "Profilkarte lädt",
+      "status": "PASS",
+      "detail": {
+        "tiles": 10
+      },
+      "ms": 503
+    },
+    {
+      "name": "Profil: Ort und Skills speichern und erneut laden",
+      "status": "PASS",
+      "ms": 1216
+    },
+    {
+      "name": "Profil: aktuellen Standort übernehmen",
+      "status": "PASS",
+      "ms": 872
+    },
+    {
+      "name": "Profil: Bild hochladen und nach Neuladen anzeigen",
+      "status": "PASS",
+      "ms": 925
+    },
+    {
+      "name": "Fremdes Profil zeigt keine Bearbeiten-Schaltfläche",
+      "status": "PASS",
+      "ms": 385
+    },
+    {
+      "name": "Projekt über Formular erstellen",
+      "status": "PASS",
+      "detail": {
+        "projectId": 2
+      },
+      "ms": 1830
+    },
+    {
+      "name": "Projekt ist für Alice sichtbar",
+      "status": "PASS",
+      "ms": 382
+    },
+    {
+      "name": "Projekt: Name ist auf Detailseite sichtbar",
+      "status": "FAIL",
+      "detail": "Projektname fehlt auf Detailseite",
+      "ms": 385,
+      "screenshots": [
+        "workflows-16-bob.png",
+        "workflows-16-alice.png",
+        "workflows-16-registrierung.png",
+        "workflows-16-ohne-standort.png"
+      ]
+    },
+    {
+      "name": "Projekt: Teamname ist auf Detailseite sichtbar",
+      "status": "FAIL",
+      "detail": "Teamname fehlt auf Detailseite",
+      "ms": 1,
+      "screenshots": [
+        "workflows-17-bob.png",
+        "workflows-17-alice.png",
+        "workflows-17-registrierung.png",
+        "workflows-17-ohne-standort.png"
+      ]
+    },
+    {
+      "name": "Projekt: Deadline ändern",
+      "status": "PASS",
+      "ms": 72
+    },
+    {
+      "name": "Projekt: Deadline entfernen",
+      "status": "PASS",
+      "ms": 942
+    },
+    {
+      "name": "Task über Projekt erstellen",
+      "status": "PASS",
+      "detail": {
+        "taskId": 1
+      },
+      "ms": 826
+    },
+    {
+      "name": "Task übernehmen als Bob",
+      "status": "PASS",
+      "ms": 954
+    },
+    {
+      "name": "Alice sieht Bobs Task als zugewiesen",
+      "status": "PASS",
+      "ms": 387
+    },
+    {
+      "name": "Task: Status In Progress und Projektstatus",
+      "status": "PASS",
+      "ms": 798
+    },
+    {
+      "name": "Task: Deadline ändern",
+      "status": "PASS",
+      "ms": 423
+    },
+    {
+      "name": "Task: Deadline entfernen",
+      "status": "PASS",
+      "ms": 958
+    },
+    {
+      "name": "Dashboard zeigt übernommene offene Aufgabe",
+      "status": "PASS",
+      "ms": 441
+    },
+    {
+      "name": "Task: Done und 100 Prozent Projektfortschritt",
+      "status": "PASS",
+      "ms": 1196
+    },
+    {
+      "name": "Allgemeines Task-Formular erstellt zweite Aufgabe",
+      "status": "PASS",
+      "ms": 1250
+    },
+    {
+      "name": "Teamnotiz speichern und bei Alice sichtbar",
+      "status": "FAIL",
+      "detail": "Expected values to be strictly equal:\n+ actual - expected\n\n+ ''\n- 'QA-1789899822472 Notiz'\n",
+      "ms": 1194,
+      "screenshots": [
+        "workflows-29-bob.png",
+        "workflows-29-alice.png",
+        "workflows-29-registrierung.png",
+        "workflows-29-ohne-standort.png"
+      ]
+    },
+    {
+      "name": "Teamdatei hochladen und bei Alice anzeigen",
+      "status": "PASS",
+      "ms": 1177
+    },
+    {
+      "name": "Teamdatei nennt tatsächlichen Uploader Bob",
+      "status": "FAIL",
+      "detail": "QA-1789899822472-upload.txt\nHochgeladen von unbekannt\nam 20.9.2026, 10:24:28",
+      "ms": 2,
+      "screenshots": [
+        "workflows-31-bob.png",
+        "workflows-31-alice.png",
+        "workflows-31-registrierung.png",
+        "workflows-31-ohne-standort.png"
+      ]
+    },
+    {
+      "name": "Teamdatei herunterladen: Inhalt stimmt",
+      "status": "PASS",
+      "ms": 268
+    },
+    {
+      "name": "Team: Mitglied hinzufügen",
+      "status": "PASS",
+      "ms": 815
+    },
+    {
+      "name": "Team: Mitglied zurück ins ursprüngliche Team verschieben",
+      "status": "PASS",
+      "ms": 806
+    },
+    {
+      "name": "Team-Auswahl wechselt die angezeigte Seite",
+      "status": "PASS",
+      "ms": 953
+    },
+    {
+      "name": "Teamverwaltung zeigt die Teamnamen",
+      "status": "PASS",
+      "ms": 383
+    },
+    {
+      "name": "Team über Teamverwaltung erstellen",
+      "status": "PASS",
+      "detail": {
+        "teamId": 4
+      },
+      "ms": 392
+    },
+    {
+      "name": "Team über separate Seite /teams/new erstellen",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#team-create-status').filter({ hasText: 'erfolgreich' }).first() to be visible\u001b[22m\n",
+      "ms": 5766,
+      "screenshots": [
+        "workflows-38-bob.png",
+        "workflows-38-alice.png",
+        "workflows-38-registrierung.png",
+        "workflows-38-ohne-standort.png"
+      ]
+    },
+    {
+      "name": "Leeres Testteam über Oberfläche löschen",
+      "status": "PASS",
+      "ms": 1887
+    }
+  ],
+  "events": [
+    {
+      "who": "registrierung",
+      "type": "http",
+      "status": 500,
+      "url": "http://127.0.0.1:3100/register"
+    },
+    {
+      "who": "registrierung",
+      "type": "http",
+      "status": 401,
+      "url": "http://127.0.0.1:3100/login"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "dialog",
+      "message": "Profil aktualisiert!"
+    },
+    {
+      "who": "bob",
+      "type": "dialog",
+      "message": "Profilbild aktualisiert!"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "alice",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "alice",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "http://127.0.0.1:5101/team",
+      "error": "net::ERR_FAILED"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "http://127.0.0.1:3100/team/4",
+      "error": "net::ERR_ABORTED"
+    }
+  ]
+}

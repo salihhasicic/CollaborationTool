@@ -1,0 +1,230 @@
+{
+  "phase": "workflows",
+  "tag": "QA-1789913277623",
+  "base": "http://127.0.0.1:3200",
+  "results": [
+    {
+      "name": "Login Bob über Formular",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3200/start"
+      },
+      "ms": 881
+    },
+    {
+      "name": "Login Alice in unabhängiger Sitzung",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3200/start"
+      },
+      "ms": 893
+    },
+    {
+      "name": "Registrierung: Standort erlaubt, mit Profilbild",
+      "status": "PASS",
+      "ms": 910
+    },
+    {
+      "name": "Registrierung: neuer Nutzer kann sich einloggen",
+      "status": "PASS",
+      "ms": 870
+    },
+    {
+      "name": "Registrierung: doppelter Benutzername wird abgelehnt",
+      "status": "PASS",
+      "ms": 808
+    },
+    {
+      "name": "Registrierung: ohne Standortfreigabe möglich",
+      "status": "PASS",
+      "ms": 909
+    },
+    {
+      "name": "Benutzersuche nach Skill Python",
+      "status": "PASS",
+      "detail": {
+        "anzahl": 2
+      },
+      "ms": 831
+    },
+    {
+      "name": "Benutzersuche: keine Treffer",
+      "status": "PASS",
+      "ms": 934
+    },
+    {
+      "name": "Umkreissuche Bob",
+      "status": "PASS",
+      "detail": "Nutzer im Umkreis:\njulia (1.51 km)",
+      "ms": 792
+    },
+    {
+      "name": "Profilkarte lädt",
+      "status": "PASS",
+      "detail": {
+        "tiles": 10
+      },
+      "ms": 491
+    },
+    {
+      "name": "Profil: Ort und Skills speichern und erneut laden",
+      "status": "PASS",
+      "ms": 1217
+    },
+    {
+      "name": "Profil: aktuellen Standort übernehmen",
+      "status": "PASS",
+      "ms": 877
+    },
+    {
+      "name": "Profil: Bild hochladen und nach Neuladen anzeigen",
+      "status": "PASS",
+      "ms": 932
+    },
+    {
+      "name": "Fremdes Profil zeigt keine Bearbeiten-Schaltfläche",
+      "status": "PASS",
+      "ms": 384
+    },
+    {
+      "name": "Projekt über Formular erstellen",
+      "status": "PASS",
+      "detail": {
+        "projectId": 2
+      },
+      "ms": 1800
+    },
+    {
+      "name": "Projekt ist für Alice sichtbar",
+      "status": "PASS",
+      "ms": 383
+    },
+    {
+      "name": "Projekt: Name ist auf Detailseite sichtbar",
+      "status": "PASS",
+      "ms": 390
+    },
+    {
+      "name": "Projekt: Teamname ist auf Detailseite sichtbar",
+      "status": "PASS",
+      "ms": 1
+    },
+    {
+      "name": "Projekt: Deadline ändern",
+      "status": "PASS",
+      "ms": 425
+    },
+    {
+      "name": "Projekt: Deadline entfernen",
+      "status": "PASS",
+      "ms": 963
+    },
+    {
+      "name": "Task über Projekt erstellen",
+      "status": "PASS",
+      "detail": {
+        "taskId": 2
+      },
+      "ms": 824
+    },
+    {
+      "name": "Task übernehmen als Bob",
+      "status": "PASS",
+      "ms": 964
+    },
+    {
+      "name": "Alice sieht Bobs Task als zugewiesen",
+      "status": "PASS",
+      "ms": 391
+    },
+    {
+      "name": "Task: Status In Progress und Projektstatus",
+      "status": "PASS",
+      "ms": 816
+    },
+    {
+      "name": "Task: Deadline ändern",
+      "status": "PASS",
+      "ms": 443
+    },
+    {
+      "name": "Task: Deadline entfernen",
+      "status": "PASS",
+      "ms": 960
+    },
+    {
+      "name": "Dashboard zeigt übernommene offene Aufgabe",
+      "status": "PASS",
+      "ms": 467
+    },
+    {
+      "name": "Task: Done und 100 Prozent Projektfortschritt",
+      "status": "PASS",
+      "ms": 1203
+    },
+    {
+      "name": "Allgemeines Task-Formular erstellt zweite Aufgabe",
+      "status": "PASS",
+      "ms": 1276
+    },
+    {
+      "name": "Teamnotiz speichern und bei Alice sichtbar",
+      "status": "PASS",
+      "ms": 1221
+    },
+    {
+      "name": "Teamdatei hochladen und bei Alice anzeigen",
+      "status": "PASS",
+      "ms": 1186
+    },
+    {
+      "name": "Teamdatei nennt tatsächlichen Uploader Bob",
+      "status": "PASS",
+      "ms": 1
+    },
+    {
+      "name": "Teamdatei herunterladen: Inhalt stimmt",
+      "status": "PASS",
+      "ms": 411
+    },
+    {
+      "name": "Team: Mitglied hinzufügen",
+      "status": "PASS",
+      "ms": 846
+    },
+    {
+      "name": "Team: Mitglied zurück ins ursprüngliche Team verschieben",
+      "status": "PASS",
+      "ms": 1782
+    },
+    {
+      "name": "Team-Auswahl wechselt die angezeigte Seite",
+      "status": "PASS",
+      "ms": 85
+    },
+    {
+      "name": "Teamverwaltung zeigt die Teamnamen",
+      "status": "PASS",
+      "ms": 378
+    },
+    {
+      "name": "Team über Teamverwaltung erstellen",
+      "status": "PASS",
+      "detail": {
+        "teamId": 5
+      },
+      "ms": 422
+    },
+    {
+      "name": "Team über separate Seite /teams/new erstellen",
+      "status": "PASS",
+      "ms": 791
+    },
+    {
+      "name": "Leeres Testteam über Oberfläche löschen",
+      "status": "PASS",
+      "ms": 1856
+    }
+  ],
+  "events": []
+}

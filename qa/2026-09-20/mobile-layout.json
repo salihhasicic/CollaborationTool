@@ -1,0 +1,86 @@
+[
+  {
+    "route": "/start",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/users",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/profile/2",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/projects",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/project/2",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/chat/1",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/chats",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/team/1",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/team_manage",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/teams/new",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/register",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  },
+  {
+    "route": "/login",
+    "innerWidth": 980,
+    "screenWidth": 390,
+    "scrollWidth": 980,
+    "viewport": null
+  }
+]

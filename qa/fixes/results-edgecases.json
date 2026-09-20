@@ -1,0 +1,158 @@
+{
+  "phase": "edgecases",
+  "tag": "QA-1789913381352",
+  "base": "http://127.0.0.1:3200",
+  "results": [
+    {
+      "name": "Login Bob über Formular",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3200/start"
+      },
+      "ms": 866
+    },
+    {
+      "name": "Login Alice in unabhängiger Sitzung",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3200/start"
+      },
+      "ms": 912
+    },
+    {
+      "name": "Registrierung ohne Bild mit Standortfreigabe",
+      "status": "PASS",
+      "ms": 906
+    },
+    {
+      "name": "Neu registrierter Nutzer kann sich anmelden",
+      "status": "PASS",
+      "ms": 870
+    },
+    {
+      "name": "Doppelte Registrierung zeigt verständliche Fehlermeldung",
+      "status": "PASS",
+      "ms": 799
+    },
+    {
+      "name": "Registrierung mit Bild erzeugt keinen Serverfehler",
+      "status": "PASS",
+      "ms": 886
+    },
+    {
+      "name": "Login mit falschem Passwort zeigt Fehler",
+      "status": "PASS",
+      "ms": 838
+    },
+    {
+      "name": "Login-Pflicht: Dashboard für ausgeloggte Sitzung gesperrt",
+      "status": "PASS",
+      "ms": 362
+    },
+    {
+      "name": "Logout: Projektinhalte verschwinden nach Abmelden",
+      "status": "PASS",
+      "ms": 1596
+    },
+    {
+      "name": "Logout: Projektänderungen sind nach Abmelden gesperrt",
+      "status": "PASS",
+      "ms": 380
+    },
+    {
+      "name": "Abgelaufener/ungültiger JWT: verständlicher Login statt Dashboard-500",
+      "status": "PASS",
+      "ms": 1209
+    },
+    {
+      "name": "Navigationslinks: alle vorhandenen Menüpunkte erreichbar",
+      "status": "PASS",
+      "detail": [
+        "/start",
+        "/projects",
+        "/users",
+        "/chats",
+        "/team/1",
+        "/chat/1",
+        "/team_manage",
+        "/profile/2"
+      ],
+      "ms": 3572
+    },
+    {
+      "name": "Profilübersicht: Demo-Profilbilder laden",
+      "status": "PASS",
+      "ms": 1595
+    },
+    {
+      "name": "Privatchat: HTML-Nachricht wird im Nachrichtenbereich als Text dargestellt",
+      "status": "PASS",
+      "ms": 851
+    },
+    {
+      "name": "Privatchat: HTML bleibt auch in der Vorschau Text",
+      "status": "PASS",
+      "ms": 389
+    },
+    {
+      "name": "Privatchat: gespeicherter JavaScript-Marker wird nicht ausgeführt",
+      "status": "PASS",
+      "ms": 2104
+    },
+    {
+      "name": "Mobile Ansicht nutzt Gerätebreite und vermeidet horizontales Scrollen",
+      "status": "PASS",
+      "ms": 0
+    },
+    {
+      "name": "Mobile Ansicht: Login funktioniert",
+      "status": "PASS",
+      "ms": 861
+    },
+    {
+      "name": "Desktop: große Ansichten ohne horizontalen Überlauf",
+      "status": "PASS",
+      "detail": [
+        {
+          "route": "/start",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/users",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/projects",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/project/2",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/chats",
+          "width": 1440,
+          "scrollWidth": 1440
+        },
+        {
+          "route": "/team/1",
+          "width": 1440,
+          "scrollWidth": 1440
+        }
+      ],
+      "ms": 2277
+    }
+  ],
+  "events": [
+    {
+      "who": "neuregistrierung",
+      "type": "http",
+      "status": 401,
+      "url": "http://127.0.0.1:3200/login"
+    }
+  ]
+}

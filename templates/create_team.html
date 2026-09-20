@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Neues Team erstellen</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="/static/app.js"></script>
+<link rel="stylesheet" href="/static/responsive.css">
 </head>
 <body>
      <nav class="sidebar">
@@ -34,30 +37,17 @@
         <div id="team-create-status" style="margin-top:12px;"></div>
     </div>
     <script>
-        document.getElementById("createTeamForm").onsubmit = function(e) {
-            e.preventDefault();
-            const name = document.getElementById("teamName").value;
-            const token = localStorage.getItem('access_token');
-            fetch("http://127.0.0.1:5000/team", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
-                body: JSON.stringify({ name })
-            })
-            .then(res => res.json().then(data => ({status: res.status, data})))
-            .then(({status, data}) => {
-                if (status === 201) {
-                    document.getElementById("team-create-status").innerHTML = "Team erfolgreich erstellt: <b>" + data.name + "</b>";
-                } else {
-                    document.getElementById("team-create-status").innerText = data.error || "Fehler beim Erstellen.";
-                }
-            })
-            .catch(() => {
-                document.getElementById("team-create-status").innerText = "Netzwerkfehler.";
-            });
-        }
+
+document.getElementById('createTeamForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const target = document.getElementById('team-create-status');
+    try {
+        const data = await requestJSON('/api/team/create', jsonOptions({name: document.getElementById('teamName').value}));
+        target.textContent = `Team erfolgreich erstellt: ${data.name}`;
+        document.getElementById('teamName').value = '';
+    } catch(e) {target.textContent = e.message;}
+});
+
     </script>
 </body>
 </html>

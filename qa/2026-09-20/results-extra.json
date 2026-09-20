@@ -1,0 +1,25 @@
+{
+  "phase": "extra",
+  "results": [
+    {
+      "name": "Logout: tatsächliche Projektänderung muss gesperrt sein",
+      "status": "FAIL",
+      "detail": "Projektdeadline nach Logout geändert; HTTP 302, gespeichert 2026-12-24T00:00:00"
+    },
+    {
+      "name": "Dateiablage: gleicher Dateiname bleibt eindeutig",
+      "status": "FAIL",
+      "detail": "2 Dateieinträge für denselben Namen; beide laden 'Version 2'"
+    },
+    {
+      "name": "Team mit Mitgliedern und Projekt löschen: keine verwaisten Daten",
+      "status": "FAIL",
+      "detail": "HTTP 200; 1 Projekt(e) ohne zugehöriges Team nach Löschen"
+    },
+    {
+      "name": "Bob und Alice senden gleichzeitig: alle 20 Nachrichten bleiben erhalten",
+      "status": "FAIL",
+      "detail": "20 gesendet, 17 gespeichert; fehlend ['QA-EXTRA-1789900134-parallel-3-1', 'QA-EXTRA-1789900134-parallel-4-2', 'QA-EXTRA-1789900134-parallel-6-2']; HTTP-Status [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200]"
+    }
+  ]
+}

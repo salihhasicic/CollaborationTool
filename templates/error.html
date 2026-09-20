@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Anfrage nicht möglich</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    <script src="/static/app.js"></script>
+<link rel="stylesheet" href="/static/responsive.css">
+</head>
+<body><main class="container"><h1>{{ status }}</h1><p role="alert">{{ message }}</p><p><a href="/start">Zum Dashboard</a> · <a href="/login">Zum Login</a></p><button type="button" onclick="history.back()">Zurück</button></main></body>
+</html>

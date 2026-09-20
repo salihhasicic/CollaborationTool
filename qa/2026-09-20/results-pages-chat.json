@@ -1,0 +1,382 @@
+{
+  "phase": "pages-chat",
+  "tag": "QA-1789899721827",
+  "base": "http://127.0.0.1:3100",
+  "results": [
+    {
+      "name": "Login Bob über Formular",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3100/start"
+      },
+      "ms": 1077
+    },
+    {
+      "name": "Login Alice in unabhängiger Sitzung",
+      "status": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:3100/start"
+      },
+      "ms": 1407
+    },
+    {
+      "name": "Seite /start",
+      "status": "PASS",
+      "detail": {
+        "title": "Dashboard – bob",
+        "forms": 0
+      },
+      "ms": 571
+    },
+    {
+      "name": "Seite /projects",
+      "status": "PASS",
+      "detail": {
+        "title": "Projekte des Teams 1",
+        "forms": 0
+      },
+      "ms": 433
+    },
+    {
+      "name": "Seite /projects/new",
+      "status": "PASS",
+      "detail": {
+        "title": "Projekt anlegen",
+        "forms": 1
+      },
+      "ms": 445
+    },
+    {
+      "name": "Seite /tasks/new",
+      "status": "PASS",
+      "detail": {
+        "title": "Neuen Task erstellen",
+        "forms": 1
+      },
+      "ms": 452
+    },
+    {
+      "name": "Seite /users",
+      "status": "PASS",
+      "detail": {
+        "title": "Benutzerübersicht",
+        "forms": 1
+      },
+      "ms": 704
+    },
+    {
+      "name": "Seite /profile/2",
+      "status": "PASS",
+      "detail": {
+        "title": "Profil",
+        "forms": 0
+      },
+      "ms": 604
+    },
+    {
+      "name": "Seite /profile/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Profil",
+        "forms": 0
+      },
+      "ms": 544
+    },
+    {
+      "name": "Seite /team/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Team 1",
+        "forms": 4
+      },
+      "ms": 456
+    },
+    {
+      "name": "Seite /team/2",
+      "status": "PASS",
+      "detail": {
+        "title": "Team 2",
+        "forms": 4
+      },
+      "ms": 456
+    },
+    {
+      "name": "Seite /team_manage",
+      "status": "PASS",
+      "detail": {
+        "title": "Team verwalten",
+        "forms": 4
+      },
+      "ms": 438
+    },
+    {
+      "name": "Seite /teams/new",
+      "status": "PASS",
+      "detail": {
+        "title": "Neues Team erstellen",
+        "forms": 1
+      },
+      "ms": 446
+    },
+    {
+      "name": "Seite /chat/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Team Chat 1",
+        "forms": 1
+      },
+      "ms": 455
+    },
+    {
+      "name": "Seite /chats",
+      "status": "PASS",
+      "detail": {
+        "title": "Private Chats",
+        "forms": 0
+      },
+      "ms": 470
+    },
+    {
+      "name": "Seite /private_chat/1",
+      "status": "PASS",
+      "detail": {
+        "title": "Privater Chat",
+        "forms": 1
+      },
+      "ms": 421
+    },
+    {
+      "name": "Seite /register",
+      "status": "PASS",
+      "detail": {
+        "title": "Registrieren",
+        "forms": 1
+      },
+      "ms": 420
+    },
+    {
+      "name": "Seite /login",
+      "status": "PASS",
+      "detail": {
+        "title": "Login",
+        "forms": 1
+      },
+      "ms": 413
+    },
+    {
+      "name": "Privatchat /chats: Bob sendet Alice",
+      "status": "PASS",
+      "ms": 1627
+    },
+    {
+      "name": "Privatchat: Alice empfängt ohne Neuladen",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.chat-msg-bubble').filter({ hasText: 'QA-1789899721827 Bob → Alice äöü 🙂' }).first() to be visible\u001b[22m\n",
+      "ms": 6002,
+      "screenshots": [
+        "pages-chat-19-bob.png",
+        "pages-chat-19-alice.png"
+      ]
+    },
+    {
+      "name": "Privatchat: Alice empfängt nach erneutem Öffnen",
+      "status": "PASS",
+      "ms": 794
+    },
+    {
+      "name": "Privatchat: Alice antwortet Bob",
+      "status": "PASS",
+      "ms": 971
+    },
+    {
+      "name": "Privatchat: Nachrichten bleiben nach Neuladen erhalten",
+      "status": "PASS",
+      "ms": 789
+    },
+    {
+      "name": "Privatchat aus fremdem Profil öffnen und Verlauf laden",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#messages').filter({ hasText: 'QA-1789899721827 Bob → Alice äöü 🙂' }).first() to be visible\u001b[22m\n",
+      "ms": 5779,
+      "screenshots": [
+        "pages-chat-23-bob.png",
+        "pages-chat-23-alice.png"
+      ]
+    },
+    {
+      "name": "Privatchat aus Profil: Senden funktioniert",
+      "status": "FAIL",
+      "detail": "Senden liefert HTTP 500\n\n500 !== 200\n",
+      "ms": 57,
+      "screenshots": [
+        "pages-chat-24-bob.png",
+        "pages-chat-24-alice.png"
+      ]
+    },
+    {
+      "name": "Teamchat: Bob sendet",
+      "status": "PASS",
+      "ms": 817
+    },
+    {
+      "name": "Teamchat: Alice empfängt ohne Neuladen",
+      "status": "FAIL",
+      "detail": "locator.waitFor: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.chat-content').filter({ hasText: 'QA-1789899721827 Teamnachricht von Bob' }).first() to be visible\u001b[22m\n",
+      "ms": 6001,
+      "screenshots": [
+        "pages-chat-26-bob.png",
+        "pages-chat-26-alice.png"
+      ]
+    },
+    {
+      "name": "Teamchat: Alice empfängt nach Neuladen und antwortet",
+      "status": "PASS",
+      "ms": 1333
+    },
+    {
+      "name": "Teamchat: leere Nachricht wird im Formular blockiert",
+      "status": "PASS",
+      "ms": 272
+    },
+    {
+      "name": "Teamchat: KI-Frage liefert brauchbare Antwort",
+      "status": "FAIL",
+      "detail": "[Fehler bei GPT: No API key provided. You can set your API key in code using 'openai.api_key = ', or you can set the environment variable OPENAI_API_KEY=). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = '. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.]",
+      "ms": 62,
+      "screenshots": [
+        "pages-chat-29-bob.png",
+        "pages-chat-29-alice.png"
+      ]
+    },
+    {
+      "name": "Teamchat: KI-Antwortvorschlag und Übernehmen",
+      "status": "FAIL",
+      "detail": "[Fehler bei GPT: No API key provided. You can set your API key in code using 'openai.api_key = ', or you can set the environment variable OPENAI_API_KEY=). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = '. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.] Übernehmen",
+      "ms": 83,
+      "screenshots": [
+        "pages-chat-30-bob.png",
+        "pages-chat-30-alice.png"
+      ]
+    },
+    {
+      "name": "Chat: Zeitangabe entspricht Europe/Zurich",
+      "status": "FAIL",
+      "detail": "{\"raw\":\"2026-09-20T10:22:37.320885\",\"displayed\":\"20.9.2026, 10:22:37\",\"expected\":\"20.9.2026, 12:22:37\"}\n+ actual - expected\n\n+ '20.9.2026, 10:22:37'\n- '20.9.2026, 12:22:37'\n               ^\n",
+      "ms": 3,
+      "screenshots": [
+        "pages-chat-31-bob.png",
+        "pages-chat-31-alice.png"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "http",
+      "status": 404,
+      "url": "http://127.0.0.1:3100/chat/private/null/1"
+    },
+    {
+      "who": "bob",
+      "type": "js",
+      "url": "http://127.0.0.1:3100/private_chat/1",
+      "error": "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "alice",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "alice",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "network",
+      "url": "https://example.com/photo.jpg",
+      "error": "net::ERR_BLOCKED_BY_ORB"
+    },
+    {
+      "who": "bob",
+      "type": "http",
+      "status": 404,
+      "url": "http://127.0.0.1:3100/chat/private/null/1"
+    },
+    {
+      "who": "bob",
+      "type": "js",
+      "url": "http://127.0.0.1:3100/private_chat/1",
+      "error": "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    },
+    {
+      "who": "bob",
+      "type": "http",
+      "status": 500,
+      "url": "http://127.0.0.1:3100/chat/private/send"
+    },
+    {
+      "who": "bob",
+      "type": "http",
+      "status": 404,
+      "url": "http://127.0.0.1:3100/chat/private/null/1"
+    },
+    {
+      "who": "bob",
+      "type": "js",
+      "url": "http://127.0.0.1:3100/private_chat/1",
+      "error": "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    }
+  ]
+}

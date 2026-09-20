@@ -1,205 +1,113 @@
-from datetime import datetime
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, g, abort
 from extensions import db
-from models import Project, Task, Team, User
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from models import Project, Task, User
+from security import data, text, integer, team_access, status, deadline, utc_iso
 
 project_bp = Blueprint('project', __name__)
 
-# Hilfsfunktion: Team-Zugehörigkeit prüfen
-def user_in_team(user_id, team_id):
-    user = User.query.get(user_id)
-    return user and user.team_id == team_id
+def project_access(project_id):
+    project = db.get_or_404(Project, project_id)
+    team_access(project.team_id)
+    return project
 
-# Projekt anlegen
+def task_access(task_id, edit=False):
+    task = db.get_or_404(Task, task_id)
+    project_access(task.project_id)
+    if edit and task.assigned_user_id != g.user.id:
+        abort(403, description='Nur die verantwortliche Person kann diese Aufgabe ändern.')
+    return task
+
+def serialize_project(p):
+    return {'id': p.id, 'name': p.name, 'status': p.status, 'team_id': p.team_id, 'deadline': utc_iso(p.deadline)}
+
+def serialize_task(t):
+    return {'id': t.id, 'title': t.title, 'description': t.description, 'status': t.status,
+            'project_id': t.project_id, 'assigned_user_id': t.assigned_user_id, 'deadline': utc_iso(t.deadline)}
+
+def recalc_project_status(project):
+    db.session.flush()
+    tasks = Task.query.filter_by(project_id=project.id).all()
+    states = [t.status for t in tasks]
+    project.status = ('Done' if states and all(s == 'Done' for s in states)
+                      else 'To Do' if all(s == 'To Do' for s in states) else 'In Progress')
+
 @project_bp.route('/project', methods=['POST'])
-@jwt_required()
 def create_project():
-    data = request.json
-    user_id = get_jwt_identity()
-    team_id = data.get('team_id')
-    if not user_in_team(user_id, team_id):
-        return jsonify({'error': 'Kein Zugriff auf dieses Team'}), 403
-    deadline_str = data.get('deadline')
-    deadline = datetime.strptime(deadline_str, '%Y-%m-%d') if deadline_str else None
-    project = Project(name=data['name'], status=data.get('status', 'To Do'), team_id=team_id, deadline=deadline)
+    body = data()
+    team = team_access(integer(body.get('team_id')))
+    project = Project(name=text(body.get('name', ''), 'Projektname', 120, True), team_id=team.id,
+                      status=status(body.get('status', 'To Do')), deadline=deadline(body.get('deadline')))
     db.session.add(project)
     db.session.commit()
-    return jsonify({'id': project.id, 'name': project.name, 'status': project.status, 'team_id': project.team_id})
+    return jsonify(serialize_project(project))
 
-# Projekte des eigenen Teams anzeigen
-@project_bp.route('/projects', methods=['GET'])
-@jwt_required()
+@project_bp.route('/projects')
 def get_projects():
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    projects = Project.query.filter_by(team_id=user.team_id).all()
-    return jsonify([
-        {'id': p.id, 'name': p.name, 'status': p.status, 'team_id': p.team_id, 'deadline': p.deadline.isoformat() if p.deadline else None} for p in projects
-    ])
+    projects = Project.query.filter_by(team_id=g.user.team_id).all() if g.user.team_id else []
+    return jsonify([serialize_project(p) for p in projects])
 
-@project_bp.route('/project/<int:project_id>', methods=['GET'])
-@jwt_required()
+@project_bp.route('/project/<int:project_id>')
 def get_project_by_id(project_id):
-    user_id = get_jwt_identity()
-    project = Project.query.get_or_404(project_id)
-    if not user_in_team(user_id, project.team_id):
-        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
-    return jsonify({
-        'id': project.id,
-        'name': project.name,
-        'status': project.status,
-        'team_id': project.team_id,
-        'deadline': project.deadline.isoformat() if project.deadline else None
-    })
+    return jsonify(serialize_project(project_access(project_id)))
 
-# Projekt-Status ändern
 @project_bp.route('/project/<int:project_id>/status', methods=['PATCH'])
-@jwt_required()
 def update_project_status(project_id):
-    data = request.json
-    user_id = get_jwt_identity()
-    project = Project.query.get_or_404(project_id)
-    if not user_in_team(user_id, project.team_id):
-        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
-    project.status = data['status']
+    project = project_access(project_id)
+    project.status = status(data().get('status'))
     db.session.commit()
-    return jsonify({'id': project.id, 'status': project.status})
+    return jsonify(serialize_project(project))
 
-# Hilfsfunktion: Projektstatus neu berechnen
-def recalc_project_status(project):
-    tasks = Task.query.filter_by(project_id=project.id).all()
-    if not tasks:
-        return "To Do"
-    statuses = [t.status for t in tasks]
-    if all(s == "Done" for s in statuses):
-        return "Done"
-    if all(s == "To Do" for s in statuses):
-        return "To Do"
-    return "In Progress"
-
-# Task anlegen
 @project_bp.route('/project/<int:project_id>/task', methods=['POST'])
-@jwt_required()
 def create_task(project_id):
-    data = request.json
-    user_id = get_jwt_identity()
-    project = Project.query.get_or_404(project_id)
-    if not user_in_team(user_id, project.team_id):
-        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
-    deadline_str = data.get('deadline')
-    deadline = datetime.strptime(deadline_str, '%Y-%m-%d') if deadline_str else None
-    task = Task(title=data['title'], description=data.get('description', ''), status=data.get('status', 'To Do'), project_id=project_id, deadline=deadline)
+    project = project_access(project_id)
+    body = data()
+    task = Task(title=text(body.get('title', ''), 'Aufgabentitel', 120, True),
+                description=text(body.get('description', ''), 'Beschreibung'), project_id=project.id,
+                status=status(body.get('status', 'To Do')), deadline=deadline(body.get('deadline')))
     db.session.add(task)
+    recalc_project_status(project)
     db.session.commit()
-    # Nach Anlegen: Projektstatus neu berechnen
-    project.status = recalc_project_status(project)
-    db.session.commit()
-    return jsonify({'id': task.id, 'title': task.title, 'status': task.status, 'project_id': task.project_id, 'project_status': project.status})
+    return jsonify(**serialize_task(task), project_status=project.status)
 
-# Tasks eines Projekts anzeigen
-@project_bp.route('/project/<int:project_id>/tasks', methods=['GET'])
-@jwt_required()
+@project_bp.route('/project/<int:project_id>/tasks')
 def get_tasks(project_id):
-    user_id = get_jwt_identity()
-    project = Project.query.get_or_404(project_id)
-    if not user_in_team(user_id, project.team_id):
-        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
-    tasks = Task.query.filter_by(project_id=project_id).all()
-    return jsonify([
-        {'id': t.id, 'title': t.title, 'description': t.description, 'status': t.status, 'project_id': t.project_id, 'assigned_user_id': t.assigned_user_id, 'deadline': t.deadline.isoformat() if t.deadline else None} for t in tasks
-    ])
+    project_access(project_id)
+    return jsonify([serialize_task(t) for t in Task.query.filter_by(project_id=project_id).order_by(Task.id)])
 
-# Task-Status ändern (z.B. für Kanban-Board)
 @project_bp.route('/task/<int:task_id>/status', methods=['PATCH'])
-@jwt_required()
 def update_task_status(task_id):
-    data = request.json
-    user_id = get_jwt_identity()
-    task = Task.query.get_or_404(task_id)
-    project = Project.query.get(task.project_id)
-    if not user_in_team(user_id, project.team_id):
-        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
-    task.status = data['status']
+    task = task_access(task_id, edit=True)
+    task.status = status(data().get('status'))
+    recalc_project_status(task.project)
     db.session.commit()
-    # Nach Status-Änderung: Projektstatus neu berechnen
-    project.status = recalc_project_status(project)
-    db.session.commit()
-    return jsonify({'id': task.id, 'status': task.status, 'project_status': project.status})
+    return jsonify(**serialize_task(task), project_status=task.project.status)
 
-# Task zuweisen (nur an sich selbst, wenn noch nicht zugewiesen)
 @project_bp.route('/task/<int:task_id>/assign', methods=['POST'])
-@jwt_required()
 def assign_task(task_id):
-    user_id = get_jwt_identity()
-    task = Task.query.get_or_404(task_id)
-    project = Project.query.get(task.project_id)
-    if not user_in_team(user_id, project.team_id):
-        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
-    if task.assigned_user_id is not None:
-        return jsonify({'error': 'Task ist bereits zugewiesen'}), 400
-    task.assigned_user_id = user_id
+    task_access(task_id)
+    changed = Task.query.filter_by(id=task_id, assigned_user_id=None).update({'assigned_user_id': g.user.id})
+    if not changed:
+        abort(409, description='Diese Aufgabe ist bereits vergeben.')
     db.session.commit()
-    return jsonify({'id': task.id, 'assigned_user_id': task.assigned_user_id})
+    return jsonify(id=task_id, assigned_user_id=g.user.id)
 
-@project_bp.route('/user/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = User.query.get_or_404(user_id)
-    return jsonify({'id': user.id, 'username': user.username})
-
-@project_bp.route('/user/<int:user_id>/tasks', methods=['GET'])
-@jwt_required()
+@project_bp.route('/user/<int:user_id>/tasks')
 def get_tasks_by_user(user_id):
-    user = User.query.get_or_404(user_id)
-    tasks = Task.query.filter_by(assigned_user_id=user.id).all()
-    return jsonify([
-        {
-            'id': t.id,
-            'title': t.title,
-            'status': t.status,
-            'project_id': t.project_id,
-            'deadline': t.deadline.isoformat() if t.deadline else None
-        } for t in tasks
-    ])
+    if user_id != g.user.id:
+        abort(403, description='Du kannst nur deine eigenen Aufgaben abrufen.')
+    return jsonify([serialize_task(t) for t in Task.query.join(Project).filter(
+        Task.assigned_user_id == user_id, Project.team_id == g.user.team_id).all()])
 
 @project_bp.route('/project/<int:project_id>/deadline', methods=['PATCH'])
-@jwt_required()
 def update_project_deadline(project_id):
-    data = request.json
-    user_id = get_jwt_identity()
-    project = Project.query.get_or_404(project_id)
-
-    if not user_in_team(user_id, project.team_id):
-        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
-
-    deadline_str = data.get('deadline')
-    if deadline_str:
-        from datetime import datetime
-        project.deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
-    else:
-        project.deadline = None
-
+    project = project_access(project_id)
+    project.deadline = deadline(data().get('deadline'))
     db.session.commit()
-    return jsonify({'id': project.id, 'deadline': project.deadline.isoformat() if project.deadline else None})
+    return jsonify(serialize_project(project))
 
 @project_bp.route('/task/<int:task_id>/deadline', methods=['PATCH'])
-@jwt_required()
 def update_task_deadline(task_id):
-    data = request.json
-    user_id = get_jwt_identity()
-    task = Task.query.get_or_404(task_id)
-    project = Project.query.get(task.project_id)
-
-    if not user_in_team(user_id, project.team_id):
-        return jsonify({'error': 'Kein Zugriff auf dieses Projekt'}), 403
-
-    deadline_str = data.get('deadline')
-    if deadline_str:
-        from datetime import datetime
-        task.deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
-    else:
-        task.deadline = None
-
+    task = task_access(task_id, edit=True)
+    task.deadline = deadline(data().get('deadline'))
     db.session.commit()
-    return jsonify({'id': task.id, 'deadline': task.deadline.isoformat() if task.deadline else None})
-
+    return jsonify(serialize_task(task))
